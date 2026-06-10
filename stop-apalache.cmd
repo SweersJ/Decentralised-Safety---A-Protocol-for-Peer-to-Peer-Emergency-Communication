@@ -1,0 +1,26 @@
+@echo off
+setlocal EnableExtensions EnableDelayedExpansion
+
+set "PORT=8822"
+if not "%~1"=="" set "PORT=%~1"
+
+set "FOUND=0"
+for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":%PORT% .*LISTENING"') do (
+  if not defined SEEN_%%P (
+    set "SEEN_%%P=1"
+    set "FOUND=1"
+    echo Stopping PID %%P on port %PORT%...
+    taskkill /PID %%P /F >nul 2>nul
+    if errorlevel 1 (
+      echo Failed to stop PID %%P.
+    ) else (
+      echo Stopped PID %%P.
+    )
+  )
+)
+
+if "%FOUND%"=="0" (
+  echo No process is listening on port %PORT%.
+)
+
+exit /b 0

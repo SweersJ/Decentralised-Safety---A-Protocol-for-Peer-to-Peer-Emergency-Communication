@@ -1,5 +1,5 @@
 import healpy as hp # pyright: ignore[reportMissingImports]
-from numpy import radians, floor, log2, mean, sqrt, pi
+from numpy import radians, floor, log2, mean, std, sqrt, pi
 from time import perf_counter
 from functools import wraps
 
@@ -103,12 +103,12 @@ class gps_truncation:
 
 
 def _get_column_widths():
-    widths = [7, 6, 12, 9, 9, 9, 9, 9, 10, 10, 12, 12, 13]
+    widths = [7, 4, 12, 9, 9, 9, 9, 9, 10, 10, 19, 19, 19]
     return widths
 
 def _get_formatted_table(lat_input, lon_input, hp_instance, gps_instance, nside_values, widths):
     NUM_RUNS = 100
-    header1 = f"{'nside':<{widths[0]}} {'pow':<{widths[1]}} {'pix_index':<{widths[2]}} {'area':<{widths[3]}} {'area':<{widths[4]}} {'area':<{widths[5]}} {'radius':<{widths[6]}} {'radius':<{widths[7]}} {'trunc_lat':<{widths[8]}} {'trunc_lon':<{widths[9]}} {'hp_time':<{widths[10]}} {'gps_time':<{widths[11]}} {'diff_time':<{widths[12]}}"
+    header1 = f"{'nside':<{widths[0]}} {'pow':<{widths[1]}} {'pix_index':<{widths[2]}} {'area':<{widths[3]}} {'area':<{widths[4]}} {'area':<{widths[5]}} {'radius':<{widths[6]}} {'radius':<{widths[7]}} {'trunc_lat':<{widths[8]}} {'trunc_lon':<{widths[9]}} {'hp_time (mean±std)':<{widths[10]}} {'gps_time (mean±std)':<{widths[11]}} {'diff_time (mean±std)':<{widths[12]}}"
     header2 = f"{'(-)':<{widths[0]}} {'(-)':<{widths[1]}} {'(-)':<{widths[2]}} {'(sr)':<{widths[3]}} {'(deg²)':<{widths[4]}} {'(km²)':<{widths[5]}} {'(km)':<{widths[6]}} {'(deg)':<{widths[7]}} {'(deg)':<{widths[8]}} {'(deg)':<{widths[9]}} {f'(µs) [{NUM_RUNS}x]':<{widths[10]}} {f'(µs) [{NUM_RUNS}x]':<{widths[11]}} {f'(µs) [{NUM_RUNS}x]':<{widths[12]}}"
     print(f"\n{header1}")
     print(f"{header2}")
@@ -124,8 +124,14 @@ def _get_formatted_table(lat_input, lon_input, hp_instance, gps_instance, nside_
         avg_hp = mean(run_hp)
         avg_gps = mean(run_gps)
         avg_diff = mean(run_diff)
+        std_hp = std(run_hp)
+        std_gps = std(run_gps)
+        std_diff = std(run_diff)
+        hp_str = f"{avg_hp:.2f}±{std_hp:.2f}"
+        gps_str = f"{avg_gps:.2f}±{std_gps:.2f}"
+        diff_str = f"{avg_diff:.2f}±{std_diff:.2f}"
         nside_pow = int(log2(nside))
-        print(f"{nside:<{widths[0]}} {nside_pow:<{widths[1]}} {pix:<{widths[2]}} {pixel_area_sr:<{widths[3]}.2e} {pixel_area_deg2:<{widths[4]}.2e} {pixel_area_km2:<{widths[5]}.2e} {pixel_radius_km:<{widths[6]}.2e} {pixel_radius_deg:<{widths[7]}.2e} {trunc_lat:<{widths[8]}.3f} {trunc_lon:<{widths[9]}.3f} {avg_hp:<{widths[10]}.2f} {avg_gps:<{widths[11]}.2f} {avg_diff:<{widths[12]}.2f}")
+        print(f"{nside:<{widths[0]}} {nside_pow:<{widths[1]}} {pix:<{widths[2]}} {pixel_area_sr:<{widths[3]}.2e} {pixel_area_deg2:<{widths[4]}.2e} {pixel_area_km2:<{widths[5]}.2e} {pixel_radius_km:<{widths[6]}.2e} {pixel_radius_deg:<{widths[7]}.2e} {trunc_lat:<{widths[8]}.3f} {trunc_lon:<{widths[9]}.3f} {hp_str:<{widths[10]}} {gps_str:<{widths[11]}} {diff_str:<{widths[12]}}")
     print("-" * len(header1))
 
 def compare_increasing_nside(lat_input=None, lon_input=None):

@@ -8,6 +8,9 @@ from numpy import radians, floor, log2, mean, std, sqrt, pi
 from time import perf_counter
 from functools import wraps
 
+NUM_RUNS = 1000
+CURRENT_DATE = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
 def timed(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
@@ -109,8 +112,9 @@ class gps_truncation:
         return truncated_lat, truncated_lon
 
 
-def _build_table(lat_input: float, lon_input: float, hp_instance: healpix, gps_instance: gps_truncation, nside_values: list[int], num_runs: int = 100) -> pd.DataFrame:
-    rows = []
+def _build_table(lat_input: float, lon_input: float, hp_instance: healpix, gps_instance: gps_truncation, nside_values: list[int], num_runs: int = 100) -> tuple[pd.DataFrame, pd.DataFrame]:
+    summary_rows = []
+    raw_rows = []
     for nside in nside_values:
         run_hp, run_gps, run_diff = [], [], []
         for _ in range(num_runs):
@@ -119,9 +123,14 @@ def _build_table(lat_input: float, lon_input: float, hp_instance: healpix, gps_i
             run_hp.append(hp_instance.get_pixel_index_time * 1e6)
             run_gps.append(gps_instance.truncate_coordinates_time * 1e6)
             run_diff.append(abs(hp_instance.get_pixel_index_time - gps_instance.truncate_coordinates_time) * 1e6)
-        rows.append({
+        pow_val = int(log2(nside))
+        for t_hp, t_gps in zip(run_hp, run_gps):
+            raw_rows.append({"pow": pow_val, "method": "HEALPix",        "time_us": t_hp})
+            raw_rows.append({"pow": pow_val, "method": "GPS truncation", "time_us": t_gps})
+        summary_rows.append({
+            ("nside", "(-)"): nside,
             ("nside", "(-)"):         nside,
-            ("pow", "(-)"):           int(log2(nside)),
+            ("pow", "(-)"):           pow_val,
             ("pix_index", "(-)"):     pix,
             ("area", "(sr)"):         pixel_area_sr,
             ("area", "(deg²)"):       pixel_area_deg2,
@@ -137,20 +146,53 @@ def _build_table(lat_input: float, lon_input: float, hp_instance: healpix, gps_i
             ("diff_time", f"mean (µs) [{num_runs}x]"): mean(run_diff),
             ("diff_time", f"std  (µs) [{num_runs}x]"): std(run_diff),
         })
-    df = pd.DataFrame(rows)
-    df.columns = pd.MultiIndex.from_tuples(df.columns)
-    return df
+    summary_df = pd.DataFrame(summary_rows)
+    summary_df.columns = pd.MultiIndex.from_tuples(summary_df.columns)
+    raw_df = pd.DataFrame(raw_rows)
+    return summary_df, raw_df
 
 def _print_table(df: pd.DataFrame) -> None:
     print(df.to_string(index=False, float_format=lambda x: f"{x:.4g}"))
     print("")
+
+def _plot_scatter(raw_df: pd.DataFrame) -> None:
+    pow_values = sorted(raw_df["pow"].unique())
+    x_labels = [f"$2^{{{p}}}$" for p in pow_values]
+    colors = {"HEALPix": "tab:blue", "GPS truncation": "tab:orange"}
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    fig.suptitle("HEALPix vs GPS truncation - individual run times per nside", fontsize=13)
+
+    for method, color in colors.items():
+        subset = raw_df[raw_df["method"] == method]
+        jitter = 0.15 * (1 if method == "HEALPix" else -1)
+        ax.scatter(subset["pow"] + jitter, subset["time_us"],
+                   color=color, alpha=0.3, s=8, label=method)
+
+    ax.set_ylabel("Time (\u00b5s)")
+    ax.set_yscale("log")
+    ax.set_xlabel("nside (2^n)")
+    ax.set_xticks(pow_values)
+    ax.set_xticklabels(x_labels)
+    ax.legend()
+    ax.grid(True, which="both", alpha=0.3)
+
+    plt.tight_layout()
+
+    _save_plot("scatter")
+
+def _save_plot(name: str) -> None:
+    output_map = "exports"
+    makedirs(output_map, exist_ok=True)
+    filename = path.join(output_map, f'{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}_{name}.png')
+    plt.savefig(filename, dpi=300)
 
 def _plot_table(df: pd.DataFrame, runs: int = 100) -> None:
     pow_vals = df[("pow", "(-)")]
     x_labels = [f"$2^{{{int(p)}}}$" for p in pow_vals]
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    fig.suptitle("HEALPix vs GPS truncation — timing vs nside", fontsize=13)
+    fig.suptitle(f"HEALPix vs GPS truncation - Timing (mean \u00b1 1\u03c3) of {runs} runs vs nside", fontsize=13)
 
     # Timing (mean ± 1σ)
     for key, color, label in [
@@ -165,7 +207,6 @@ def _plot_table(df: pd.DataFrame, runs: int = 100) -> None:
         ax.plot(pow_vals, m, marker="o", color=color, label=label)
         ax.fill_between(pow_vals, m - s, m + s, color=color, alpha=0.2)
     ax.set_ylabel("Time (\u00b5s)")
-    ax.set_title(f"Timing (mean \u00b1 1\u03c3) of {runs} runs")
     ax.legend()
     ax.grid(True, which="both", alpha=0.3)
     ax.set_xlabel("nside (2^n)")
@@ -174,10 +215,7 @@ def _plot_table(df: pd.DataFrame, runs: int = 100) -> None:
 
     plt.tight_layout()
     
-    output_map = "figs"
-    makedirs(output_map, exist_ok=True)
-    filename = path.join(output_map, f'{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}_healpix_vs_gps_truncation_metrics.png')
-    plt.savefig(filename, dpi=300)
+    _save_plot("healpix_vs_gps_truncation_metrics")
 
 def compare_increasing_nside(lat_input: float = None, lon_input: float = None) -> None:
     if lat_input is None or lon_input is None:
@@ -188,10 +226,10 @@ def compare_increasing_nside(lat_input: float = None, lon_input: float = None) -
 
     nside_values = [2 ** i for i in range(1, 19)]  # 2, 4, 8, ..., 262144
 
-    NUM_RUNS = 100
-    df = _build_table(lat_input, lon_input, hp_instance, gps_instance, nside_values, num_runs=NUM_RUNS)
+    df, raw_df = _build_table(lat_input, lon_input, hp_instance, gps_instance, nside_values, num_runs=NUM_RUNS)
     _print_table(df)
     _plot_table(df, runs=NUM_RUNS)
+    _plot_scatter(raw_df)
 
 def compare_fixed_nside(nside_power: int = 18, lat_input: float = None, lon_input: float = None) -> None:
     if lat_input is None or lon_input is None:
@@ -202,8 +240,7 @@ def compare_fixed_nside(nside_power: int = 18, lat_input: float = None, lon_inpu
 
     nside = 2 ** nside_power
 
-    NUM_RUNS = 100
-    df = _build_table(lat_input, lon_input, hp_instance, gps_instance, [nside], num_runs=NUM_RUNS)
+    df, _ = _build_table(lat_input, lon_input, hp_instance, gps_instance, [nside], num_runs=NUM_RUNS)
     _print_table(df)
 
 if __name__ == "__main__":

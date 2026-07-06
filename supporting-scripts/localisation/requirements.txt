@@ -3,5 +3,8 @@ astropy-iers-data==0.2026.6.15.15.33.16
 healpy==1.19.0
 numpy==2.4.6
 packaging==26.2
+pandas==3.0.3
 pyerfa==2.0.1.5
+python-dateutil==2.9.0.post0
 PyYAML==6.0.3
+six==1.17.0

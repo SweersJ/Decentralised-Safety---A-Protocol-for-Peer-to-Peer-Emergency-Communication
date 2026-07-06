@@ -1,4 +1,5 @@
-import healpy as hp # pyright: ignore[reportMissingImports]
+import healpy as hp
+import pandas as pd
 from numpy import radians, floor, log2, mean, std, sqrt, pi
 from time import perf_counter
 from functools import wraps
@@ -14,20 +15,22 @@ def timed(func):
 
 def request_coordinates():
     lat_input = input("Enter latitude in degrees (-90 to 90): ")
+    print("")
     if lat_input != '':
         lat_input = float(lat_input)
     else:
         lat_input = 52.239068
-        print(f"No latitude input provided. Using default value: {lat_input}")
+        print(f"No latitude input provided. Using default value: {lat_input}\n")
     if lat_input < -90 or lat_input > 90:
         raise ValueError("Latitude must be between -90 and 90 degrees.")
 
     lon_input = input("Enter longitude in degrees (-180 to 180): ")
+    print("")
     if lon_input != '':
         lon_input = float(lon_input)
     else:
         lon_input = 6.850713
-        print(f"No longitude input provided. Using default value: {lon_input}")
+        print(f"No longitude input provided. Using default value: {lon_input}\n")
     if lon_input < -180 or lon_input > 180:
         raise ValueError("Longitude must be between -180 and 180 degrees.")
 
@@ -102,17 +105,9 @@ class gps_truncation:
         return truncated_lat, truncated_lon
 
 
-def _get_column_widths():
-    widths = [7, 4, 12, 9, 9, 9, 9, 9, 10, 10, 19, 19, 19]
-    return widths
-
-def _get_formatted_table(lat_input, lon_input, hp_instance, gps_instance, nside_values, widths):
+def _build_table(lat_input, lon_input, hp_instance, gps_instance, nside_values):
     NUM_RUNS = 100
-    header1 = f"{'nside':<{widths[0]}} {'pow':<{widths[1]}} {'pix_index':<{widths[2]}} {'area':<{widths[3]}} {'area':<{widths[4]}} {'area':<{widths[5]}} {'radius':<{widths[6]}} {'radius':<{widths[7]}} {'trunc_lat':<{widths[8]}} {'trunc_lon':<{widths[9]}} {'hp_time (mean±std)':<{widths[10]}} {'gps_time (mean±std)':<{widths[11]}} {'diff_time (mean±std)':<{widths[12]}}"
-    header2 = f"{'(-)':<{widths[0]}} {'(-)':<{widths[1]}} {'(-)':<{widths[2]}} {'(sr)':<{widths[3]}} {'(deg²)':<{widths[4]}} {'(km²)':<{widths[5]}} {'(km)':<{widths[6]}} {'(deg)':<{widths[7]}} {'(deg)':<{widths[8]}} {'(deg)':<{widths[9]}} {f'(µs) [{NUM_RUNS}x]':<{widths[10]}} {f'(µs) [{NUM_RUNS}x]':<{widths[11]}} {f'(µs) [{NUM_RUNS}x]':<{widths[12]}}"
-    print(f"\n{header1}")
-    print(f"{header2}")
-    print("-" * len(header1))
+    rows = []
     for nside in nside_values:
         run_hp, run_gps, run_diff = [], [], []
         for _ in range(NUM_RUNS):
@@ -121,18 +116,31 @@ def _get_formatted_table(lat_input, lon_input, hp_instance, gps_instance, nside_
             run_hp.append(hp_instance.get_pixel_index_time * 1e6)
             run_gps.append(gps_instance.truncate_coordinates_time * 1e6)
             run_diff.append(abs(hp_instance.get_pixel_index_time - gps_instance.truncate_coordinates_time) * 1e6)
-        avg_hp = mean(run_hp)
-        avg_gps = mean(run_gps)
-        avg_diff = mean(run_diff)
-        std_hp = std(run_hp)
-        std_gps = std(run_gps)
-        std_diff = std(run_diff)
-        hp_str = f"{avg_hp:.2f}±{std_hp:.2f}"
-        gps_str = f"{avg_gps:.2f}±{std_gps:.2f}"
-        diff_str = f"{avg_diff:.2f}±{std_diff:.2f}"
-        nside_pow = int(log2(nside))
-        print(f"{nside:<{widths[0]}} {nside_pow:<{widths[1]}} {pix:<{widths[2]}} {pixel_area_sr:<{widths[3]}.2e} {pixel_area_deg2:<{widths[4]}.2e} {pixel_area_km2:<{widths[5]}.2e} {pixel_radius_km:<{widths[6]}.2e} {pixel_radius_deg:<{widths[7]}.2e} {trunc_lat:<{widths[8]}.3f} {trunc_lon:<{widths[9]}.3f} {hp_str:<{widths[10]}} {gps_str:<{widths[11]}} {diff_str:<{widths[12]}}")
-    print("-" * len(header1))
+        rows.append({
+            ("nside", "(-)"):         nside,
+            ("pow", "(-)"):           int(log2(nside)),
+            ("pix_index", "(-)"):     pix,
+            ("area", "(sr)"):         pixel_area_sr,
+            ("area", "(deg²)"):       pixel_area_deg2,
+            ("area", "(km²)"):        pixel_area_km2,
+            ("radius", "(km)"):       pixel_radius_km,
+            ("radius", "(deg)"):      pixel_radius_deg,
+            ("trunc_lat", "(deg)"):   trunc_lat,
+            ("trunc_lon", "(deg)"):   trunc_lon,
+            ("hp_time", f"mean (µs) [{NUM_RUNS}x]"): mean(run_hp),
+            ("hp_time", f"std  (µs) [{NUM_RUNS}x]"): std(run_hp),
+            ("gps_time", f"mean (µs) [{NUM_RUNS}x]"): mean(run_gps),
+            ("gps_time", f"std  (µs) [{NUM_RUNS}x]"): std(run_gps),
+            ("diff_time", f"mean (µs) [{NUM_RUNS}x]"): mean(run_diff),
+            ("diff_time", f"std  (µs) [{NUM_RUNS}x]"): std(run_diff),
+        })
+    df = pd.DataFrame(rows)
+    df.columns = pd.MultiIndex.from_tuples(df.columns)
+    return df
+
+def _print_table(df):
+    print(df.to_string(index=False, float_format=lambda x: f"{x:.4g}"))
+    print("")
 
 def compare_increasing_nside(lat_input=None, lon_input=None):
     if lat_input is None or lon_input is None:
@@ -141,11 +149,10 @@ def compare_increasing_nside(lat_input=None, lon_input=None):
     hp_instance = healpix(print_output=False)
     gps_instance = gps_truncation(print_output=False)
 
-    nside_values = [2 ** i for i in range(1, 19)]  # 2, 4, 8, ..., 262.144
+    nside_values = [2 ** i for i in range(1, 19)]  # 2, 4, 8, ..., 262144
 
-    widths = _get_column_widths()
-
-    _get_formatted_table(lat_input, lon_input, hp_instance, gps_instance, nside_values, widths)
+    df = _build_table(lat_input, lon_input, hp_instance, gps_instance, nside_values)
+    _print_table(df)
 
 def compare_fixed_nside(nside_power=18, lat_input=None, lon_input=None):
     if lat_input is None or lon_input is None:
@@ -156,9 +163,8 @@ def compare_fixed_nside(nside_power=18, lat_input=None, lon_input=None):
 
     nside = 2 ** nside_power
 
-    widths = _get_column_widths()
-    
-    _get_formatted_table(lat_input, lon_input, hp_instance, gps_instance, [nside], widths)
+    df = _build_table(lat_input, lon_input, hp_instance, gps_instance, [nside])
+    _print_table(df)
 
 if __name__ == "__main__":
     lat_input, lon_input = request_coordinates()

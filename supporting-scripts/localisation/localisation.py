@@ -115,6 +115,13 @@ class gps_truncation:
 def _build_table(lat_input: float, lon_input: float, hp_instance: healpix, gps_instance: gps_truncation, nside_values: list[int], num_runs: int = 100) -> tuple[pd.DataFrame, pd.DataFrame]:
     summary_rows = []
     raw_rows = []
+
+    # Warm-up runs to mitigate any initial overhead
+    for _ in range(5):
+        hp_instance.run(lat_input, lon_input, nside_values[0])
+        gps_instance.run(lat_input, lon_input)
+
+    # Actual benchmarking runs
     for nside in nside_values:
         run_hp, run_gps, run_diff = [], [], []
         for _ in range(num_runs):
@@ -182,10 +189,22 @@ def _plot_scatter(raw_df: pd.DataFrame) -> None:
     _save_plot("scatter")
 
 def _save_plot(name: str) -> None:
-    output_map = "exports"
-    makedirs(output_map, exist_ok=True)
-    filename = path.join(output_map, f'{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}_{name}.png')
+    output_sub_map = initialize_output_folder()
+    filename = path.join(output_sub_map, f'{name}.png')
     plt.savefig(filename, dpi=300)
+    print(f"Saved: {filename}")
+
+def _save_csv(df: pd.DataFrame, name: str) -> None:
+    output_sub_map = initialize_output_folder()
+    filename = path.join(output_sub_map, f'{name}.csv')
+    df.to_csv(filename, index=False)
+    print(f"Saved: {filename}")
+
+def initialize_output_folder():
+    output_map = "exports"
+    output_sub_map = path.join(output_map, CURRENT_DATE)
+    makedirs(output_sub_map, exist_ok=True)
+    return output_sub_map
 
 def _plot_table(df: pd.DataFrame, runs: int = 100) -> None:
     pow_vals = df[("pow", "(-)")]
@@ -194,7 +213,7 @@ def _plot_table(df: pd.DataFrame, runs: int = 100) -> None:
     fig, ax = plt.subplots(figsize=(10, 5))
     fig.suptitle(f"HEALPix vs GPS truncation - Timing (mean \u00b1 1\u03c3) of {runs} runs vs nside", fontsize=13)
 
-    # Timing (mean ± 1σ)
+    # Timing (mean ± 1σ (std))
     for key, color, label in [
         ("hp_time",   "tab:blue",   "HEALPix"),
         ("gps_time",  "tab:orange", "GPS truncation"),
@@ -228,6 +247,8 @@ def compare_increasing_nside(lat_input: float = None, lon_input: float = None) -
 
     df, raw_df = _build_table(lat_input, lon_input, hp_instance, gps_instance, nside_values, num_runs=NUM_RUNS)
     _print_table(df)
+    _save_csv(df, "summary")
+    _save_csv(raw_df, "raw")
     _plot_table(df, runs=NUM_RUNS)
     _plot_scatter(raw_df)
 

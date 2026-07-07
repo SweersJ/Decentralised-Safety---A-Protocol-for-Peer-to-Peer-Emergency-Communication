@@ -1,7 +1,7 @@
 sources: 
 - [Linear temporal logic - Wikipedia](https://en.wikipedia.org/wiki/Linear_temporal_logic)
 - [Shibboleth Authentication Request](https://ieeexplore-ieee-org.ezproxy2.utwente.nl/document/8424750)
-- [[_principles_of_model_checking.pdf]]
+- [Principles of Model Checking](https://ris.utwente.nl/ws/portalfiles/portal/268937696/Baier2008principles.pdf)
 
 
 

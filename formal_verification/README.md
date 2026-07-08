@@ -131,6 +131,8 @@ Some examples of of quint code of communication protocols can be found down belo
                 always(eventually(color == "red"))
             )
         }
+
+    	run greenYellowRedOrderTest = init.then(toGreen).then(toYellow).then(toRed)
 	```
 
 # Links

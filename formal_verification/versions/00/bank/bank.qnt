@@ -4,7 +4,7 @@
 
 // >>> MODEL CHECKING EXAMPLE
 
-// PS ...\formal_verification\version1> quint run bank.qnt --invariant=no_negatives
+// PS ...\formal_verification\versions\00\bank> quint run bank.qnt --invariant=no_negatives
 // Fetching Rust evaluator v0.6.0...
 //   Downloading Rust evaluator from https://api.github.com/repos/quint-co/quint/releases/assets/385414004...
 //   Extracting ...\.quint\rust-evaluator-v0.6.0\quint_evaluator-x86_64-pc-windows-msvc.zip...
@@ -25,7 +25,7 @@
 
 // >>> MODEL BASED TESTING (MBT) EXAMPLE
 
-// PS ...\formal_verification\version1> quint run bank.qnt --invariant=no_negatives --mbt
+// PS ...\formal_verification\versions\00\bank> quint run bank.qnt --invariant=no_negatives --mbt
 // An example execution:
 
 // [State 0]
@@ -51,7 +51,7 @@
 
 // >>> FIXED VERSION (WITH PRECONDITION) EXAMPLE
 
-// PS ...\formal_verification\version1> quint run bank.qnt --invariant=no_negatives
+// PS ...\formal_verification\versions\00\bank> quint run bank.qnt --invariant=no_negatives
 // An example execution:
 
 // [State 0] { balances: Map("alice" -> 0, "bob" -> 0, "charlie" -> 0) }
@@ -105,10 +105,10 @@
 
 // >>> MODEL CHECKING VERIFY WITH SERVER EXAMPLE
 
-// PS ...\formal_verification> cmd /c verify.cmd version1\bank.qnt no_negatives
+// PS ...\formal_verification\versions\00\bank> cmd /c verify.cmd bank.qnt no_negatives
 
 // Starting Apalache server on port 8822...
-// Running verification for "version1\bank.qnt" with invariant "no_negatives"...
+// Running verification for "bank.qnt" with invariant "no_negatives"...
 // [ok] No violation found (11239ms).
 // You may increase --max-steps.
 // Use --verbosity to produce more (or less) output.

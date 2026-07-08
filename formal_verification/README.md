@@ -136,6 +136,9 @@ Some examples of of quint code of communication protocols can be found down belo
 
 - [Cheatsheet | Quint](https://quint.sh/quint-cheatsheet.pdf)
 - [Getting started | Quint](https://quint.sh/docs/getting-started)
+- [Language manual/Summary of Quint \| Quint Docs](https://quint.sh/docs/lang)
+- [Specifying Systems | Leslie Lamport](https://lamport.azurewebsites.net/tla/book-21-07-04.pdf)
+- [Principles of Model Checking](https://ris.utwente.nl/ws/portalfiles/portal/268937696/Baier2008principles.pdf)
 
 # How to run and why?
 

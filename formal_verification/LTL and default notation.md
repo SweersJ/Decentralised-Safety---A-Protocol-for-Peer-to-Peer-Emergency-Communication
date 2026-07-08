@@ -27,7 +27,7 @@ sources:
 - $\wedge$ : and
 - $\vee$ : or
 - $\implies$: implies
-- $\leadsto$ : leads-to (eventually) operator
+- $\leadsto$ : leads-to operator (abbreviation of: always($\psi$ implies eventually($\phi$)) or $\Box\;(\psi\;\implies\;\Diamond\;\phi$)  [Summary of Quint \| Quint Docs](https://quint.sh/docs/lang#other-temporal-operators)
 - $\sim_{\text{weak}}$ : weak fairness
 - $\sim_{\text{strong}}$ : strong fairness
 - $\subseteq$ : subset relation

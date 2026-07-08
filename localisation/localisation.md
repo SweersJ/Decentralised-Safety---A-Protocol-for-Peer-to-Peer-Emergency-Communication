@@ -1,6 +1,6 @@
 # Introduction
 
-The script [localisation.py](./localisation.py) has been created to test the computation of the healpix algorithm for determining specific pix indexes for given longitude and latitude coordinates. This is compared with the truncated of these coordinates to 3 decimals. This execution has been run 100 times per specific nside (resolution) to determine a statistical correct number. An example execution result can be found down below.
+The script [localisation.py](./localisation.py) has been created to test the computation of the HEALPix algorithm for determining specific pix indexes for given longitude and latitude coordinates. This is compared with the truncated of these coordinates to 3 decimals. This execution has been run 100 times per specific nside (resolution) to determine a statistical correct number. An example execution result can be found down below.
 
 Note: this script needs to be run in a linux environment otherwise the `healpy` python package can't be used/installed.
 
@@ -15,8 +15,8 @@ Note: this script needs to be run in a linux environment otherwise the `healpy` 
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
-.venv/bin/python3 -m pip install -r requirements.txt # Only the first time
-.venv/bin/python3 localisation.py
+python3 -m pip install -r requirements.txt # Only the first time
+python3 localisation.py
 ```
 
 # Execution result example

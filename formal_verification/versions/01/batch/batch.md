@@ -213,9 +213,9 @@ flowchart LR
 
 ## Execution 1
 
-| Command    | `quint run version_1-2/batch.qnt --mbt` |
-| ---------- | --------------------------------------- |
-| violations | 0                                       |
+| Command    | `quint run versions/01/batch/batch.qnt --mbt` |
+| ---------- | --------------------------------------------- |
+| violations | 0                                             |
 ### Result
 ```powershell
 An example execution:
@@ -465,9 +465,9 @@ Use --seed=0xf312c0885e37e957 --backend=rust to reproduce.
 
 ## Execution 2
 
-| Command    | `cmd /c verify.cmd version_1-2/batch.qnt` |
-| ---------- | ----------------------------------------- |
-| violations | 0                                         |
+| Command    | `cmd /c verify.cmd versions/01/batch/batch.qnt` |
+| ---------- | ----------------------------------------------- |
+| violations | 0                                               |
 ### Result
 ```powershell
 PASS #0: SanyParser                                               I@18:00:34.811
@@ -538,17 +538,17 @@ The outcome is: NoError                                           I@18:00:40.638
 
 ## Execution 3
 
-| Command    | `cmd /c verify.cmd version_1-2/batch.qnt --backend tlc --temporal=received_is_monotonic,pending_ack_is_eventually_cleared,pending_message_is_eventually_acked,fair_receive_message,fair_receive_ack,eventual_cleanup_under_fairness` |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| violations | 1<br>- [] followed by action not of form [A]_v                                                                                                                                                                                       |
-| fixes      | Run only one temporal proposition and don't use tlc backend as the issue persists, but this comes with a warning that the results might be incorrect.<br>`cmd /c verify.cmd version_1-2/batch.qnt --temporal=received_is_monotonic`                        |
+| Command    | `cmd /c verify.cmd versions/01/batch/batch.qnt --backend tlc --temporal=received_is_monotonic,pending_ack_is_eventually_cleared,pending_message_is_eventually_acked,fair_receive_message,fair_receive_ack,eventual_cleanup_under_fairness` |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| violations | 1<br>- [] followed by action not of form [A]_v                                                                                                                                                                                             |
+| fixes      | Run only one temporal proposition and don't use tlc backend as the issue persists, but this comes with a warning that the results might be incorrect.<br>`cmd /c verify.cmd versions/01/batch/batch.qnt --temporal=received_is_monotonic`  |
 
 ### Result 1
 
 
 ```powershell
 Starting Apalache server on port 8822...
-Running verification for "version_1-2/batch.qnt" with arguments "--backend tlc --temporal=received_is_monotonic,pending_ack_is_eventually_cleared,pending_message_is_eventually_acked,fair_receive_message,fair_receive_ack,eventual_cleanup_under_fairness"...
+Running verification for "versions/01/batch/batch.qnt" with arguments "--backend tlc --temporal=received_is_monotonic,pending_ack_is_eventually_cleared,pending_message_is_eventually_acked,fair_receive_message,fair_receive_ack,eventual_cleanup_under_fairness"...
 [TLC] Compiling to TLA+ (via Apalache)...
 [TLC] Running TLC model checker...
 

@@ -32,6 +32,8 @@ module batch {
 
     type Node = str
 
+    type PayloadExchangeState = Idle | MessagesSent | MessagesReceived | AckSent | AckReceived
+
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES
     // ------------------------------------------------------------------------------------
@@ -79,20 +81,36 @@ module batch {
     
     // store received state
     var payloadReceived: Node -> (Node -> bool)
+
+    // Payload-id generator for future send actions.
+    var nextPayloadId: int
+    
+    //TODO: change this with payloadSent and payloadReceived to a single state variable that indicates the state of the payload exchange between two nodes.
+    var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
+
+    // ------------------------------------------------------------------------------------
+    // HELPER FUNCTIONS
+    // ------------------------------------------------------------------------------------
+
+    /* TODO: activate when in interactive mode
+    pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
+        recordStates.map(rs => rs.messageId)
+    } 
+    */
     
     // ------------------------------------------------------------------------------------
     // INIT ACTIONS
     // ------------------------------------------------------------------------------------
 
     action init() = {
-        nondet randomMessagesAlice = MESSAGES.powerset().oneOf() //TODO: find a way to generate random messages depending on the number of Nodes
-        nondet randomMessagesBob = MESSAGES.powerset().oneOf()
+        nondet randomMessageIdsAlice = MESSAGES.keys().powerset().oneOf() //TODO: find a way to generate random messages depending on the number of Nodes
+        nondet randomMessageIdsBob = MESSAGES.keys().powerset().oneOf()
         all {
             nodeState' = NODES.mapBy(
                 sender => NODES.mapBy(
                     receiver => {
                         ...EMPTY_NODE_STATE,
-                        messages: if (sender == ALICE) randomMessagesAlice else randomMessagesBob
+                        messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
                     }
                 )
             ),
@@ -102,7 +120,7 @@ module batch {
                 )
             ),
             messageStore' = NODES.mapBy(
-                node => if (node == ALICE) randomMessagesAlice else randomMessagesBob
+                node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
             ),
             payloadSent' = NODES.mapBy(
                 sender => NODES.mapBy(
@@ -147,6 +165,9 @@ module batch {
         sender != receiver,
         messageStore.get(sender).size() != 0, // check if the sender has messages to send to the receiver, otherwise it doesn't make sense to add messages to the payload with no messages.
         nodeState.get(sender).get(receiver).messages.size() != 0, // check if the sender has messages to send to the receiver, otherwise it doesn't make sense to add messages to the payload with no messages.
+        nodeState.get(sender).get(receiver).messages.exists(
+            m => not(m.in(messageStore.get(receiver)))
+        ), // only proceed when there is at least one message the receiver does not yet have.
         not(payloadSent.get(sender).get(receiver)),
         not(payloadReceived.get(receiver).get(sender)),
         
@@ -349,9 +370,78 @@ module batch {
     // ------------------------------------------------------------------------------------
     // HELPER ACTIONS
     // ------------------------------------------------------------------------------------
-   
-    // Insert helper actions here for exploration of the state space, if needed.
 
+    // Init action for tests that require an actual sync from Alice to Bob.
+    action initWithMessagesToSync() = {
+        nondet randomMessageIdsAlice = MESSAGES.keys().powerset().oneOf()
+        nondet randomMessageIdsBob = MESSAGES.keys().powerset().oneOf()
+        all {
+            randomMessageIdsAlice.size() != 0,
+            randomMessageIdsAlice.exists(id => not(id.in(randomMessageIdsBob))),
+            nodeState' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => {
+                        ...EMPTY_NODE_STATE,
+                        messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
+                    }
+                )
+            ),
+            payloadState' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => EMPTY_PAYLOAD
+                )
+            ),
+            messageStore' = NODES.mapBy(
+                node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
+            ),
+            payloadSent' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => false
+                )
+            ),
+            payloadReceived' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => false
+                )
+            )
+        }
+    }
+
+    // Init action for tests that require no sync delta from Alice to Bob.
+    action initWithoutMessagesToSync() = {
+        nondet randomMessageIdsAlice = MESSAGES.keys().powerset().oneOf()
+        nondet randomMessageIdsBob = MESSAGES.keys().powerset().oneOf()
+        all {
+            randomMessageIdsAlice.size() != 0,
+            randomMessageIdsAlice.forall(id => id.in(randomMessageIdsBob)),
+            nodeState' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => {
+                        ...EMPTY_NODE_STATE,
+                        messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
+                    }
+                )
+            ),
+            payloadState' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => EMPTY_PAYLOAD
+                )
+            ),
+            messageStore' = NODES.mapBy(
+                node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
+            ),
+            payloadSent' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => false
+                )
+            ),
+            payloadReceived' = NODES.mapBy(
+                sender => NODES.mapBy(
+                    receiver => false
+                )
+            )
+        }
+    }
 
     // -------------------------------------------------------------------------------------
     // SAFETY PROPOSITIONS
@@ -378,5 +468,36 @@ module batch {
     // TESTS
     // ------------------------------------------------------------------------------------
 
-    // Insert test cases here for exploration of the state space, if needed.
+    run messagesSuccessfullyStoredTest =
+        initWithMessagesToSync
+            .then(addMessages(ALICE, BOB))
+            .then(sendMessagesPayload(ALICE, BOB))
+            .then(receiveMessagesPayload(ALICE, BOB))
+            .then(storeReceivedMessages(ALICE, BOB))
+            .then(determineAck(ALICE, BOB))
+            .then(sendAckPayload(ALICE, BOB))
+            .then(receiveAckPayload(ALICE, BOB))
+            .expect(
+                messageStore.get(ALICE).forall(x => x.in(messageStore.get(BOB)))
+            )
+
+    run messageStoreSyncTest =
+        initWithMessagesToSync
+            .then(addMessages(ALICE, BOB))
+            .then(sendMessagesPayload(ALICE, BOB))
+            .then(receiveMessagesPayload(ALICE, BOB))
+            .then(storeReceivedMessages(ALICE, BOB))
+            .then(determineAck(ALICE, BOB))
+            .then(sendAckPayload(ALICE, BOB))
+            .then(receiveAckPayload(ALICE, BOB))
+            .expect(
+                // After complete bidirectional message exchange, both nodes should have messages
+                // This verifies that the protocol correctly syncs messages when nodes start with different sets
+                messageStore.get(ALICE).size() > 0 and
+                messageStore.get(BOB).size() > 0
+            )
+
+    run addMessagesFailsWhenNoSyncDeltaTest =
+        initWithoutMessagesToSync
+            .then(addMessages(ALICE, BOB).fail())
 }

@@ -16,7 +16,13 @@ module messages {
     // CONSTANT VALUES
     // ------------------------------------------------------------------------------------
 
-    pure val MESSAGES: Set[Message] = Set(message1, message2, message3, message4, message5) //TODO: maybe add a map of messageId to message to be able to retrieve the message by its ID.
+    pure val MESSAGES: MessageId -> Message = Map(
+        message1.messageId -> message1,
+        message2.messageId -> message2,
+        message3.messageId -> message3,
+        message4.messageId -> message4,
+        message5.messageId -> message5
+    ) //TODO: maybe add a map of messageId to message to be able to retrieve the message by its ID.
 
     pure val EMPTY_MESSAGE: Message = {
         messageId: "",
@@ -65,7 +71,10 @@ module messages {
     // ------------------------------------------------------------------------------------
 
     pure def getMessage(messageId: MessageId): Message = {
-        val filtered = MESSAGES.filter(m => m.messageId == messageId)
-        if (filtered.size() > 0) chooseSome(filtered) else EMPTY_MESSAGE
+        MESSAGES.get(messageId)
+    }
+
+    pure def getMessages(messageIds: Set[MessageId]): Set[Message] = {
+        messageIds.map(id => getMessage(id))
     }
 }

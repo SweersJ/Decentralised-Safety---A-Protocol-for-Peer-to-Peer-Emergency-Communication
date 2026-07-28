@@ -82,6 +82,7 @@ module batch {
     // store received state
     var payloadReceived: Node -> (Node -> bool)
 
+    // TODO: add the payload generator
     // Payload-id generator for future send actions.
     var nextPayloadId: int
     
@@ -92,11 +93,105 @@ module batch {
     // HELPER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
+    pure def initNodeState(randomMessageIdsAlice: Set[MessageId], randomMessageIdsBob: Set[MessageId]): Node -> (Node -> NodeState) = {
+        NODES.mapBy(
+            sender => NODES.mapBy(
+                receiver => {
+                    ...EMPTY_NODE_STATE,
+                    messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
+                }
+            )
+        )
+    }
+
+    pure def initPayloadState(): Node -> (Node -> Payload) = {
+        NODES.mapBy(
+            sender => NODES.mapBy(
+                receiver => EMPTY_PAYLOAD
+            )
+        )
+    }
+
+    pure def initMessageStore(randomMessageIdsAlice: Set[MessageId], randomMessageIdsBob: Set[MessageId]): Node -> Set[Message] = {
+        NODES.mapBy(
+            node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
+        )
+    }
+
+    pure def initPayloadSentState(): Node -> (Node -> bool) = {
+        NODES.mapBy(
+            sender => NODES.mapBy(
+                receiver => false
+            )
+        )
+    }
+
+    pure def initPayloadReceivedState(): Node -> (Node -> bool) = {
+        NODES.mapBy(
+            sender => NODES.mapBy(
+                receiver => false
+            )
+        )
+    }
+
     /* TODO: activate when in interactive mode
     pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
         recordStates.map(rs => rs.messageId)
     } 
     */
+
+    // Sender and receiver must be different nodes, otherwise it doesn't make sense to send a payload to itself.
+    pure def isPeerPair(sender: Node, receiver: Node): bool = {
+        sender != receiver
+    }
+
+    // check if the sender has messages to send to the receiver, otherwise it doesn't make sense to add messages to the payload with no messages.
+    def hasMessagesToProcess(sender: Node, receiver: Node): bool = {
+        messageStore.get(sender).size() != 0 and                    
+        nodeState.get(sender).get(receiver).messages.size() != 0
+    }
+
+    // only proceed when there is at least one message the receiver does not yet have.
+    def hasSyncDelta(sender: Node, receiver: Node): bool = {
+        nodeState.get(sender).get(receiver).messages.exists(
+            m => not(m.in(messageStore.get(receiver)))
+        )
+    }
+
+    def canAddMessages(sender: Node, receiver: Node): bool = {
+        isPeerPair(sender, receiver) and
+        hasMessagesToProcess(sender, receiver) and
+        hasSyncDelta(sender, receiver) and
+        not(payloadSent.get(sender).get(receiver)) and
+        not(payloadReceived.get(receiver).get(sender))
+    }
+
+    def canSendMessagesPayload(sender: Node, receiver: Node): bool = {
+        isPeerPair(sender, receiver) and
+        payloadState.get(sender).get(receiver).messages.size() != 0 and
+        nodeState.get(sender).get(receiver).messages.size() != 0 and
+        not(payloadSent.get(sender).get(receiver)) and
+        not(payloadReceived.get(receiver).get(sender))
+    }
+
+    def canReceiveMessagesPayload(sender: Node, receiver: Node): bool = {
+        isPeerPair(sender, receiver) and
+        payloadSent.get(sender).get(receiver) and
+        not(payloadReceived.get(receiver).get(sender))
+    }
+
+    def canProcessDeliveredPayload(sender: Node, receiver: Node): bool = {
+        isPeerPair(sender, receiver) and
+        payloadSent.get(sender).get(receiver) and
+        payloadReceived.get(receiver).get(sender)
+    }
+
+    def canReceiveAckPayload(sender: Node, receiver: Node): bool = {
+        isPeerPair(sender, receiver) and
+        payloadState.get(sender).get(receiver).acks.size() != 0 and
+        payloadSent.get(receiver).get(sender) and
+        not(payloadReceived.get(sender).get(receiver))
+    }
     
     // ------------------------------------------------------------------------------------
     // INIT ACTIONS
@@ -106,32 +201,11 @@ module batch {
         nondet randomMessageIdsAlice = MESSAGES.keys().powerset().oneOf() //TODO: find a way to generate random messages depending on the number of Nodes
         nondet randomMessageIdsBob = MESSAGES.keys().powerset().oneOf()
         all {
-            nodeState' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => {
-                        ...EMPTY_NODE_STATE,
-                        messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
-                    }
-                )
-            ),
-            payloadState' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => EMPTY_PAYLOAD
-                )
-            ),
-            messageStore' = NODES.mapBy(
-                node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
-            ),
-            payloadSent' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => false
-                )
-            ),
-            payloadReceived' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => false
-                )
-            )
+            nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
+            payloadState' = initPayloadState,
+            messageStore' = initMessageStore(randomMessageIdsAlice, randomMessageIdsBob),
+            payloadSent' = initPayloadSentState,
+            payloadReceived' = initPayloadReceivedState,
         }
     }
 
@@ -162,14 +236,7 @@ module batch {
     // Batch flow 1: Sender adds messages to its payload.
     action addMessages(sender, receiver) = all {
         // Guards
-        sender != receiver,
-        messageStore.get(sender).size() != 0, // check if the sender has messages to send to the receiver, otherwise it doesn't make sense to add messages to the payload with no messages.
-        nodeState.get(sender).get(receiver).messages.size() != 0, // check if the sender has messages to send to the receiver, otherwise it doesn't make sense to add messages to the payload with no messages.
-        nodeState.get(sender).get(receiver).messages.exists(
-            m => not(m.in(messageStore.get(receiver)))
-        ), // only proceed when there is at least one message the receiver does not yet have.
-        not(payloadSent.get(sender).get(receiver)),
-        not(payloadReceived.get(receiver).get(sender)),
+        canAddMessages(sender, receiver),
         
         // Next state updates
         /* TODO: [added] add check to ensure that the messages added to the payload are not already 
@@ -198,11 +265,7 @@ module batch {
     // the payload in the system.
     action sendMessagesPayload(sender, receiver) = all {
         // Guards
-        sender != receiver,
-        payloadState.get(sender).get(receiver).messages.size() != 0, //check if the payload has messages to send to the receiver, otherwise it doesn't make sense to send a payload with no messages.
-        nodeState.get(sender).get(receiver).messages.size() != 0, //check if the sender has messages to send to the receiver, otherwise it doesn't make sense to send a payload with no messages.
-        not(payloadSent.get(sender).get(receiver)),
-        not(payloadReceived.get(receiver).get(sender)),
+        canSendMessagesPayload(sender, receiver),
         
         // Next state updates
         messageStore' = messageStore,
@@ -217,9 +280,7 @@ module batch {
 
     action receiveMessagesPayload(sender, receiver) = all {
         // Guards
-        sender != receiver,
-        payloadSent.get(sender).get(receiver),
-        not(payloadReceived.get(receiver).get(sender)),
+        canReceiveMessagesPayload(sender, receiver),
         
         // Next state updates
         messageStore' = messageStore,
@@ -234,9 +295,7 @@ module batch {
 
     action storeReceivedMessages(sender, receiver) = all {
         // Guards
-        sender != receiver,
-        payloadSent.get(sender).get(receiver),
-        payloadReceived.get(receiver).get(sender),
+        canProcessDeliveredPayload(sender, receiver),
         
         // Next state updates
         messageStore' = messageStore.setBy(
@@ -268,9 +327,7 @@ module batch {
     // updates the payload state to reflect the acknowledged messages.
     action determineAck(sender, receiver) = all {
         // Guards
-        sender != receiver,
-        payloadSent.get(sender).get(receiver),
-        payloadReceived.get(receiver).get(sender),
+        canProcessDeliveredPayload(sender, receiver),
 
         // Next state updates
         messageStore' = messageStore,
@@ -296,9 +353,7 @@ module batch {
     // Batch flow 4: Sender sends the acknowledgment payload to the receiver. 
     action sendAckPayload(sender, receiver) = all {
         // Guards
-        sender != receiver,
-        payloadSent.get(sender).get(receiver),
-        payloadReceived.get(receiver).get(sender),
+        canProcessDeliveredPayload(sender, receiver),
 
         // Next state updates
         messageStore' = messageStore,
@@ -327,10 +382,7 @@ module batch {
     // been delivered or resend specific messages.
     action receiveAckPayload(sender, receiver) = all {
         // Guards
-        sender != receiver,
-        payloadState.get(sender).get(receiver).acks.size() != 0, 
-        payloadSent.get(receiver).get(sender),
-        not(payloadReceived.get(sender).get(receiver)),
+        canReceiveAckPayload(sender, receiver),
 
         // Next state updates
         messageStore' = messageStore,
@@ -378,32 +430,11 @@ module batch {
         all {
             randomMessageIdsAlice.size() != 0,
             randomMessageIdsAlice.exists(id => not(id.in(randomMessageIdsBob))),
-            nodeState' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => {
-                        ...EMPTY_NODE_STATE,
-                        messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
-                    }
-                )
-            ),
-            payloadState' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => EMPTY_PAYLOAD
-                )
-            ),
-            messageStore' = NODES.mapBy(
-                node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
-            ),
-            payloadSent' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => false
-                )
-            ),
-            payloadReceived' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => false
-                )
-            )
+            nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
+            payloadState' = initPayloadState,
+            messageStore' = initMessageStore(randomMessageIdsAlice, randomMessageIdsBob),
+            payloadSent' = initPayloadSentState,
+            payloadReceived' = initPayloadReceivedState
         }
     }
 
@@ -414,32 +445,11 @@ module batch {
         all {
             randomMessageIdsAlice.size() != 0,
             randomMessageIdsAlice.forall(id => id.in(randomMessageIdsBob)),
-            nodeState' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => {
-                        ...EMPTY_NODE_STATE,
-                        messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
-                    }
-                )
-            ),
-            payloadState' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => EMPTY_PAYLOAD
-                )
-            ),
-            messageStore' = NODES.mapBy(
-                node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
-            ),
-            payloadSent' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => false
-                )
-            ),
-            payloadReceived' = NODES.mapBy(
-                sender => NODES.mapBy(
-                    receiver => false
-                )
-            )
+            nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
+            payloadState' = initPayloadState,
+            messageStore' = initMessageStore(randomMessageIdsAlice, randomMessageIdsBob),
+            payloadSent' = initPayloadSentState,
+            payloadReceived' = initPayloadReceivedState
         }
     }
 

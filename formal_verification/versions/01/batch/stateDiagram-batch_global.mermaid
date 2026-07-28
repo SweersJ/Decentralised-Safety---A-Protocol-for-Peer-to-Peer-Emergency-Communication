@@ -1,0 +1,22 @@
+stateDiagram-v2
+    [*] --> Init
+    Init --> Idle
+    Idle --> Idle
+    Idle --> SenderAddedMessages
+    SenderAddedMessages --> SenderSentPayload
+    SenderSentPayload --> SenderSentPayloadInTransit
+    SenderSentPayloadInTransit --> ReceiverReceivedPayload
+    ReceiverReceivedPayload --> ReceiverProcessing
+
+    state ReceiverProcessing {
+        [*] --> ReceiverStoredMessages
+        ReceiverStoredMessages --> [*]
+        --
+        [*] --> ReceiverDeterminedAck
+        ReceiverDeterminedAck --> [*]
+    }
+
+    ReceiverProcessing --> ReceiverSentAck
+    ReceiverSentAck --> ReceiverSentAckInTransit
+    ReceiverSentAckInTransit --> SenderReceivedAck
+    SenderReceivedAck --> Idle

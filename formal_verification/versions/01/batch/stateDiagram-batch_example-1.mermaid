@@ -1,0 +1,73 @@
+stateDiagram-v2
+    [*] --> Initial
+    
+    Initial: MessageStore<sub>A</sub>: [M1, M2, M3]<br><br>MessageStore<sub>B</sub>: [M1]<br><br>NodeState<sub>A->B</sub>: {messages: [M1,M2,M3], offers: [], requests: []}<br><br>NodeState<sub>B->A</sub>: {messages: [M1], offers: [], requests: []}
+    
+    Initial --> Idle: Initialisation of the protocol is complete, both Alice and Bob are ready to send and receive messages.
+
+    note left of Idle
+        Either Alice or Bob can add messages to the payload and send them to the other party. The other party can then receive the payload, store the messages, and acknowledge them. This process can be repeated until all messages have been sent and acknowledged.
+    end note
+
+    Idle: Alice and Bob are idle, waiting for messages to be sent or received
+    
+    Idle --> AliceAddMessages: Alice adds messages to payload
+
+    Idle --> Idle: No action is taken, Alice and Bob remain idle
+    
+    AliceAddMessages: Payload<sub>A->B</sub>: {messages: [M1, M2, M3], acks: []}
+
+    AliceAddMessages --> AliceSend: Alice sends payload
+    
+    AliceSend: PayloadSent<sub>A->B</sub>: true<br><br>PayloadReceived<sub>B->A</sub>: false
+    
+    AliceSend --> AliceSendPayloadInTransit: Sent payload from Alice to Bob is in transit
+
+    AliceSendPayloadInTransit: Sent payload from Alice to Bob is in transit
+
+    AliceSendPayloadInTransit --> BobReceive: Bob receives payload
+    
+    BobReceive: PayloadSent<sub>A->B</sub>: true<br><br>PayloadReceived<sub>B->A</sub>: true
+
+    BobReceive --> ReceiverProcessing
+
+    state ReceiverProcessing {
+        note  left of BobStoresMessages
+            Bob notices that Alice has sent M1 thus that doesn't need to be sent to Alice.
+        end note
+
+        BobStoresMessages: MessageStore<sub>A</sub>: [M1, M2, M3]<br><br>MessageStore<sub>B</sub>: [M1, M2, M3]<br><br>NodeState<sub>A->B</sub>: {messages: [M1,M2,M3], offers: [], requests: []}<br><br>NodeState<sub>B->A</sub>: {messages: [], offers: [], requests: []}
+
+        [*] --> BobStoresMessages: Bob stores messages
+        BobStoresMessages --> [*]
+
+        --
+        note left of BobDetermineAck
+            Bob acknowledges all messages they received from Alice to indicate that they have received 
+            them. This is done by editing the existing payload to include the ACKs for the messages 
+            received from Alice.
+        end note
+        
+        BobDetermineAck:  Payload<sub>A->B</sub>: {messages: [M1, M2, M3], acks: [M1, M2, M3]}
+
+        [*] --> BobDetermineAck: Bob acknowledges messages received from Alice
+        BobDetermineAck --> [*]
+    }
+    
+    ReceiverProcessing --> BobSend: Bob sends acks
+    
+    BobSend: PayloadSent<sub>A->B</sub>: false<br><br>PayloadReceived<sub>B->A</sub>: false<br><br>PayloadSent<sub>B->A</sub>: true<br><br>PayloadReceived<sub>A->B</sub>: false
+    
+    BobSend --> BobSendPayloadInTransit: Sent payload from Bob to Alice is in transit
+
+    BobSendPayloadInTransit: Sent payload from Bob to Alice is in transit
+
+    BobSendPayloadInTransit --> AliceReceiveAck: Alice receives acks
+
+    note right of AliceReceiveAck
+        Alice notices that Bob has acknowledged M1, M2, and M3 thus that doesn't need to be sent to Bob. Therefore, Alice can remove it from the NodeState.
+    end note
+
+    AliceReceiveAck: PayloadSent<sub>B->A</sub>: true<br><br>PayloadReceived<sub>A->B</sub>: true<br><br>NodeState<sub>A->B</sub>: {messages: [], offers: [], requests: []}<br><br>NodeState<sub>B->A</sub>: {messages: [], offers: [], requests: []}
+    
+    AliceReceiveAck --> [*]

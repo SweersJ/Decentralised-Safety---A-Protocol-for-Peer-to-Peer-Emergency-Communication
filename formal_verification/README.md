@@ -24,6 +24,8 @@ In this project their has been chosen for quint as formal verification tool as i
     > This provides the syntax checker and IntelliSense for writing quint.
 
     Install "Quint" from "Informal Systems"
+2. [ITF Trace Viewer (VScode extension)](https://marketplace.visualstudio.com/items?itemName=informal.itf-trace-viewer)
+	> This provides
 
 ### Windows
 1. Windows OS

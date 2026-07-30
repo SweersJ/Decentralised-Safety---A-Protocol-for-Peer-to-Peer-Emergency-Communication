@@ -198,8 +198,8 @@ module batch {
     // ------------------------------------------------------------------------------------
 
     action init() = {
-        nondet randomMessageIdsAlice = MESSAGES.keys().powerset().oneOf() //TODO: find a way to generate random messages depending on the number of Nodes
-        nondet randomMessageIdsBob = MESSAGES.keys().powerset().oneOf()
+        nondet randomMessageIdsAlice = getMessageIdsPowerset.oneOf() //TODO: find a way to generate random messages depending on the number of Nodes
+        nondet randomMessageIdsBob = getMessageIdsPowerset.oneOf()
         all {
             nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
             payloadState' = initPayloadState,
@@ -420,13 +420,13 @@ module batch {
     }
 
     // ------------------------------------------------------------------------------------
-    // HELPER ACTIONS
+    // HELPER VERIFICATION ACTIONS
     // ------------------------------------------------------------------------------------
 
     // Init action for tests that require an actual sync from Alice to Bob.
     action initWithMessagesToSync() = {
-        nondet randomMessageIdsAlice = MESSAGES.keys().powerset().oneOf()
-        nondet randomMessageIdsBob = MESSAGES.keys().powerset().oneOf()
+        nondet randomMessageIdsAlice = getMessageIdsPowerset.oneOf()
+        nondet randomMessageIdsBob = getMessageIdsPowerset.oneOf()
         all {
             randomMessageIdsAlice.size() != 0,
             randomMessageIdsAlice.exists(id => not(id.in(randomMessageIdsBob))),
@@ -440,8 +440,8 @@ module batch {
 
     // Init action for tests that require no sync delta from Alice to Bob.
     action initWithoutMessagesToSync() = {
-        nondet randomMessageIdsAlice = MESSAGES.keys().powerset().oneOf()
-        nondet randomMessageIdsBob = MESSAGES.keys().powerset().oneOf()
+        nondet randomMessageIdsAlice = getMessageIdsPowerset.oneOf()
+        nondet randomMessageIdsBob = getMessageIdsPowerset.oneOf()
         all {
             randomMessageIdsAlice.size() != 0,
             randomMessageIdsAlice.forall(id => id.in(randomMessageIdsBob)),
@@ -454,11 +454,82 @@ module batch {
     }
 
     // -------------------------------------------------------------------------------------
+    // HELPER VERIFICATION FUNCTIONS
+    // -------------------------------------------------------------------------------------
+
+    def isDefaultNodeState(n: Node): bool = {
+        nodeState.get(n).get(n).messages.size() == 0 and
+        nodeState.get(n).get(n).offers.size() == 0 and
+        nodeState.get(n).get(n).requests.size() == 0
+    }
+
+    def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
+        payloadState.get(sender).get(receiver).payloadId == 0 and
+        payloadState.get(sender).get(receiver).acks.size() == 0 and
+        payloadState.get(sender).get(receiver).offers.size() == 0 and
+        payloadState.get(sender).get(receiver).requests.size() == 0 and
+        payloadState.get(sender).get(receiver).messages.size() == 0
+    }
+
+    // -------------------------------------------------------------------------------------
     // SAFETY PROPOSITIONS
     // -------------------------------------------------------------------------------------
 
-    // Insert safety propositions here for exploration of the state space, if needed.
+    val two_nodes_only = 
+        NODES.size() == 2
 
+    val no_self_receiver_nodeState = 
+        NODES.forall(
+            n => isDefaultNodeState(n)
+        )
+
+    val no_self_receiver_payloadState = 
+        NODES.forall(
+            n => isDefaultPayloadState(n, n)
+        )
+
+    val no_reverse_payloadState = 
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    (
+                        sender != receiver implies
+                        payloadState.get(sender).get(receiver).payloadId == 0 and
+                        payloadState.get(sender).get(receiver).acks.size() == 0 and
+                        payloadState.get(sender).get(receiver).offers.size() == 0 and
+                        payloadState.get(sender).get(receiver).requests.size() == 0 and
+                        payloadState.get(sender).get(receiver).messages.size() == 0
+                    ) or (
+                        sender != receiver implies
+                        payloadState.get(receiver).get(sender).payloadId == 0 and
+                        payloadState.get(receiver).get(sender).acks.size() == 0 and
+                        payloadState.get(receiver).get(sender).offers.size() == 0 and
+                        payloadState.get(receiver).get(sender).requests.size() == 0 and
+                        payloadState.get(receiver).get(sender).messages.size() == 0
+                    )
+            )
+        )
+
+    // // ACKs should only exist for messages already marked as received by that receiver.
+    // val ack_implies_received = 
+    //     NODES.forall(
+    //         receiver => NODES.forall(
+    //             sender => ackPayload.get(receiver).get(sender).forall(
+    //                 id => received.get(receiver).contains(id)
+    //             )
+    //         )
+    //     )
+
+    // // If a message is in-flight to a receiver, it should not also be in sender self-state.
+    // val in_flight_never_self = 
+    //     NODES.forall(
+    //         sender => NODES.forall(
+    //             receiver => sender != receiver 
+    //             implies messageState.get(sender).get(receiver).intersect(
+    //                 messageState.get(sender).get(sender)
+    //             ).size() == 0
+    //         )
+    //     )
 
     // -------------------------------------------------------------------------------------
     // LIVENESS PROPOSITIONS

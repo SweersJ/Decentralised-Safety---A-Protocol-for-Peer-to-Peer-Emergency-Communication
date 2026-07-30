@@ -22,7 +22,7 @@ module messages {
         message3.messageId -> message3,
         message4.messageId -> message4,
         message5.messageId -> message5
-    ) //TODO: maybe add a map of messageId to message to be able to retrieve the message by its ID.
+    )
 
     pure val EMPTY_MESSAGE: Message = {
         messageId: "",
@@ -76,5 +76,9 @@ module messages {
 
     pure def getMessages(messageIds: Set[MessageId]): Set[Message] = {
         messageIds.map(id => getMessage(id))
+    }
+
+    pure def getMessageIdsPowerset: Set[Set[MessageId]] = {
+        MESSAGES.keys().powerset()
     }
 }

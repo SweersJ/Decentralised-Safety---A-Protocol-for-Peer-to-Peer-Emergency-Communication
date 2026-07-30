@@ -68,7 +68,7 @@ flowchart LR
 | Logic family                | State predicate (safety), not CTL/LTL by itself                            |
 | Formal verification formula | $$\forall n \in \mathit{NODES} \,.\, \|\mathit{messageState}[n][n]\| = 0$$ |
 | Formal verification textual | For every node n in NODES, the set messageState[n][n] is empty.            |
-| Explanation                 |                                                                            |
+| Explanation                 | Messages are never queued from a node to itself, preventing self-loop traffic in the model. |
 
 | Formula id                  | $$\text{no\_self\_ack\_state}$$                                          |
 | --------------------------- | ------------------------------------------------------------------------ |
@@ -76,7 +76,7 @@ flowchart LR
 | Logic family                | State predicate (safety), not CTL/LTL by itself                         |
 | Formal verification formula | $$\forall n \in \mathit{NODES} \,.\, \|\mathit{ackPayload}[n][n]\| = 0$$ |
 | Formal verification textual | For every node n in NODES, the set ackPayload[n][n] is empty.          |
-| Explanation                 |                                                                          |
+| Explanation                 | A node never creates or stores acknowledgements addressed to itself. |
 ## Message ID Bounds 
 | Formula id                  | $$\text{message\_ids\_bounded}$$                                                                                                                                                    |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -84,7 +84,7 @@ flowchart LR
 | Logic family                | State predicate (safety), not CTL/LTL by itself                                                                                                                                   |
 | Formal verification formula | $$\forall \text{sender}, \text{receiver} \in \mathit{NODES} \,.\, \forall \text{id} \in \mathit{messageState}[\text{sender}][\text{receiver}] \,.\, 0 \leq \text{id} < \mathit{nextMsgId}$$ |
 | Formal verification textual | For all sender and receiver in NODES, every id in messageState[sender][receiver] is non-negative and strictly smaller than nextMsgId.                                                    |
-| Explanation                 |                                                                                                                                                                                     |
+| Explanation                 | All in-flight message IDs must come from the allocated ID range and cannot reference future IDs. |
 
 
 | Formula id                  | $$\text{ack\_ids\_bounded}$$                                                                                                                                                              |
@@ -93,7 +93,7 @@ flowchart LR
 | Logic family                | State predicate (safety), not CTL/LTL by itself                                                                                                                                         |
 | Formal verification formula | $$\forall \text{receiver}, \text{sender} \in \mathit{NODES} \,.\, \forall \text{id} \in \mathit{ackPayload}[\text{receiver}][\text{sender}] \,.\, 0 \leq \text{id} < \mathit{nextMsgId}$$ |
 | Formal verification textual | For all receiver and sender in NODES, every id in ackPayload[receiver][sender] is non-negative and strictly smaller than nextMsgId.                                                |
-| Explanation                 |                                                                                                                                                                                           |
+| Explanation                 | Pending acknowledgement IDs are always valid message IDs already issued by the protocol. |
 
 
 | Formula id                  | $$\text{received\_ids\_bounded}$$                                                                                                                         |
@@ -102,7 +102,7 @@ flowchart LR
 | Logic family                | State predicate (safety), not CTL/LTL by itself                                                                                                         |
 | Formal verification formula | $$\forall \text{receiver} \in \mathit{NODES} \,.\, \forall \text{id} \in \mathit{received}[\text{receiver}] \,.\, 0 \leq \text{id} < \mathit{nextMsgId}$$ |
 | Formal verification textual | For every receiver in NODES, each id in received[receiver] is non-negative and strictly smaller than nextMsgId.                                |
-| Explanation                 |                                                                                                                                                           |
+| Explanation                 | Delivered IDs are always within the generated ID range, ruling out invalid or fabricated deliveries. |
 
 
 
@@ -113,7 +113,7 @@ flowchart LR
 | Logic family                | State predicate (safety), not CTL/LTL by itself                                                                                                                                                    |
 | Formal verification formula | $$\forall \text{receiver}, \text{sender} \in \mathit{NODES} \,.\, \forall \text{id} \in \mathit{ackPayload}[\text{receiver}][\text{sender}] \,.\, \text{id} \in \mathit{received}[\text{receiver}]$$ |
 | Formal verification textual | For all receiver and sender in NODES, every acknowledged id for receiver is also present in received[receiver].                                                                                 |
-| Explanation                 |                                                                                                                                                                                                      |
+| Explanation                 | The protocol cannot acknowledge a message unless that receiver has already recorded it as received. |
 
 | Formula id                  | $$\text{in\_flight\_never\_self}$$                                                                                                                                                                                             |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -121,7 +121,7 @@ flowchart LR
 | Logic family                | State predicate (safety), not CTL/LTL by itself                                                                                                                                                                              |
 | Formal verification formula | $$\forall \text{sender}, \text{receiver} \in \mathit{NODES} \,.\, \text{sender} \neq \text{receiver} \implies \mathit{messageState}[\text{sender}][\text{receiver}] \cap \mathit{messageState}[\text{sender}][\text{sender}] = \emptyset$$ |
 | Formal verification textual | For every distinct sender and receiver, the in-flight messages to receiver do not overlap with sender's self-channel messages.                                                                            |
-| Explanation                 |                                                                                                                                                                                                                                |
+| Explanation                 | Since self-channels are empty, cross-node in-flight traffic is disjoint from any self-directed traffic. |
 
 
 ## Temporal and Liveness Properties
@@ -131,7 +131,7 @@ flowchart LR
 | Logic family                | LTL (first-order/quantified LTL)                                                                                        |
 | Formal verification formula | $$\Box \left( \forall n \in \mathit{NODES} \,.\, \mathit{received}[n] \subseteq \bigcirc \mathit{received}[n] \right)$$ |
 | Formal verification textual | For every node n in Nodes, the received set can only grow or stay the same in comparison with the next state.           |
-| Explanation                 |                                                                                                                         |
+| Explanation                 | Once an ID is marked as received, it is never removed in later states. |
 
 | Formula id                  | $$\text{pending\_ack\_cleared}$$                                                                                                                                                                                                                     |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -139,7 +139,7 @@ flowchart LR
 | Logic family                | LTL (leads-to / response)                                                                                                                                                                                                                           |
 | Formal verification formula | $$\forall \text{receiver}, \text{sender} \in \mathit{NODES} \,.\, \text{receiver} \neq \text{sender} \implies (\|\mathit{ackPayload}[\text{receiver}][\text{sender}]\| > 0) \leadsto (\|\mathit{ackPayload}[\text{receiver}][\text{sender}]\| = 0)$$ |
 | Formal verification textual | For every distinct receiver and sender, if ackPayload[receiver][sender] is non-empty, it eventually becomes empty.                                                                                 |
-| Explanation                 |                                                                                                                                                                                                                                                      |
+| Explanation                 | Any non-empty pending-ack set is eventually consumed, so acknowledgements do not remain pending forever. |
 
 
 
@@ -149,7 +149,7 @@ flowchart LR
 | Logic family                | LTL (leads-to / response)                                                                                                                                                                                                                |
 | Formal verification formula | $$\forall \text{sender}, \text{receiver} \in \mathit{NODES} \,.\, \text{sender} \neq \text{receiver} \implies (\|\mathit{messageState}[\text{sender}][\text{receiver}]\| > 0) \leadsto (\|\mathit{ackPayload}[\text{receiver}][\text{sender}]\| > 0)$$ |
 | Formal verification textual | For every distinct sender and receiver, if messageState[sender][receiver] is non-empty, then eventually ackPayload[receiver][sender] becomes non-empty.                                                      |
-| Explanation                 |                                                                                                                                                                                                                                        |
+| Explanation                 | Every in-flight message eventually leads to a corresponding pending acknowledgement at the receiver side. |
 
 
 
@@ -160,7 +160,7 @@ flowchart LR
 | Logic family                | Fairness constraint (WF), not CTL; temporal assumption              |
 | Formal verification formula | $$\mathit{someReceiveMessage} \sim_{\text{weak}} \mathit{received}$$ |
 | Formal verification textual | If someReceiveMessage stays enabled, weak fairness ensures it is taken often enough to keep delivery progressing. |
-| Explanation                 |                                                                      |
+| Explanation                 | This assumes message-receive steps cannot stay continuously enabled yet be postponed forever. |
 
 | Formula id                  | $$\text{fair\_receive\_ack}$$                                        |
 | --------------------------- | -------------------------------------------------------------------- |
@@ -168,7 +168,7 @@ flowchart LR
 | Logic family                | Fairness constraint (WF), not CTL; temporal assumption              |
 | Formal verification formula | $$\mathit{someReceiveAck} \sim_{\text{weak}} \mathit{messageState}$$ |
 | Formal verification textual | If someReceiveAck stays enabled, weak fairness ensures it is taken often enough to keep cleanup progressing. |
-| Explanation                 |                                                                      |
+| Explanation                 | This assumes ack-receive steps cannot stay continuously enabled yet be postponed forever. |
 
 | Formula id                  | $$\text{cleanup\_under\_fairness}$$                                                                                                                                                                                                                                                                               |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -176,7 +176,7 @@ flowchart LR
 | Logic family                | LTL under fairness assumptions                                                                                                                                                                                                                                                                                      |
 | Formal verification formula | $$(\text{fair\_receive\_message} \land \text{fair\_receive\_ack}) \implies \forall \text{sender}, \text{receiver} \in \mathit{NODES} \,.\, \text{sender} \neq \text{receiver} \implies (\|\mathit{messageState}[\text{sender}][\text{receiver}]\| > 0) \leadsto (\|\mathit{messageState}[\text{sender}][\text{receiver}]\| = 0)$$ |
 | Formal verification textual | Under both weak fairness assumptions, every non-empty in-flight message set between distinct nodes is eventually emptied.                                                                                                                                      |
-| Explanation                 |                                                                                                                                                                                                                                                                                                                   |
+| Explanation                 | Under both fairness assumptions, message queues between distinct nodes eventually drain to empty. |
 
 
 
@@ -187,7 +187,7 @@ flowchart LR
 | Logic family                | State predicate (existential witness), not CTL/LTL                                                                                                          |
 | Formal verification formula | $$\exists \text{sender}, \text{receiver} \in \mathit{NODES} \,.\, \text{sender} \neq \text{receiver} \land \|\mathit{messageState}[\text{sender}][\text{receiver}]\| > 0$$ |
 | Formal verification textual | There exist two distinct nodes for which at least one message can be in flight.                                   |
-| Explanation                 |                                                                                                                                                                |
+| Explanation                 | This shows the model is non-trivial: states with in-flight messages are reachable. |
 
 
 | Formula id                  | $$\text{can\_have\_pending\_acks}$$                                                                                                                                      |
@@ -196,7 +196,7 @@ flowchart LR
 | Logic family                | State predicate (existential witness), not CTL/LTL                                                                                                                        |
 | Formal verification formula | $$\exists \text{receiver}, \text{sender} \in \mathit{NODES} \,.\, \text{receiver} \neq \text{sender} \land \|\mathit{ackPayload}[\text{receiver}][\text{sender}]\| > 0$$ |
 | Formal verification textual | There exist two distinct nodes for which at least one pending acknowledgment can exist.                                                                       |
-| Explanation                 |                                                                                                                                                                          |
+| Explanation                 | This shows acknowledgement-generation behavior is reachable, not just message sending. |
 
 
 | Formula id                  | $$\text{can\_have\_delivered}$$                                                                 |

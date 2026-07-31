@@ -78,7 +78,11 @@ module messages {
         messageIds.map(id => getMessage(id))
     }
 
-    pure def getMessageIdsPowerset: Set[Set[MessageId]] = {
+    pure def getMessageIdsPowerset(): Set[Set[MessageId]] = {
         MESSAGES.keys().powerset()
+    }
+
+    pure def getRandomMessageIds(): Set[MessageId] = {
+        getMessageIdsPowerset.chooseSome()
     }
 }

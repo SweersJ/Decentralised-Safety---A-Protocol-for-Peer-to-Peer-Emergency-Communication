@@ -93,12 +93,23 @@ module batch {
     // HELPER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
-    pure def initNodeState(randomMessageIdsAlice: Set[MessageId], randomMessageIdsBob: Set[MessageId]): Node -> (Node -> NodeState) = {
+    pure def initNodeState(randomMessageIdsSender: Set[MessageId], randomMessageIdsReceiver: Set[MessageId]): Node -> (Node -> NodeState) = {
         NODES.mapBy(
             sender => NODES.mapBy(
                 receiver => {
                     ...EMPTY_NODE_STATE,
-                    messages: if (sender == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
+                    messages: if (sender != receiver and sender == ALICE) getMessages(randomMessageIdsSender) else if (sender != receiver and sender == BOB) getMessages(randomMessageIdsReceiver) else EMPTY_NODE_STATE.messages
+                }
+            )
+        )
+    }
+
+    pure def initNodeState2(randomMessageIds: Node -> Set[MessageId]): Node -> (Node -> NodeState) = {
+        NODES.mapBy(
+            sender => NODES.mapBy(
+                receiver => {
+                    ...EMPTY_NODE_STATE,
+                    messages: if (sender != receiver) getMessages(randomMessageIds.get(sender)) else EMPTY_NODE_STATE.messages
                 }
             )
         )
@@ -118,6 +129,12 @@ module batch {
         )
     }
 
+    pure def initMessageStore2(randomMessageIds: Node -> Set[MessageId]): Node -> Set[Message] = {
+        NODES.mapBy(
+            node => getMessages(randomMessageIds.get(node))
+        )
+    }
+
     pure def initPayloadSentState(): Node -> (Node -> bool) = {
         NODES.mapBy(
             sender => NODES.mapBy(
@@ -132,6 +149,10 @@ module batch {
                 receiver => false
             )
         )
+    }
+
+    pure def initRandomMessageIds(): Node -> Set[MessageId] = {
+        NODES.mapBy(n => getRandomMessageIds)
     }
 
     /* TODO: activate when in interactive mode
@@ -198,12 +219,11 @@ module batch {
     // ------------------------------------------------------------------------------------
 
     action init() = {
-        nondet randomMessageIdsAlice = getMessageIdsPowerset.oneOf() //TODO: find a way to generate random messages depending on the number of Nodes
-        nondet randomMessageIdsBob = getMessageIdsPowerset.oneOf()
+        val randomMessageIds = initRandomMessageIds //TODO: find a way to generate random messages depending on the number of Nodes
         all {
-            nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
+            nodeState' = initNodeState2(randomMessageIds),
             payloadState' = initPayloadState,
-            messageStore' = initMessageStore(randomMessageIdsAlice, randomMessageIdsBob),
+            messageStore' = initMessageStore2(randomMessageIds),
             payloadSent' = initPayloadSentState,
             payloadReceived' = initPayloadReceivedState,
         }
@@ -425,14 +445,15 @@ module batch {
 
     // Init action for tests that require an actual sync from Alice to Bob.
     action initWithMessagesToSync() = {
-        nondet randomMessageIdsAlice = getMessageIdsPowerset.oneOf()
-        nondet randomMessageIdsBob = getMessageIdsPowerset.oneOf()
+        val randomMessageIds = initRandomMessageIds
+        val randomMessageIdsAlice = randomMessageIds.get(ALICE)
+        val randomMessageIdsBob = randomMessageIds.get(BOB)
         all {
             randomMessageIdsAlice.size() != 0,
             randomMessageIdsAlice.exists(id => not(id.in(randomMessageIdsBob))),
             nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
             payloadState' = initPayloadState,
-            messageStore' = initMessageStore(randomMessageIdsAlice, randomMessageIdsBob),
+            messageStore' = initMessageStore2(randomMessageIds),
             payloadSent' = initPayloadSentState,
             payloadReceived' = initPayloadReceivedState
         }
@@ -440,14 +461,15 @@ module batch {
 
     // Init action for tests that require no sync delta from Alice to Bob.
     action initWithoutMessagesToSync() = {
-        nondet randomMessageIdsAlice = getMessageIdsPowerset.oneOf()
-        nondet randomMessageIdsBob = getMessageIdsPowerset.oneOf()
+        val randomMessageIds = initRandomMessageIds
+        val randomMessageIdsAlice = randomMessageIds.get(ALICE)
+        val randomMessageIdsBob = randomMessageIds.get(BOB)
         all {
             randomMessageIdsAlice.size() != 0,
             randomMessageIdsAlice.forall(id => id.in(randomMessageIdsBob)),
-            nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
+            nodeState' = initNodeState2(randomMessageIds),
             payloadState' = initPayloadState,
-            messageStore' = initMessageStore(randomMessageIdsAlice, randomMessageIdsBob),
+            messageStore' = initMessageStore2(randomMessageIds),
             payloadSent' = initPayloadSentState,
             payloadReceived' = initPayloadReceivedState
         }
@@ -492,20 +514,21 @@ module batch {
         NODES.forall(
             sender => NODES.forall(
                 receiver =>
+                    sender != receiver implies
                     (
-                        sender != receiver implies
-                        payloadState.get(sender).get(receiver).payloadId == 0 and
-                        payloadState.get(sender).get(receiver).acks.size() == 0 and
-                        payloadState.get(sender).get(receiver).offers.size() == 0 and
-                        payloadState.get(sender).get(receiver).requests.size() == 0 and
-                        payloadState.get(sender).get(receiver).messages.size() == 0
-                    ) or (
-                        sender != receiver implies
-                        payloadState.get(receiver).get(sender).payloadId == 0 and
-                        payloadState.get(receiver).get(sender).acks.size() == 0 and
-                        payloadState.get(receiver).get(sender).offers.size() == 0 and
-                        payloadState.get(receiver).get(sender).requests.size() == 0 and
-                        payloadState.get(receiver).get(sender).messages.size() == 0
+                        // Allow both directions to be empty only when both directions are idle.
+                        (
+                            not(payloadSent.get(sender).get(receiver)) and
+                            not(payloadReceived.get(receiver).get(sender)) and
+                            not(payloadSent.get(receiver).get(sender)) and
+                            not(payloadReceived.get(sender).get(receiver))
+                        )
+                        or
+                        // During sync activity, at least one direction must differ from EMPTY_PAYLOAD.
+                        (
+                            not(isDefaultPayloadState(sender, receiver)) or
+                            not(isDefaultPayloadState(receiver, sender))
+                        )
                     )
             )
         )
@@ -535,14 +558,67 @@ module batch {
     // LIVENESS PROPOSITIONS
     // -------------------------------------------------------------------------------------
    
-    // Insert liveness propositions here for exploration of the state space, if needed.
+    // temporal received_is_monotonic = always(
+    //     NODES.forall(n => received.get(n).subseteq(next(received.get(n)))))
 
+    // temporal pending_ack_is_eventually_cleared =
+    //     NODES.forall(
+    //         receiver => NODES.forall(
+    //             sender => receiver != sender 
+    //             implies ackPayload.get(receiver).get(sender).size() > 0
+    //             leadsTo ackPayload.get(receiver).get(sender).size() == 0
+    //         )
+    //     )
+
+    // temporal pending_message_is_eventually_acked =
+    //     NODES.forall(
+    //         sender => NODES.forall(
+    //             receiver => sender != receiver 
+    //             implies messageState.get(sender).get(receiver).size() > 0
+    //             leadsTo ackPayload.get(receiver).get(sender).size() > 0
+    //         )
+    //     )
+
+    // // Fairness assumptions for progress-oriented propositions.
+    // temporal fair_receive_message = 
+    //     someReceiveMessage.weakFair(Set(received))
+    // temporal fair_receive_ack = 
+    //     someReceiveAck.weakFair(Set(messageState))
+
+    // // Under fairness, messages are eventually removed from sender per-receiver state.
+    // temporal eventual_cleanup_under_fairness =
+    //     (fair_receive_message and fair_receive_ack).implies(
+    //         NODES.forall(
+    //             sender => NODES.forall(
+    //                 receiver => sender != receiver
+    //                 implies messageState.get(sender).get(receiver).size() > 0
+    //                 leadsTo messageState.get(sender).get(receiver).size() == 0
+    //             )
+    //         )
+    //     )
 
     // -------------------------------------------------------------------------------------
     // WITNESS-STYLE PROPOSITIONS (NON-INVARIANTS)
     // -------------------------------------------------------------------------------------
 
-    // Insert witness-style propositions here for exploration of the state space, if needed.
+    // val can_have_in_flight_messages =
+    //     NODES.exists(
+    //         sender => NODES.exists(
+    //             receiver => sender != receiver and messageState.get(sender).get(receiver).size() > 0
+    //         )
+    //     )
+
+    // val can_have_pending_acks =
+    //     NODES.exists(
+    //         receiver => NODES.exists(
+    //             sender => receiver != sender and ackPayload.get(receiver).get(sender).size() > 0
+    //         )
+    //     )
+
+    // val can_have_delivered_messages = 
+    //     NODES.exists(
+    //         receiver => received.get(receiver).size() > 0
+    //     )
 
 
     // ------------------------------------------------------------------------------------

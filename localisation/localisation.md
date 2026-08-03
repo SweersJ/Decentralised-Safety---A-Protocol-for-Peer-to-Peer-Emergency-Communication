@@ -10,19 +10,44 @@ Note: this script needs to be run in a linux environment otherwise the `healpy` 
 - Python
 - Python packages describes in [requirements.txt](./requirements.txt)
 
-# Commands to run
+# Setup
 
+Create and activate a virtual environment inside the `localisation` folder, then install the requirements file:
+
+**Windows**
+> (script doesn't work in this environment)
+```cmd
+cd localisation
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**Linux / WSL / macOS**
 ```bash
+cd localisation
 python3 -m venv .venv
-. .venv/bin/activate
-python3 -m pip install -r requirements.txt # Only the first time
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+# Usage
+
+**Windows**
+> (script doesn't work in this environment)
+
+**Linux / WSL / macOS**
+```bash
+cd localisation
+python3 -m venv .venv
+source .venv/bin/activate
 python3 localisation.py
 ```
 
 # Execution result example
 
 ```bash
-(.venv) xxx:xxx/localisation$ .venv/bin/python3 localisation.py
+(.venv) xxx:xxx/localisation$ python3 localisation.py
 Enter latitude in degrees (-90 to 90): 
 
 No latitude input provided. Using default value: 52.239068

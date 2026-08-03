@@ -38,7 +38,7 @@ In this project their has been chosen for quint as formal verification tool as i
 4. Java JDK >=17
     > For installing quint npm package.
 5. [quint (npm package)](https://www.npmjs.com/package/@informalsystems/quint)
-    > This provides the quint language to run quint files with the '.qnt' extension.
+    > This provides the quint language to run quint files with the '.qnt' extension. Miminal version 6.0.0-dev with chooseSome implementation. TODO: check if the version is merged in the actual code.
 
     ```cmd
 	npm install -g @informalsystems/quint
@@ -76,6 +76,41 @@ In this project their has been chosen for quint as formal verification tool as i
 	```bash
 	npm install -g @informalsystems/quint
 	```
+
+## quint_runner.py – interactive verification GUI
+
+`quint_runner.py` is an OS-independent Python GUI (tkinter) that scans a `.qnt` file, shows all discovered declarations as checkboxes, and runs the selected verifications / tests / simulations with configurable options.
+
+### Requirements
+
+- Python 3.10 or higher
+- tkinter – bundled with Python on Windows and macOS; on Linux/WSL install separately:
+  ```bash
+  sudo apt install python3-tk
+  ```
+
+### Usage
+
+```bash
+# Open the GUI with no file pre-loaded
+python quint_runner.py
+
+# Pre-load a specific .qnt file
+python quint_runner.py versions/01/batch/batch.qnt
+
+# load a config (restores file, all checkbox states, and options)
+python quint_runner.py --config batch_config.json
+
+# load both - spec file pre-scanned first, then config overlays options/checks
+python quint_runner.py versions/01/batch/batch.qnt --config batch_config.json
+```
+
+1. **Browse / type** the path to a `.qnt` file and click **Scan**.
+2. Toggle the checkboxes for the declarations you want to run (grouped as *Tests*, *Safety*, *Witness*, *Liveness*).
+3. Adjust options in the **quint run** and **quint verify** tabs (e.g. `--mbt`, `--seed`, `--backend tlc`).
+4. Click **▶ Run selected** – output streams live and is saved under `output/<category>/<timestamp>-<name>` next to the `.qnt` file.
+
+On Windows, formal verification (`quint verify`) is automatically routed through `verify.cmd` which manages the Apalache server lifecycle.
 
 # Examples
 

@@ -1,0 +1,283 @@
+{
+  "name": "Quint",
+  "scopeName": "source.quint",
+  "fileTypes": [
+    "qnt"
+  ],
+  "patterns": [
+    {
+      "include": "#hashbang-line"
+    },
+    {
+      "include": "#docComments"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#qualified-names"
+    },
+    {
+      "include": "#wildcard"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#builtins"
+    },
+    {
+      "include": "#booleans"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#constants"
+    },
+		{
+			"include": "#punctuation"
+		},
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#field-access"
+    },
+    {
+      "include": "#primed-variables"
+    },
+    {
+      "include": "#function-call"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#identifiers"
+    }
+  ],
+  "repository": {
+    "hashbang-line": {
+      "patterns": [
+        {
+          "name": "comment.line.hashbang.quint",
+          "match": "\\A#!.*$"
+        }
+      ]
+    },
+    "docComments": {
+      "patterns": [
+        {
+          "name": "comment.block.documentation.quint",
+          "match": "///.*$"
+        }
+      ]
+    },
+		"punctuation": {
+			"patterns": [
+				{
+					"name": "keyword.operator.spread.quint",
+					"match": "\\.\\.\\."
+				},
+				{
+					"name": "punctuation.accessor.quint",
+					"match": "::"
+				},
+				{
+					"name": "punctuation.separator.quint",
+					"match": "\\|"
+				}
+			]
+		},
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.quint",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.quint"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.quint"
+            }
+          }
+        },
+        {
+          "name": "comment.line.double-slash.quint",
+          "begin": "//",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.quint"
+            }
+          },
+          "end": "$\\n?"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.quint",
+          "begin": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.quint"
+            }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.quint"
+            }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.quint",
+              "match": "\\\\(?:[\\\"nrt]|u[0-9a-fA-F]{4})"
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.quint",
+          "match": "\\b(module|import|export|from|as|if|then|else|let|in|all|any|nondet|match)\\b"
+        },
+        {
+          "name": "storage.type.declaration.quint",
+          "match": "\\b(action|val|var|def|pure|type|temporal|assume|const|run)\\b"
+        },
+        {
+          "name": "keyword.control.logical.quint",
+          "match": "\\b(and|or|not|implies|iff|leadsTo)\\b"
+        },
+        {
+          "name": "keyword.other.temporal.quint",
+          "match": "\\b(always|eventually|next|enabled|weakFair|strongFair|orKeep|mustChange|guarantees)\\b"
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.builtin.quint",
+          "match": "\\b(eq|neq|exists|forall|in|contains|union|intersect|exclude|subseteq|filter|map|fold|powerset|flatten|allLists|allListsUpTo|getOnlyElement|chooseSome|oneOf|isFinite|size|get|keys|mapBy|setToMap|setOfMaps|set|setBy|put|append|concat|head|tail|length|nth|indices|replaceAt|slice|range|select|foldl|iadd|isub|imul|idiv|imod|ipow|ilt|igt|ilte|igte|iuminus|to|assign|ite|then|expect|reps|fail|assert|actionAll|actionAny|existsConst|forallConst|chooseConst|item|tuples|field|fieldNames|with|variant|matchVariant)\\b"
+        },
+        {
+          "name": "support.function.builtin.namespace.quint",
+          "match": "\\b(?:q::debug|apalache::generate)\\b"
+        },
+        {
+          "name": "support.constant.builtin.quint",
+          "match": "\\b(Int|Nat|Bool)\\b"
+        }
+      ]
+    },
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.quint",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.quint",
+          "match": "\\b-?0x[0-9a-fA-F](?:_?[0-9a-fA-F])*\\b"
+        },
+        {
+          "name": "constant.numeric.integer.quint",
+          "match": "\\b-?(?:0|[1-9](?:_?[0-9])*)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.other.uppercase.quint",
+          "match": "\\b[A-Z][A-Z0-9_]*\\b"
+        },
+        {
+          "name": "entity.name.type.constructor.quint",
+          "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.quint",
+          "match": "\\b(int|bool|str|Set|List|Map|Option|Tup|Rec)\\b"
+        }
+      ]
+    },
+    "qualified-names": {
+      "patterns": [
+        {
+          "name": "entity.name.namespace.quint",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*::(?=[a-zA-Z_])"
+        }
+      ]
+    },
+    "wildcard": {
+      "patterns": [
+        {
+          "name": "variable.language.wildcard.quint",
+          "match": "\\b_\\b"
+        }
+      ]
+    },
+    "field-access": {
+      "patterns": [
+        {
+          "name": "variable.other.property.quint",
+          "match": "(?<=\\.)(?:_[0-9]+|[a-zA-Z_][a-zA-Z0-9_]*)\\b"
+        }
+      ]
+    },
+    "primed-variables": {
+      "patterns": [
+        {
+          "name": "variable.other.primed.quint",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*'(?!')"
+        }
+      ]
+    },
+    "function-call": {
+      "patterns": [
+        {
+          "name": "support.function.quint",
+          "match": "\\b(?:[a-zA-Z_][a-zA-Z0-9_]*::)*[a-zA-Z_][a-zA-Z0-9_]*\\s*(?=\\()"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "meta.quint",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.quint",
+          "match": "=>|->|==|!=|<=|>=|<|>|\\+|-|\\*|/|%|\\^|=|\\.|,|:|;|'"
+        }
+      ]
+    }
+  }
+}

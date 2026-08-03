@@ -1,0 +1,805 @@
+#!/usr/bin/env python3
+"""quint_runner.py – GUI for Quint verifications, tests, and simulations.
+
+Usage:
+    python quint_runner.py [path/to/spec.qnt]
+"""
+
+import json
+import queue
+import re
+import shlex
+import sys
+import platform
+import subprocess
+import threading
+from datetime import datetime
+from pathlib import Path
+import tkinter as tk
+from tkinter import ttk, filedialog, scrolledtext, messagebox
+
+# ─── paths ──────────────────────────────────────────────────────────────────
+
+SCRIPT_DIR = Path(__file__).parent.resolve()
+VERIFY_CMD = SCRIPT_DIR / "verify.cmd"
+
+# ─── parsing ────────────────────────────────────────────────────────────────
+
+# Only match declarations whose body begins on the next line (line ends with `=`).
+# Limit to ≤ 8 spaces of indentation to exclude action-local vals.
+_DECL_RE = re.compile(r"^[ \t]{0,8}(val|run|temporal)\s+(\w+)\s*=\s*$", re.MULTILINE)
+
+# val names starting with `can_` are witnesses; all other vals are safety invariants.
+_WITNESS_RE = re.compile(r"^can_")
+
+_CATEGORIES: dict[str, dict] = {
+    "tests":    {"label": "Tests",              "folder": "tests"},
+    "safety":   {"label": "Safety (invariant)", "folder": "safety"},
+    "witness":  {"label": "Witness",            "folder": "witness"},
+    "liveness": {"label": "Liveness (temporal)", "folder": "liveness"},
+}
+
+
+def parse_qnt(path: Path) -> dict[str, list[str]]:
+    text = path.read_text(encoding="utf-8")
+    seen: set[str] = set()
+    groups: dict[str, list[str]] = {k: [] for k in _CATEGORIES}
+    for m in _DECL_RE.finditer(text):
+        kind, name = m.group(1), m.group(2)
+        if name in seen:
+            continue
+        seen.add(name)
+        if kind == "run":
+            groups["tests"].append(name)
+        elif kind == "temporal":
+            groups["liveness"].append(name)
+        else:  # val
+            target = "witness" if _WITNESS_RE.match(name) else "safety"
+            groups[target].append(name)
+    return groups
+
+
+# ─── syntax highlighting (from quint-vscode-highlighting grammar) ───────────────────
+
+_GRAMMAR_PATH = (SCRIPT_DIR / "quint-vscode-highlighting" / "syntaxes"
+                 / "quint.tmLanguage.json")
+
+# TextMate scope prefix → tkinter tag name (more-specific prefixes must come first)
+_SCOPE_TAG: dict[str, str] = {
+    "keyword.control":         "kw",
+    "keyword.operator":        "operator",
+    "keyword.other":           "kw",
+    "storage.type":            "kw",
+    "support.function":        "function",
+    "support.type":            "type_name",
+    "support.constant":        "type_name",   # Int, Nat, Bool
+    "constant.language":       "constant",    # true, false
+    "constant.numeric":        "number",
+    "constant.other":          "constant",    # ALL_CAPS identifiers like ALICE
+    "entity.name.type":        "type_name",
+    "entity.name.namespace":   "namespace",
+    "variable.other.primed":   "primed",
+    "variable.other.property": "property",
+    "variable.language":       "variable",    # wildcard _
+    "punctuation":             "operator",
+    "comment":                 "comment",
+}
+
+
+def _scope_to_tag(name: str) -> str | None:
+    for prefix, tag in _SCOPE_TAG.items():
+        if name.startswith(prefix):
+            return tag
+    return None
+
+
+def _collect_grammar_patterns() -> tuple[
+    list[tuple[re.Pattern, str]],
+    list[tuple[re.Pattern, re.Pattern, str]],
+]:
+    """Parse tmLanguage.json into (line-match patterns, begin/end block patterns)."""
+    line_pats: list[tuple[re.Pattern, str]] = []
+    block_pats: list[tuple[re.Pattern, re.Pattern, str]] = []
+
+    def _extract(node: dict) -> None:
+        name = node.get("name", "")
+        tag = _scope_to_tag(name)
+        if "match" in node and tag:
+            try:
+                line_pats.append((re.compile(node["match"]), tag))
+            except re.error:
+                pass
+        elif "begin" in node and "end" in node and tag:
+            # strings are handled separately with an escape-aware line regex
+            # MULTILINE on end so `$\n?` (line-comment end) works per-line
+            if tag != "string":
+                try:
+                    block_pats.append((
+                        re.compile(node["begin"]),
+                        re.compile(node["end"], re.MULTILINE),
+                        tag,
+                    ))
+                except re.error:
+                    pass
+        for sub in node.get("patterns", []):
+            _extract(sub)
+
+    if _GRAMMAR_PATH.exists():
+        try:
+            grammar = json.loads(_GRAMMAR_PATH.read_text(encoding="utf-8"))
+            repo = grammar.get("repository", {})
+            for ref in grammar.get("patterns", []):
+                key = ref.get("include", "#")[1:]
+                if key in repo:
+                    _extract(repo[key])
+        except Exception:
+            pass
+
+    if not line_pats:  # fallback when grammar file is unavailable
+        line_pats = [
+            (re.compile(r'\b(module|import|from|export|as|if|else|not|or|and|implies|iff|'
+                        r'all|any|leadsTo|type|assume|const|var|val|nondet|def|pure|action|'
+                        r'temporal|run|Tup|Rec|Set|List|int|str|bool)\b'), "kw"),
+            (re.compile(r'\b(false|true|Bool|Int|Nat)\b'), "constant"),
+            (re.compile(r'//.*$'), "comment"),
+            (re.compile(r'\b\d+\b'), "number"),
+        ]
+
+    # escape-aware string regex added regardless of grammar source
+    line_pats.append((re.compile(r'"[^"\n\\]*(?:\\.[^"\n\\]*)*"'), "string"))
+    return line_pats, block_pats
+
+
+_LINE_PATS, _BLOCK_PATS = _collect_grammar_patterns()
+
+
+def _highlight_qnt(widget: tk.Text, lines: list[str]) -> None:
+    """Apply Quint syntax highlighting from the loaded grammar patterns."""
+    # block patterns (/* ... */ comments) require full-text span tracking
+    full_text = "\n".join(lines)
+    for begin_re, end_re, tag in _BLOCK_PATS:
+        pos = 0
+        while pos < len(full_text):
+            bm = begin_re.search(full_text, pos)
+            if not bm:
+                break
+            em = end_re.search(full_text, bm.end())
+            end_idx = em.end() if em else len(full_text)
+            sl = full_text.count("\n", 0, bm.start()) + 1
+            sc = bm.start() - (full_text.rfind("\n", 0, bm.start()) + 1)
+            el = full_text.count("\n", 0, end_idx) + 1
+            ec = end_idx - (full_text.rfind("\n", 0, end_idx) + 1)
+            widget.tag_add(tag, f"{sl}.{sc}", f"{el}.{ec}")
+            pos = end_idx
+
+    # line-match patterns; comment/string patterns come last in _LINE_PATS
+    # so they overwrite keywords/numbers that fall inside them
+    for i, line in enumerate(lines, 1):
+        for pat, tag in _LINE_PATS:
+            for m in pat.finditer(line):
+                widget.tag_add(tag, f"{i}.{m.start()}", f"{i}.{m.end()}")
+
+
+# ─── command building ────────────────────────────────────────────────────────
+
+def _verify_base(qnt: Path, opts: dict) -> list[str]:
+    """Return the base quint verify invocation, using verify.cmd on Windows when available."""
+    if platform.system() == "Windows" and VERIFY_CMD.exists():
+        return ["cmd", "/c", str(VERIFY_CMD), str(qnt)]
+    return ["quint", "verify", str(qnt)]
+
+
+def build_command(
+    qnt: Path,
+    effective_cat: str,
+    name: str,
+    out_file: Path,
+    opts: dict,
+) -> list[str]:
+    """
+    effective_cat: 'tests' | 'safety_run' | 'safety_verify' | 'witness' | 'liveness'
+    out_file: .itf.json for run/test commands, .log path for verify (captured separately).
+    """
+    run_flags: list[str] = []
+    if opts.get("mbt"):
+        run_flags.append("--mbt")
+    if opts.get("seed", "").strip():
+        run_flags += ["--seed", opts["seed"].strip()]
+    if opts.get("max_steps", "").strip():
+        run_flags += ["--max-steps", opts["max_steps"].strip()]
+
+    if effective_cat == "tests":
+        return ["quint", "test", str(qnt), "--match", re.escape(name),
+                "--out-itf", str(out_file)]
+
+    if effective_cat == "safety_run":
+        return ["quint", "run", str(qnt), "--invariant", name,
+                "--out-itf", str(out_file)] + run_flags
+
+    if effective_cat == "witness":
+        return ["quint", "run", str(qnt), "--witnesses", name,
+                "--out-itf", str(out_file)] + run_flags
+
+    # verify-based categories; --out-itf saves the counterexample trace if supported
+    flag_map = {"safety_verify": "--invariant", "liveness": "--temporal"}
+    cmd = _verify_base(qnt, opts) + [flag_map[effective_cat], name,
+                                      "--out-itf", str(out_file)]
+    if opts.get("backend") == "tlc":
+        cmd += ["--backend", "tlc"]
+    # --keep-server only understood by verify.cmd wrapper
+    if platform.system() == "Windows" and VERIFY_CMD.exists() and opts.get("keep_server"):
+        cmd.append("--keep-server")
+    return cmd
+
+
+def _determine_status(returncode: int, output: str) -> str:
+    """Classify a run result as 'ok', 'violation', or 'error'."""
+    if returncode == 0:
+        return "ok"
+    lower = output.lower()
+    if any(kw in lower for kw in ("violation", "violated", "counterexample",
+                                   "invariant not", "failed", "assertion")):
+        return "violation"
+    return "error"
+
+# ─── GUI ─────────────────────────────────────────────────────────────────────
+
+class QuintRunner(tk.Tk):
+    def __init__(self, initial_file: str | None = None) -> None:
+        super().__init__()
+        self.title("Quint Runner")
+        self.minsize(980, 720)
+
+        self._qnt_path: Path | None = None
+        self._groups: dict[str, list[str]] = {}
+        self._checks: dict[str, dict[str, tk.BooleanVar]] = {}
+        self._status: dict[tuple[str, str], str] = {}
+        self._status_labels: dict[tuple[str, str], tk.Label] = {}
+        self._log_queue: queue.Queue[tuple[str, str | None]] = queue.Queue()
+        self._running = False
+        self._file_viewer: tk.Toplevel | None = None
+
+        self._build_ui()
+        self._setup_scroll_routing()
+        self._poll_log()
+
+        if initial_file:
+            self.file_var.set(initial_file)
+            self._scan()
+
+    # ── UI construction ───────────────────────────────────────────────────────
+
+    def _build_ui(self) -> None:
+        ttk.Style(self).theme_use("clam")
+
+        # file + config row
+        top = ttk.Frame(self, padding=6)
+        top.pack(fill="x", padx=8, pady=(8, 0))
+
+        file_frame = ttk.Frame(top)
+        file_frame.pack(fill="x")
+        ttk.Label(file_frame, text="Quint file:").pack(side="left")
+        self.file_var = tk.StringVar()
+        ttk.Entry(file_frame, textvariable=self.file_var, width=60).pack(
+            side="left", padx=4, fill="x", expand=True)
+        ttk.Button(file_frame, text="Browse…", command=self._browse).pack(side="left", padx=2)
+        ttk.Button(file_frame, text="Scan", command=self._scan).pack(side="left", padx=2)
+
+        cfg_frame = ttk.Frame(top)
+        cfg_frame.pack(fill="x", pady=(4, 0))
+        ttk.Button(cfg_frame, text="⬆  Import config", command=self._import_config).pack(side="left", padx=2)
+        ttk.Button(cfg_frame, text="⬇  Export config", command=self._export_config).pack(side="left", padx=2)
+
+        # main split
+        paned = ttk.PanedWindow(self, orient="horizontal")
+        paned.pack(fill="both", expand=True, padx=8, pady=6)
+
+        self._build_declarations_panel(paned)
+        self._build_options_panel(paned)
+
+        # output
+        out_frame = ttk.LabelFrame(self, text="Output", padding=4)
+        out_frame.pack(fill="both", expand=True, padx=8, pady=(0, 8))
+        btn_row = ttk.Frame(out_frame)
+        btn_row.pack(fill="x", pady=(0, 4))
+        ttk.Button(btn_row, text="View file", command=self._open_file_viewer).pack(side="left", padx=2)
+        ttk.Button(btn_row, text="Clear", command=self._log_clear).pack(side="right", padx=2)
+
+        out_inner = ttk.Frame(out_frame)
+        out_inner.pack(fill="both", expand=True)
+        out_sb = ttk.Scrollbar(out_inner, orient="vertical")
+        out_sb.pack(side="right", fill="y")
+        self.output_text = tk.Text(
+            out_inner, height=10, font=("Consolas", 9), state="disabled",
+            wrap="word", bg="#1e1e1e", fg="#d4d4d4",
+            insertbackground="white", selectbackground="#264f78",
+            yscrollcommand=out_sb.set,
+        )
+        out_sb.configure(command=self.output_text.yview)
+        self.output_text.pack(side="left", fill="both", expand=True)
+
+        # widget-level bindings return "break" so bind_all _route never double-scrolls
+        self.output_text.bind("<MouseWheel>",
+            lambda e: (self.output_text.yview_scroll(-1 * (e.delta // 120), "units"), "break")[-1])
+        self.output_text.bind("<Button-4>",
+            lambda e: (self.output_text.yview_scroll(-1, "units"), "break")[-1])
+        self.output_text.bind("<Button-5>",
+            lambda e: (self.output_text.yview_scroll( 1, "units"), "break")[-1])
+
+        self.output_text.tag_configure("cmd",  foreground="#4ec9b0")  # command lines
+        self.output_text.tag_configure("ok",   foreground="#4caf50")  # success
+        self.output_text.tag_configure("err",  foreground="#f44336")  # error
+        self.output_text.tag_configure("info", foreground="#9cdcfe")  # info
+        self.output_text.tag_configure("warn", foreground="#dcdcaa")  # warning
+
+    def _build_declarations_panel(self, paned: ttk.PanedWindow) -> None:
+        left = ttk.LabelFrame(paned, text="Declarations", padding=4)
+        paned.add(left, weight=3)
+
+        canvas = tk.Canvas(left, highlightthickness=0)
+        sb = ttk.Scrollbar(left, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=sb.set)
+        sb.pack(side="right", fill="y")
+        canvas.pack(fill="both", expand=True)
+        self._inner = ttk.Frame(canvas)
+        win_id = canvas.create_window((0, 0), window=self._inner, anchor="nw")
+        self._inner.bind("<Configure>", lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>", lambda e: canvas.itemconfig(win_id, width=e.width))
+        btn_row = ttk.Frame(left)
+        btn_row.pack(fill="x", pady=(4, 0))
+        ttk.Button(btn_row, text="Select all",
+                   command=lambda: self._set_all(True)).pack(side="left", padx=2)
+        ttk.Button(btn_row, text="Deselect all",
+                   command=lambda: self._set_all(False)).pack(side="left", padx=2)
+
+    def _build_options_panel(self, paned: ttk.PanedWindow) -> None:
+        right = ttk.Frame(paned, padding=4)
+        paned.add(right, weight=2)
+
+        nb = ttk.Notebook(right)
+        nb.pack(fill="both", expand=True)
+
+        # ── quint run tab ──────────────────────────────────────────────────
+        run_tab = ttk.Frame(nb, padding=10)
+        nb.add(run_tab, text="quint run")
+
+        self.opt_mbt = tk.BooleanVar()
+        ttk.Checkbutton(run_tab, text="--mbt  (model-based testing)",
+                        variable=self.opt_mbt).grid(
+            row=0, column=0, columnspan=2, sticky="w", pady=2)
+
+        ttk.Label(run_tab, text="--seed").grid(row=1, column=0, sticky="w", pady=3)
+        self.opt_seed = tk.StringVar()
+        ttk.Entry(run_tab, textvariable=self.opt_seed, width=14).grid(
+            row=1, column=1, sticky="w", padx=6)
+
+        ttk.Label(run_tab, text="--max-steps").grid(row=2, column=0, sticky="w", pady=3)
+        self.opt_max_steps = tk.StringVar()
+        ttk.Entry(run_tab, textvariable=self.opt_max_steps, width=14).grid(
+            row=2, column=1, sticky="w", padx=6)
+
+        ttk.Separator(run_tab, orient="horizontal").grid(
+            row=3, column=0, columnspan=2, sticky="ew", pady=10)
+        ttk.Label(run_tab, text="Safety invariants – run with:").grid(
+            row=4, column=0, columnspan=2, sticky="w")
+        self.opt_safety_cmd = tk.StringVar(value="run")
+        ttk.Radiobutton(run_tab, text="quint run --invariant  (simulation)",
+                        variable=self.opt_safety_cmd, value="run").grid(
+            row=5, column=0, columnspan=2, sticky="w")
+        ttk.Radiobutton(run_tab, text="quint verify --invariant  (formal)",
+                        variable=self.opt_safety_cmd, value="verify").grid(
+            row=6, column=0, columnspan=2, sticky="w")
+
+        # ── quint verify tab ───────────────────────────────────────────────
+        verify_tab = ttk.Frame(nb, padding=10)
+        nb.add(verify_tab, text="quint verify")
+
+        ttk.Label(verify_tab, text="--backend").grid(
+            row=0, column=0, sticky="w", pady=2)
+        self.opt_backend = tk.StringVar(value="apalache")
+        ttk.Radiobutton(verify_tab, text="apalache  (default)",
+                        variable=self.opt_backend, value="apalache").grid(
+            row=1, column=0, columnspan=2, sticky="w")
+        ttk.Radiobutton(verify_tab, text="tlc  (supports temporal properties)",
+                        variable=self.opt_backend, value="tlc").grid(
+            row=2, column=0, columnspan=2, sticky="w")
+
+        self.opt_keep_server = tk.BooleanVar()
+        ttk.Checkbutton(verify_tab, text="--keep-server  (Windows / verify.cmd only)",
+                        variable=self.opt_keep_server).grid(
+            row=3, column=0, columnspan=2, sticky="w", pady=6)
+
+        ttk.Label(verify_tab,
+                  text="Liveness properties always use quint verify.",
+                  foreground="gray").grid(row=4, column=0, columnspan=2, sticky="w")
+
+        # ── run button ─────────────────────────────────────────────────────
+        self.run_btn = ttk.Button(right, text="▶  Run selected", command=self._run_selected)
+        self.run_btn.pack(fill="x", padx=4, pady=10)
+    def _setup_scroll_routing(self) -> None:
+        """Route mousewheel to the declarations canvas or let Text widgets self-scroll."""
+        # snapshot refs now; avoids AttributeError if _route fires before _build_ui finishes
+        decl_canvas = getattr(self, "_decl_canvas", None)
+        inner       = getattr(self, "_inner",       None)
+
+        def _route(e: tk.Event) -> None:
+            if decl_canvas is None:
+                return
+            delta = -1 * (e.delta // 120) if e.delta else (-1 if e.num == 4 else 1)
+            w = e.widget
+            while w:
+                if w is decl_canvas or w is inner:
+                    decl_canvas.yview_scroll(delta, "units")
+                    return
+                try:
+                    w = w.master
+                except AttributeError:
+                    break
+
+        self.bind_all("<MouseWheel>", _route)
+        self.bind_all("<Button-4>",   _route)
+        self.bind_all("<Button-5>",   _route)
+    # ── file handling ─────────────────────────────────────────────────────────
+
+    def _browse(self) -> None:
+        path = filedialog.askopenfilename(
+            title="Select Quint file",
+            filetypes=[("Quint files", "*.qnt"), ("All files", "*.*")])
+        if path:
+            self.file_var.set(path)
+
+    def _scan(self) -> None:
+        raw = self.file_var.get().strip()
+        if not raw:
+            messagebox.showwarning("No file", "Please select a .qnt file first.")
+            return
+        p = Path(raw)
+        if not p.exists():
+            messagebox.showerror("File not found", f"Cannot find:\n{p}")
+            return
+        self._qnt_path = p
+        self._groups = parse_qnt(p)
+        self._populate_declarations()
+        total = sum(len(v) for v in self._groups.values())
+        self._log(f"Scanned {p.name}: {total} declarations found.\n", "info")
+
+    # ── declaration checkboxes ────────────────────────────────────────────────
+
+    _SECTION_LABELS = {
+        "tests":    "Tests  →  quint test --match",
+        "safety":   "Safety  →  quint run --invariant  /  quint verify --invariant",
+        "witness":  "Witness  →  quint run --witnesses",
+        "liveness": "Liveness  →  quint verify --temporal",
+    }
+
+    _STATUS_ICON: dict[str, str] = {"ok": "\u2705", "violation": "\u26a0\ufe0f", "error": "\u274c"}
+
+    def _populate_declarations(self) -> None:
+        for w in self._inner.winfo_children():
+            w.destroy()
+        self._checks.clear()
+        self._status_labels.clear()
+
+        for cat, label in self._SECTION_LABELS.items():
+            names = self._groups.get(cat, [])
+            if not names:
+                continue
+            section = ttk.LabelFrame(self._inner, text=label, padding=6)
+            section.pack(fill="x", padx=4, pady=4)
+            self._checks[cat] = {}
+            for name in names:
+                var = tk.BooleanVar(value=True)
+                self._checks[cat][name] = var
+                row = ttk.Frame(section)
+                row.pack(fill="x", anchor="w")
+                ttk.Checkbutton(row, text=name, variable=var).pack(side="left")
+                icon = self._STATUS_ICON.get(self._status.get((cat, name), ""), "")
+                lbl = tk.Label(row, text=icon, font=("Consolas", 9), anchor="w", width=2)
+                lbl.pack(side="left", padx=2)
+                self._status_labels[(cat, name)] = lbl
+
+    def _set_all(self, value: bool) -> None:
+        for cat_vars in self._checks.values():
+            for var in cat_vars.values():
+                var.set(value)
+
+    def _update_status_label(self, cat: str, name: str, status: str) -> None:
+        self._status[(cat, name)] = status
+        lbl = self._status_labels.get((cat, name))
+        if lbl and lbl.winfo_exists():
+            lbl.configure(text=self._STATUS_ICON.get(status, ""))
+
+    # ── run logic ─────────────────────────────────────────────────────────────
+
+    def _collect_opts(self) -> dict:
+        return {
+            "mbt":        self.opt_mbt.get(),
+            "seed":       self.opt_seed.get(),
+            "max_steps":  self.opt_max_steps.get(),
+            "backend":    self.opt_backend.get(),
+            "keep_server": self.opt_keep_server.get(),
+            "safety_cmd": self.opt_safety_cmd.get(),
+        }
+
+    def _run_selected(self) -> None:
+        if self._running:
+            return
+        if not self._qnt_path:
+            messagebox.showwarning("No file", "Scan a .qnt file first.")
+            return
+        opts = self._collect_opts()
+        tasks: list[tuple[str, str, str]] = []  # (original_cat, effective_cat, name)
+        for cat, cat_vars in self._checks.items():
+            for name, var in cat_vars.items():
+                if not var.get():
+                    continue
+                if cat == "safety":
+                    eff = "safety_run" if opts["safety_cmd"] == "run" else "safety_verify"
+                else:
+                    eff = cat
+                tasks.append((cat, eff, name))
+        if not tasks:
+            messagebox.showinfo("Nothing selected", "Select at least one declaration to run.")
+            return
+        self._log_clear()
+        self._set_running(True)
+        threading.Thread(target=self._run_tasks, args=(tasks, opts), daemon=True).start()
+
+    def _set_running(self, state: bool) -> None:
+        self._running = state
+        self.run_btn.configure(state="disabled" if state else "normal")
+
+    def _run_tasks(self, tasks: list[tuple[str, str, str]], opts: dict) -> None:
+        for cat, eff_cat, name in tasks:
+            self._run_one(cat, eff_cat, name, opts)
+        self._enqueue("\n✅  All done.\n", "ok")
+        self.after(0, lambda: self._set_running(False))
+
+    _FOLDER: dict[str, str] = {
+        "tests": "tests", "safety_run": "safety", "safety_verify": "safety",
+        "witness": "witness", "liveness": "liveness",
+    }
+
+    def _run_one(self, cat: str, effective_cat: str, name: str, opts: dict) -> None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        folder = self._FOLDER[effective_cat]
+        out_dir = self._qnt_path.parent / "output" / folder / name
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        itf_file = out_dir / f"{timestamp}.itf.json"
+        log_file  = out_dir / f"{timestamp}.log"
+
+        # use paths relative to qnt's parent; cwd in _exec is set to that directory
+        rel_qnt = Path(self._qnt_path.name)
+        rel_itf = itf_file.relative_to(self._qnt_path.parent)
+        cmd = build_command(rel_qnt, effective_cat, name, rel_itf, opts)
+        # quote for display only; subprocess receives the list directly
+        display = (subprocess.list2cmdline(cmd) if platform.system() == "Windows"
+                   else shlex.join(cmd))
+        self._enqueue(f"\n▶  {display}\n", "cmd")
+        # verify categories capture stdout to .log; run/test use --out-itf for the trace
+        save_log = effective_cat in ("safety_verify", "liveness")
+        rc, output = self._exec(cmd, log_file=log_file if save_log else None)
+        status = _determine_status(rc, output)
+        self.after(0, lambda s=status: self._update_status_label(cat, name, s))
+
+    def _exec(self, cmd: list[str], log_file: Path | None) -> tuple[int, str]:
+        # On Windows, npm-installed quint is quint.cmd; CreateProcess can't find .cmd files
+        if platform.system() == "Windows" and cmd and cmd[0] == "quint":
+            cmd = ["cmd", "/c"] + cmd
+        try:
+            proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                stdin=subprocess.PIPE,
+                text=True,
+                cwd=str(self._qnt_path.parent),
+            )
+            # auto-confirm any interactive prompts (e.g. quint verify temporal warning)
+            try:
+                proc.stdin.write("y\n")
+                proc.stdin.close()
+            except OSError:
+                pass
+            captured: list[str] = []
+            for line in proc.stdout:
+                captured.append(line)
+                self._enqueue(line)
+            proc.wait()
+            text = "".join(captured)
+            if log_file:
+                log_file.write_text(text, encoding="utf-8")
+            if proc.returncode == 0:
+                self._enqueue("\u2705  OK\n", "ok")
+            else:
+                self._enqueue(f"\u274c  exit {proc.returncode}\n", "err")
+            return proc.returncode, text
+        except FileNotFoundError as exc:
+            self._enqueue(f"\u274c  Command not found: {exc}\n", "err")
+            return -1, ""
+
+    # ── thread-safe logging ───────────────────────────────────────────────────
+
+    def _enqueue(self, text: str, tag: str | None = None) -> None:
+        self._log_queue.put((text, tag))
+
+    def _poll_log(self) -> None:
+        while True:
+            try:
+                text, tag = self._log_queue.get_nowait()
+                self._log(text, tag)
+            except queue.Empty:
+                break
+        self.after(40, self._poll_log)
+
+    def _log(self, text: str, tag: str | None = None) -> None:
+        self.output_text.configure(state="normal")
+        if tag:
+            self.output_text.insert("end", text, tag)
+        else:
+            self.output_text.insert("end", text)
+        self.output_text.see("end")
+        self.output_text.configure(state="disabled")
+
+    def _log_clear(self) -> None:
+        self.output_text.configure(state="normal")
+        self.output_text.delete("1.0", "end")
+        self.output_text.configure(state="disabled")
+    # ── config import / export ──────────────────────────────────────────────────────
+
+    def _import_config(self, startup_path: str | None = None) -> None:
+        path = startup_path or filedialog.askopenfilename(
+            title="Import config",
+            filetypes=[("JSON config", "*.json"), ("All files", "*.*")])
+        if not path:
+            return
+        try:
+            cfg = json.loads(Path(path).read_text(encoding="utf-8"))
+        except Exception as exc:
+            messagebox.showerror("Import error", str(exc))
+            return
+        if "file" in cfg:
+            self.file_var.set(cfg["file"])
+            self._scan()
+        if "opts" in cfg:
+            o = cfg["opts"]
+            self.opt_mbt.set(o.get("mbt", False))
+            self.opt_seed.set(o.get("seed", ""))
+            self.opt_max_steps.set(o.get("max_steps", ""))
+            self.opt_backend.set(o.get("backend", "apalache"))
+            self.opt_keep_server.set(o.get("keep_server", False))
+            self.opt_safety_cmd.set(o.get("safety_cmd", "run"))
+        if "checks" in cfg:
+            for cat, names in cfg["checks"].items():
+                for name, value in names.items():
+                    if cat in self._checks and name in self._checks[cat]:
+                        self._checks[cat][name].set(value)
+        self._log(f"Config imported from {Path(path).name}\n", "info")
+
+    def _export_config(self) -> None:
+        if not self._qnt_path:
+            messagebox.showwarning("No file", "Scan a .qnt file first.")
+            return
+        path = filedialog.asksaveasfilename(
+            title="Export config",
+            defaultextension=".json",
+            initialfile=f"{self._qnt_path.stem}_config.json",
+            filetypes=[("JSON config", "*.json"), ("All files", "*.*")])
+        if not path:
+            return
+        cfg = {
+            "file": str(self._qnt_path),
+            "checks": {
+                cat: {name: var.get() for name, var in cat_vars.items()}
+                for cat, cat_vars in self._checks.items()
+            },
+            "opts": self._collect_opts(),
+        }
+        Path(path).write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+        self._log(f"Config exported to {Path(path).name}\n", "info")
+
+    # ── file viewer ─────────────────────────────────────────────────────────────────
+
+    def _open_file_viewer(self) -> None:
+        if not self._qnt_path or not self._qnt_path.exists():
+            messagebox.showwarning("No file", "Scan a .qnt file first.")
+            return
+        if self._file_viewer and self._file_viewer.winfo_exists():
+            self._file_viewer.lift()
+            return
+
+        win = tk.Toplevel(self)
+        self._file_viewer = win
+        win.title(f"View: {self._qnt_path.name}")
+        win.geometry("900x650")
+
+        frame = ttk.Frame(win)
+        frame.pack(fill="both", expand=True)
+
+        ysb = ttk.Scrollbar(frame, orient="vertical")
+        xsb = ttk.Scrollbar(win,   orient="horizontal")
+        ysb.pack(side="right", fill="y")
+        xsb.pack(side="bottom", fill="x")
+
+        ln_text = tk.Text(
+            frame, width=5, font=("Consolas", 9), state="disabled",
+            bg="#2d2d2d", fg="#858585", relief="flat", cursor="arrow",
+        )
+        ln_text.pack(side="left", fill="y")
+
+        content = tk.Text(
+            frame, font=("Consolas", 9), wrap="none",
+            bg="#1e1e1e", fg="#d4d4d4", xscrollcommand=xsb.set,
+            cursor="arrow",
+        )
+        # configure lowest-priority first; comment last = highest priority
+        content.tag_configure("namespace", foreground="#c8c8c8")
+        content.tag_configure("kw",        foreground="#569cd6")
+        content.tag_configure("operator",  foreground="#d7ba7d")
+        content.tag_configure("number",    foreground="#b5cea8")
+        content.tag_configure("function",  foreground="#dcdcaa")
+        content.tag_configure("type_name", foreground="#4ec9b0")
+        content.tag_configure("constant",  foreground="#4fc1ff")
+        content.tag_configure("variable",  foreground="#9cdcfe")
+        content.tag_configure("property",  foreground="#9cdcfe")
+        content.tag_configure("primed",    foreground="#9cdcfe")
+        content.tag_configure("string",    foreground="#ce9178")
+        content.tag_configure("comment",   foreground="#6a9955")
+        content.pack(side="left", fill="both", expand=True)
+
+        def _sync_yview(*args: object) -> None:
+            content.yview(*args)
+            ln_text.yview(*args)
+
+        ysb.configure(command=_sync_yview)
+        xsb.configure(command=content.xview)
+
+        def _on_content_scroll(*args: object) -> None:
+            ysb.set(*args)
+            ln_text.yview_moveto(args[0])
+
+        content.configure(yscrollcommand=_on_content_scroll)
+
+        lines = self._qnt_path.read_text(encoding="utf-8").splitlines()
+        ln_text.configure(state="normal")
+        for i, line in enumerate(lines, 1):
+            ln_text.insert("end", f"{i:>4}\n")
+            content.insert("end", line + "\n")
+        _highlight_qnt(content, lines)
+        ln_text.configure(state="disabled")
+
+        # keep content in normal state so tag colors render; block edits via bindings
+        content.bind("<Key>", lambda e: "break" if not (e.state & 0x4) else None)
+        content.bind("<<Paste>>", lambda e: "break")
+
+        def _viewer_scroll(e: tk.Event) -> str:
+            delta = -1 * (e.delta // 120) if e.delta else (-1 if e.num == 4 else 1)
+            _sync_yview("scroll", delta, "units")
+            return "break"  # prevent double-scroll from class bindings
+
+        for w in (content, ln_text):
+            w.bind("<MouseWheel>", _viewer_scroll)
+            w.bind("<Button-4>",   _viewer_scroll)
+            w.bind("<Button-5>",   _viewer_scroll)
+
+# ─── entry point ─────────────────────────────────────────────────────────────
+
+def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser(description="Quint verification runner GUI")
+    parser.add_argument("file", nargs="?", metavar="SPEC.qnt",
+                        help="Quint spec file to pre-load")
+    parser.add_argument("--config", metavar="CONFIG.json",
+                        help="JSON config file to load on startup")
+    args = parser.parse_args()
+
+    app = QuintRunner(initial_file=args.file)
+    if args.config:
+        app._import_config(startup_path=args.config)
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    main()

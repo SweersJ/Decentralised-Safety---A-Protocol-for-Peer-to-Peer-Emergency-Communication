@@ -1,10 +1,11 @@
-formal_verification/_apalache-out
 formal_verification/_principles_of_model_checking.pdf
-formal_verification/quint-vscode-highlighting
-formal_verification/.obsidian
 
 localisation/exports
 
 __pycache__/
 *.pyc
 .venv/
+
+_apalache-out/
+
+.obsidian/

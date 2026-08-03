@@ -117,17 +117,17 @@ exit /b %VERIFY_EXIT%
 :usage
 echo Usage:
 echo   verify.cmd [spec-file] [quint-args] [--keep-server]
-echo
+echo .
 echo Examples:
-echo   cmd /c verify.cmd versions/00-test\bank.qnt --invariant=no_negatives
-echo   cmd /c verify.cmd versions/00-test\bank.qnt --invariant=no_negatives --keep-server
-echo   cmd /c verify.cmd versions/01-02/batch.qnt --temporal=pending_ack_is_eventually_cleared
-echo   cmd /c verify.cmd versions/01-02/batch.qnt --temporal=pending_ack_is_eventually_cleared --keep-server
+echo   cmd /c verify.cmd versions/00/bank.qnt --invariant=no_negatives
+echo   cmd /c verify.cmd versions/00/bank.qnt --invariant=no_negatives --keep-server
+echo   cmd /c verify.cmd versions/01/batch/batch.qnt --temporal=pending_ack_is_eventually_cleared
+echo   cmd /c verify.cmd versions/01/batch/batch.qnt --temporal=pending_ack_is_eventually_cleared --keep-server
 echo      Note: WARNING: Apalache has experimental support for temporal properties and might give incorrect results.
 echo            Consider using --backend tlc, which fully supports temporal properties.
-echo   cmd /c verify.cmd versions/01-02/batch.qnt --backend tlc --temporal=pending_ack_is_eventually_cleared
+echo   cmd /c verify.cmd versions/01/batch/batch.qnt --backend tlc --temporal=pending_ack_is_eventually_cleared
 echo      Note: WARNING: Unbounded model checking might take a long time.
-echo   cmd /c verify.cmd versions/01-02/batch.qnt --backend tlc --temporal=pending_ack_is_eventually_cleared --keep-server
+echo   cmd /c verify.cmd versions/01/batch/batch.qnt --backend tlc --temporal=pending_ack_is_eventually_cleared --keep-server
 exit /b 1
 
 @rem :is_listening
@@ -162,7 +162,7 @@ call :is_listening %~1
 if %ERRORLEVEL%==0 exit /b 0
 if %_tries% LEQ 0 exit /b 1
 set /a _tries-=1
-timeout /t 1 /nobreak >nul
+ping -n 2 127.0.0.1 >nul 2>&1
 goto wait_loop
 
 @rem :stop_port_pids

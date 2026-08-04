@@ -4,9 +4,9 @@
         "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
         "source": "batch.qnt",
         "status": "ok",
-        "command": "quint run batch.qnt --invariant no_self_receiver_nodeState --out-itf output/safety/out-no_self_receiver_nodeState-01.itf.json",
-        "description": "Created by Quint on Wed Jul 29 2026 22:27:59 GMT+0200 (Midden-Europese zomertijd)",
-        "timestamp": 1785356879981
+        "command": "quint run batch.qnt --invariant two_nodes_only --out-itf output\\safety\\two_nodes_only\\20260804_032439.itf.json",
+        "description": "Created by Quint on Tue Aug 04 2026 03:24:41 GMT+0200 (Midden-Europese zomertijd)",
+        "timestamp": 1785806681947
     },
     "vars": [
         "messageStore",
@@ -26,14 +26,6 @@
                         "Alice",
                         {
                             "#set": [
-                                {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
                                 {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
@@ -103,14 +95,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -372,14 +356,6 @@
                         {
                             "#set": [
                                 {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -448,14 +424,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -641,14 +609,6 @@
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -742,14 +702,6 @@
                         {
                             "#set": [
                                 {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -818,14 +770,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -1011,14 +955,6 @@
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -1112,14 +1048,6 @@
                         {
                             "#set": [
                                 {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -1188,14 +1116,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -1381,14 +1301,6 @@
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -1482,14 +1394,6 @@
                         {
                             "#set": [
                                 {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -1558,14 +1462,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -1672,7 +1568,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -1752,14 +1648,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -1802,7 +1690,24 @@
                                             "#set": []
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -1852,14 +1757,6 @@
                         {
                             "#set": [
                                 {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -1928,14 +1825,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -2117,22 +2006,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -2176,7 +2053,24 @@
                                             "#set": []
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -2226,14 +2120,6 @@
                         {
                             "#set": [
                                 {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -2271,14 +2157,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -2310,14 +2188,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -2355,7 +2225,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -2407,7 +2294,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -2430,7 +2317,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    true
+                                    false
                                 ]
                             ]
                         }
@@ -2441,7 +2328,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -2482,22 +2369,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -2541,7 +2416,24 @@
                                             "#set": []
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -2591,14 +2483,6 @@
                         {
                             "#set": [
                                 {
-                                    "body": "Medic available at checkpoint",
-                                    "groupId": "group-charlie",
-                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -2636,14 +2520,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -2675,14 +2551,6 @@
                                     {
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -2720,7 +2588,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -2761,7 +2646,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -2772,7 +2657,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -2795,7 +2680,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    true
+                                    false
                                 ]
                             ]
                         }
@@ -2806,7 +2691,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -2847,22 +2732,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -2906,7 +2779,24 @@
                                             "#set": []
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -3001,14 +2891,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -3041,22 +2923,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -3085,7 +2951,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -3126,7 +3009,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -3137,7 +3020,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -3160,7 +3043,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    true
+                                    false
                                 ]
                             ]
                         }
@@ -3171,7 +3054,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -3212,22 +3095,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -3271,7 +3142,24 @@
                                             "#set": []
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -3366,14 +3254,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -3406,22 +3286,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -3450,7 +3314,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -3491,7 +3372,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -3502,7 +3383,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -3525,7 +3406,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    true
+                                    false
                                 ]
                             ]
                         }
@@ -3536,7 +3417,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -3577,22 +3458,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -3633,10 +3502,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -3731,14 +3620,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -3771,22 +3652,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -3815,7 +3680,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -3856,7 +3738,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -3867,7 +3749,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -3901,7 +3783,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -3942,22 +3824,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -3998,10 +3868,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -4096,14 +3986,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -4136,22 +4018,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -4180,7 +4046,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -4221,7 +4104,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -4255,7 +4138,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -4307,22 +4190,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -4363,10 +4234,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -4461,14 +4352,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -4501,22 +4384,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -4545,7 +4412,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -4597,7 +4481,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -4620,7 +4504,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -4631,7 +4515,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -4677,14 +4561,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -4724,10 +4600,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -4822,14 +4718,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -4862,22 +4750,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -4906,7 +4778,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -4947,7 +4836,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    true
+                                    false
                                 ]
                             ]
                         }
@@ -4981,7 +4870,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -4992,7 +4881,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -5038,14 +4927,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -5085,10 +4966,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -5183,14 +5084,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -5223,22 +5116,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -5267,7 +5144,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -5319,7 +5213,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -5353,7 +5247,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -5399,14 +5293,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -5446,10 +5332,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -5544,14 +5450,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -5584,22 +5482,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -5628,7 +5510,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -5714,7 +5613,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -5755,18 +5654,13 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
+                                            ]
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -5807,10 +5701,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -5905,14 +5819,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -5945,22 +5851,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -5989,7 +5879,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -6075,7 +5982,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -6121,14 +6028,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
@@ -6168,10 +6067,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -6266,14 +6185,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -6306,22 +6217,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -6350,7 +6245,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -6391,7 +6303,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -6436,7 +6348,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -6477,22 +6389,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -6533,10 +6433,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -6631,14 +6551,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -6671,22 +6583,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -6715,7 +6611,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -6767,7 +6680,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -6842,22 +6755,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -6898,10 +6799,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -6996,14 +6917,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -7036,22 +6949,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -7080,7 +6977,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -7132,7 +7046,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    true
+                                    false
                                 ],
                                 [
                                     "Bob",
@@ -7166,7 +7080,7 @@
                             "#map": [
                                 [
                                     "Alice",
-                                    false
+                                    true
                                 ],
                                 [
                                     "Bob",
@@ -7207,22 +7121,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -7263,10 +7165,30 @@
                                     "Alice",
                                     {
                                         "acks": {
-                                            "#set": []
+                                            "#set": [
+                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541"
+                                            ]
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -7361,14 +7283,6 @@
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
                                 }
                             ]
                         }
@@ -7401,22 +7315,6 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
                                                     "body": "Request: flashlight batteries",
                                                     "groupId": "group-bravo",
                                                     "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
@@ -7445,7 +7343,24 @@
                                     "Alice",
                                     {
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []
@@ -7486,7 +7401,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -7520,7 +7435,7 @@
                                 ],
                                 [
                                     "Bob",
-                                    false
+                                    true
                                 ]
                             ]
                         }
@@ -7572,22 +7487,10 @@
                                     "Bob",
                                     {
                                         "acks": {
-                                            "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
-                                            ]
+                                            "#set": []
                                         },
                                         "messages": {
                                             "#set": [
-                                                {
-                                                    "body": "Medic available at checkpoint",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
                                                 {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
@@ -7631,7 +7534,24 @@
                                             "#set": []
                                         },
                                         "messages": {
-                                            "#set": []
+                                            "#set": [
+                                                {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "offers": {
                                             "#set": []

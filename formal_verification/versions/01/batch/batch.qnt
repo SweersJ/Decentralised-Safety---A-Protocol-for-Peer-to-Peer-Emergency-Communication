@@ -84,27 +84,18 @@ module batch {
 
     // TODO: add the payload generator
     // Payload-id generator for future send actions.
-    var nextPayloadId: int
+    // var nextPayloadId: int
     
     //TODO: change this with payloadSent and payloadReceived to a single state variable that indicates the state of the payload exchange between two nodes.
-    var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
+    // var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
 
     // ------------------------------------------------------------------------------------
     // HELPER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
-    pure def initNodeState(randomMessageIdsSender: Set[MessageId], randomMessageIdsReceiver: Set[MessageId]): Node -> (Node -> NodeState) = {
-        NODES.mapBy(
-            sender => NODES.mapBy(
-                receiver => {
-                    ...EMPTY_NODE_STATE,
-                    messages: if (sender != receiver and sender == ALICE) getMessages(randomMessageIdsSender) else if (sender != receiver and sender == BOB) getMessages(randomMessageIdsReceiver) else EMPTY_NODE_STATE.messages
-                }
-            )
-        )
-    }
 
-    pure def initNodeState2(randomMessageIds: Node -> Set[MessageId]): Node -> (Node -> NodeState) = {
+
+    pure def initNodeState(randomMessageIds: Node -> Set[MessageId]): Node -> (Node -> NodeState) = {
         NODES.mapBy(
             sender => NODES.mapBy(
                 receiver => {
@@ -123,13 +114,7 @@ module batch {
         )
     }
 
-    pure def initMessageStore(randomMessageIdsAlice: Set[MessageId], randomMessageIdsBob: Set[MessageId]): Node -> Set[Message] = {
-        NODES.mapBy(
-            node => if (node == ALICE) getMessages(randomMessageIdsAlice) else getMessages(randomMessageIdsBob)
-        )
-    }
-
-    pure def initMessageStore2(randomMessageIds: Node -> Set[MessageId]): Node -> Set[Message] = {
+    pure def initMessageStore(randomMessageIds: Node -> Set[MessageId]): Node -> Set[Message] = {
         NODES.mapBy(
             node => getMessages(randomMessageIds.get(node))
         )
@@ -147,6 +132,14 @@ module batch {
         NODES.mapBy(
             sender => NODES.mapBy(
                 receiver => false
+            )
+        )
+    }
+
+    pure def initPayloadExchangeState(): Node -> (Node -> PayloadExchangeState) = {
+        NODES.mapBy(
+            sender => NODES.mapBy(
+                receiver => Idle
             )
         )
     }
@@ -219,11 +212,11 @@ module batch {
     // ------------------------------------------------------------------------------------
 
     action init() = {
-        val randomMessageIds = initRandomMessageIds //TODO: find a way to generate random messages depending on the number of Nodes
+        val randomMessageIds = initRandomMessageIds
         all {
-            nodeState' = initNodeState2(randomMessageIds),
+            nodeState' = initNodeState(randomMessageIds),
             payloadState' = initPayloadState,
-            messageStore' = initMessageStore2(randomMessageIds),
+            messageStore' = initMessageStore(randomMessageIds),
             payloadSent' = initPayloadSentState,
             payloadReceived' = initPayloadReceivedState,
         }
@@ -444,35 +437,51 @@ module batch {
     // ------------------------------------------------------------------------------------
 
     // Init action for tests that require an actual sync from Alice to Bob.
-    action initWithMessagesToSync() = {
-        val randomMessageIds = initRandomMessageIds
-        val randomMessageIdsAlice = randomMessageIds.get(ALICE)
-        val randomMessageIdsBob = randomMessageIds.get(BOB)
+    action initWithMessagesToSyncTwoNodes() = {
+        nondet aliceIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).oneOf()
+        nondet bobIds = MESSAGES.keys().powerset().filter(s =>
+            aliceIds.exists(id => not(id.in(s)))
+        ).oneOf()
+        val randomMessageIds = Map(ALICE -> aliceIds, BOB -> bobIds)
         all {
-            randomMessageIdsAlice.size() != 0,
-            randomMessageIdsAlice.exists(id => not(id.in(randomMessageIdsBob))),
-            nodeState' = initNodeState(randomMessageIdsAlice, randomMessageIdsBob),
+            nodeState' = initNodeState(randomMessageIds),
             payloadState' = initPayloadState,
-            messageStore' = initMessageStore2(randomMessageIds),
+            messageStore' = initMessageStore(randomMessageIds),
             payloadSent' = initPayloadSentState,
             payloadReceived' = initPayloadReceivedState
         }
     }
 
     // Init action for tests that require no sync delta from Alice to Bob.
-    action initWithoutMessagesToSync() = {
-        val randomMessageIds = initRandomMessageIds
-        val randomMessageIdsAlice = randomMessageIds.get(ALICE)
-        val randomMessageIdsBob = randomMessageIds.get(BOB)
+    action initWithoutMessagesToSyncTwoNodes() = {
+        nondet bobIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).oneOf()
+        nondet aliceIds = bobIds.powerset().filter(s => s.size() > 0).oneOf()
+        val randomMessageIds = Map(ALICE -> aliceIds, BOB -> bobIds)
         all {
-            randomMessageIdsAlice.size() != 0,
-            randomMessageIdsAlice.forall(id => id.in(randomMessageIdsBob)),
-            nodeState' = initNodeState2(randomMessageIds),
+            nodeState' = initNodeState(randomMessageIds),
             payloadState' = initPayloadState,
-            messageStore' = initMessageStore2(randomMessageIds),
+            messageStore' = initMessageStore(randomMessageIds),
             payloadSent' = initPayloadSentState,
             payloadReceived' = initPayloadReceivedState
         }
+    }
+
+    action someReceiveMessagesPayload() = {
+        nondet sender = NODES.oneOf()
+        nondet receiver = NODES.filter(n => n != sender).oneOf()
+        receiveMessagesPayload(sender, receiver)
+    }
+
+    action someDetermineAck() = {
+        nondet sender = NODES.oneOf()
+        nondet receiver = NODES.filter(n => n != sender).oneOf()
+        determineAck(sender, receiver)
+    }
+
+    action someReceiveAckPayload() = {
+        nondet sender = NODES.oneOf()
+        nondet receiver = NODES.filter(n => n != sender).oneOf()
+        receiveAckPayload(sender, receiver)
     }
 
     // -------------------------------------------------------------------------------------
@@ -491,6 +500,15 @@ module batch {
         payloadState.get(sender).get(receiver).offers.size() == 0 and
         payloadState.get(sender).get(receiver).requests.size() == 0 and
         payloadState.get(sender).get(receiver).messages.size() == 0
+    }
+
+    def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
+        payloadState.get(sender).get(receiver).messages.map(m => m.messageId)
+    }
+
+    def hasInFlightPayload(sender: Node, receiver: Node): bool = {
+        payloadSent.get(sender).get(receiver) and
+        not(payloadReceived.get(receiver).get(sender))
     }
 
     // -------------------------------------------------------------------------------------
@@ -533,92 +551,123 @@ module batch {
             )
         )
 
-    // // ACKs should only exist for messages already marked as received by that receiver.
-    // val ack_implies_received = 
-    //     NODES.forall(
-    //         receiver => NODES.forall(
-    //             sender => ackPayload.get(receiver).get(sender).forall(
-    //                 id => received.get(receiver).contains(id)
-    //             )
-    //         )
-    //     )
+    val pending_messages_belong_to_sender_store =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver => sender != receiver implies
+                    nodeState.get(sender).get(receiver).messages.forall(
+                        m => m.in(messageStore.get(sender))
+                    )
+            )
+        )
 
-    // // If a message is in-flight to a receiver, it should not also be in sender self-state.
-    // val in_flight_never_self = 
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver => sender != receiver 
-    //             implies messageState.get(sender).get(receiver).intersect(
-    //                 messageState.get(sender).get(sender)
-    //             ).size() == 0
-    //         )
-    //     )
+    val ack_ids_match_payload_messages =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver => payloadState.get(sender).get(receiver).acks.forall(
+                    id => id.in(payloadMessageIds(sender, receiver))
+                )
+            )
+        )
+
+    val pending_acks_imply_nonempty_payload =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver => payloadState.get(sender).get(receiver).acks.size() > 0
+                    implies payloadState.get(sender).get(receiver).messages.size() > 0
+            )
+        )
 
     // -------------------------------------------------------------------------------------
     // LIVENESS PROPOSITIONS
     // -------------------------------------------------------------------------------------
    
-    // temporal received_is_monotonic = always(
-    //     NODES.forall(n => received.get(n).subseteq(next(received.get(n)))))
+    temporal fair_receive_messages_payload =
+        someReceiveMessagesPayload.weakFair(Set(payloadReceived))
 
-    // temporal pending_ack_is_eventually_cleared =
-    //     NODES.forall(
-    //         receiver => NODES.forall(
-    //             sender => receiver != sender 
-    //             implies ackPayload.get(receiver).get(sender).size() > 0
-    //             leadsTo ackPayload.get(receiver).get(sender).size() == 0
-    //         )
-    //     )
+    temporal fair_determine_ack =
+        someDetermineAck.weakFair(Set(payloadState))
 
-    // temporal pending_message_is_eventually_acked =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver => sender != receiver 
-    //             implies messageState.get(sender).get(receiver).size() > 0
-    //             leadsTo ackPayload.get(receiver).get(sender).size() > 0
-    //         )
-    //     )
+    temporal fair_receive_ack_payload =
+        someReceiveAckPayload.weakFair(Set(nodeState))
 
-    // // Fairness assumptions for progress-oriented propositions.
-    // temporal fair_receive_message = 
-    //     someReceiveMessage.weakFair(Set(received))
-    // temporal fair_receive_ack = 
-    //     someReceiveAck.weakFair(Set(messageState))
+    temporal in_flight_payload_is_eventually_received =
+        fair_receive_messages_payload implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver => sender != receiver implies
+                        hasInFlightPayload(sender, receiver)
+                        leadsTo payloadReceived.get(receiver).get(sender)
+                )
+            )
+        )
 
-    // // Under fairness, messages are eventually removed from sender per-receiver state.
-    // temporal eventual_cleanup_under_fairness =
-    //     (fair_receive_message and fair_receive_ack).implies(
-    //         NODES.forall(
-    //             sender => NODES.forall(
-    //                 receiver => sender != receiver
-    //                 implies messageState.get(sender).get(receiver).size() > 0
-    //                 leadsTo messageState.get(sender).get(receiver).size() == 0
-    //             )
-    //         )
-    //     )
+    temporal pending_payload_is_eventually_acknowledged =
+        (fair_receive_messages_payload and fair_determine_ack) implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver => sender != receiver implies
+                        (payloadState.get(sender).get(receiver).messages.size() > 0 and
+                        payloadSent.get(sender).get(receiver))
+                        leadsTo payloadState.get(sender).get(receiver).acks.size() > 0
+                )
+            )
+        )
+
+    temporal pending_ack_is_eventually_cleared =
+        fair_receive_ack_payload implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver => sender != receiver implies
+                        payloadState.get(sender).get(receiver).acks.size() > 0
+                        leadsTo payloadState.get(sender).get(receiver).acks.size() == 0
+                )
+            )
+        )
 
     // -------------------------------------------------------------------------------------
     // WITNESS-STYLE PROPOSITIONS (NON-INVARIANTS)
     // -------------------------------------------------------------------------------------
+    /* > start witness with 'can_' for quint runner */
 
-    // val can_have_in_flight_messages =
-    //     NODES.exists(
-    //         sender => NODES.exists(
-    //             receiver => sender != receiver and messageState.get(sender).get(receiver).size() > 0
-    //         )
-    //     )
+    val can_have_pending_messages =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => sender != receiver and
+                    nodeState.get(sender).get(receiver).messages.size() > 0
+            )
+        )
 
-    // val can_have_pending_acks =
-    //     NODES.exists(
-    //         receiver => NODES.exists(
-    //             sender => receiver != sender and ackPayload.get(receiver).get(sender).size() > 0
-    //         )
-    //     )
+    val can_have_payload_messages =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => sender != receiver and
+                    payloadState.get(sender).get(receiver).messages.size() > 0
+            )
+        )
 
-    // val can_have_delivered_messages = 
-    //     NODES.exists(
-    //         receiver => received.get(receiver).size() > 0
-    //     )
+    val can_have_in_flight_payload =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => sender != receiver and hasInFlightPayload(sender, receiver)
+            )
+        )
+
+    val can_have_pending_acks =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => sender != receiver and
+                    payloadState.get(sender).get(receiver).acks.size() > 0
+            )
+        )
+
+    val can_have_delivered_payload =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => sender != receiver and
+                    payloadReceived.get(receiver).get(sender)
+            )
+        )
 
 
     // ------------------------------------------------------------------------------------
@@ -626,7 +675,7 @@ module batch {
     // ------------------------------------------------------------------------------------
 
     run messagesSuccessfullyStoredTest =
-        initWithMessagesToSync
+        initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .then(receiveMessagesPayload(ALICE, BOB))
@@ -639,7 +688,7 @@ module batch {
             )
 
     run messageStoreSyncTest =
-        initWithMessagesToSync
+        initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .then(receiveMessagesPayload(ALICE, BOB))
@@ -655,6 +704,25 @@ module batch {
             )
 
     run addMessagesFailsWhenNoSyncDeltaTest =
-        initWithoutMessagesToSync
+        initWithoutMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB).fail())
+
+    run payloadMessagesWitnessTest =
+        initWithMessagesToSyncTwoNodes
+            .then(addMessages(ALICE, BOB))
+            .expect(can_have_pending_messages and can_have_payload_messages)
+
+    run inFlightPayloadWitnessTest =
+        initWithMessagesToSyncTwoNodes
+            .then(addMessages(ALICE, BOB))
+            .then(sendMessagesPayload(ALICE, BOB))
+            .expect(can_have_in_flight_payload)
+
+    run pendingAckWitnessTest =
+        initWithMessagesToSyncTwoNodes
+            .then(addMessages(ALICE, BOB))
+            .then(sendMessagesPayload(ALICE, BOB))
+            .then(receiveMessagesPayload(ALICE, BOB))
+            .then(determineAck(ALICE, BOB))
+            .expect(can_have_pending_acks and can_have_delivered_payload)
 }

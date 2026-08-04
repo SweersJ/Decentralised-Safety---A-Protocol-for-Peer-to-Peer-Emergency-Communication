@@ -4,7 +4,7 @@
         "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
         "source": "batch.qnt",
         "status": "ok",
-        "command": "quint test batch.qnt --match addMessagesFailsWhenNoSyncDeltaTest --out-itf output/tests/out-{test}-01.itf.json",
+        "command": "quint test batch.qnt --match addMessagesFailsWhenNoSyncDeltaTest --out-itf output/tests/{test}/20260729_195456.itf.json",
         "description": "Created by Quint on Wed Jul 29 2026 19:54:56 GMT+0200 (Midden-Europese zomertijd)",
         "timestamp": 1785347696169
     },

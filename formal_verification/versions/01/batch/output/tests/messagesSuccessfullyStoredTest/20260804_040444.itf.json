@@ -4,9 +4,9 @@
         "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
         "source": "batch.qnt",
         "status": "ok",
-        "command": "quint test batch.qnt --match messagesSuccessfullyStoredTest --out-itf output/tests/out-{test}-01.itf.json",
-        "description": "Created by Quint on Wed Jul 29 2026 17:59:31 GMT+0200 (Midden-Europese zomertijd)",
-        "timestamp": 1785340771918
+        "command": "quint test batch.qnt --match messagesSuccessfullyStoredTest --out-itf output\\tests\\messagesSuccessfullyStoredTest\\20260804_040444.itf.json",
+        "description": "Created by Quint on Tue Aug 04 2026 04:04:48 GMT+0200 (Midden-Europese zomertijd)",
+        "timestamp": 1785809088570
     },
     "vars": [
         "messageStore",
@@ -35,25 +35,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -66,25 +50,17 @@
                         {
                             "#set": [
                                 {
+                                    "body": "Medic available at checkpoint",
+                                    "groupId": "group-charlie",
+                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                    "timestamp": {
+                                        "#bigint": "1751966400"
+                                    }
+                                },
+                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Road blocked at bridge",
-                                    "groupId": "group-charlie",
-                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -128,25 +104,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -174,25 +134,17 @@
                                         "messages": {
                                             "#set": [
                                                 {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -412,25 +364,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -443,25 +379,17 @@
                         {
                             "#set": [
                                 {
+                                    "body": "Medic available at checkpoint",
+                                    "groupId": "group-charlie",
+                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                    "timestamp": {
+                                        "#bigint": "1751966400"
+                                    }
+                                },
+                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Road blocked at bridge",
-                                    "groupId": "group-charlie",
-                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -505,25 +433,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -551,25 +463,17 @@
                                         "messages": {
                                             "#set": [
                                                 {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -714,25 +618,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -822,25 +710,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -853,25 +725,17 @@
                         {
                             "#set": [
                                 {
+                                    "body": "Medic available at checkpoint",
+                                    "groupId": "group-charlie",
+                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                    "timestamp": {
+                                        "#bigint": "1751966400"
+                                    }
+                                },
+                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Road blocked at bridge",
-                                    "groupId": "group-charlie",
-                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -915,25 +779,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -961,25 +809,17 @@
                                         "messages": {
                                             "#set": [
                                                 {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -1124,25 +964,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -1232,25 +1056,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -1263,25 +1071,17 @@
                         {
                             "#set": [
                                 {
+                                    "body": "Medic available at checkpoint",
+                                    "groupId": "group-charlie",
+                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                    "timestamp": {
+                                        "#bigint": "1751966400"
+                                    }
+                                },
+                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Road blocked at bridge",
-                                    "groupId": "group-charlie",
-                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -1325,25 +1125,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -1371,25 +1155,17 @@
                                         "messages": {
                                             "#set": [
                                                 {
+                                                    "body": "Medic available at checkpoint",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
                                                     "body": "Offer: 2L water near station",
                                                     "groupId": "group-alpha",
                                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -1534,25 +1310,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -1642,25 +1402,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -1681,25 +1425,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -1751,25 +1479,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -1797,9 +1509,9 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -1944,25 +1656,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -2052,25 +1748,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -2091,25 +1771,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -2161,25 +1825,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -2207,9 +1855,9 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -2342,10 +1990,8 @@
                                     {
                                         "acks": {
                                             "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
                                                 "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                                "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                                                "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e"
                                             ]
                                         },
                                         "messages": {
@@ -2359,25 +2005,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -2467,25 +2097,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -2506,25 +2120,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -2576,25 +2174,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -2622,9 +2204,9 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -2757,10 +2339,8 @@
                                     {
                                         "acks": {
                                             "#set": [
-                                                "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
                                                 "2700c2ae2062a6b61de69659da7cb274c61237d2bca13ab2c9d732835ba71541",
-                                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
-                                                "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                                                "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e"
                                             ]
                                         },
                                         "messages": {
@@ -2774,25 +2354,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -2882,25 +2446,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Offer: 2L water near station",
-                                    "groupId": "group-alpha",
-                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                    "body": "Road blocked at bridge",
+                                    "groupId": "group-charlie",
+                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -2921,25 +2469,9 @@
                                     }
                                 },
                                 {
-                                    "body": "Need insulin at shelter A",
-                                    "groupId": "group-alpha",
-                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
                                     "body": "Offer: 2L water near station",
                                     "groupId": "group-alpha",
                                     "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                    "timestamp": {
-                                        "#bigint": "1751966400"
-                                    }
-                                },
-                                {
-                                    "body": "Request: flashlight batteries",
-                                    "groupId": "group-bravo",
-                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
                                     "timestamp": {
                                         "#bigint": "1751966400"
                                     }
@@ -2991,25 +2523,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -3037,9 +2553,9 @@
                                         "messages": {
                                             "#set": [
                                                 {
-                                                    "body": "Road blocked at bridge",
-                                                    "groupId": "group-charlie",
-                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }
@@ -3184,25 +2700,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "body": "Need insulin at shelter A",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Offer: 2L water near station",
-                                                    "groupId": "group-alpha",
-                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
-                                                    "timestamp": {
-                                                        "#bigint": "1751966400"
-                                                    }
-                                                },
-                                                {
-                                                    "body": "Request: flashlight batteries",
-                                                    "groupId": "group-bravo",
-                                                    "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                                                    "body": "Road blocked at bridge",
+                                                    "groupId": "group-charlie",
+                                                    "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
                                                     "timestamp": {
                                                         "#bigint": "1751966400"
                                                     }

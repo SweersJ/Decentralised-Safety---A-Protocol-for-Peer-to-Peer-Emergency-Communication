@@ -1,0 +1,75 @@
+Starting Apalache server on port 8822...
+Running verification for "batch.qnt" with arguments " --temporal fair_receive_messages_payload --backend tlc"...
+[TLC] Compiling to TLA+ (via Apalache)...
+[TLC] Running TLC model checker...
+
+TLC2 Version 2.19 of 08 August 2024
+Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 77 and seed 1786093363114768961 with 20 workers on 20 cores with 8192MB heap and 64MB offheap memory [pid: 46216] (Windows 11 10.0 amd64, Microsoft 21.0.11 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file ...\Temp\quint-tlc-sZWCma\batch.tla
+Parsing file ...\Temp\Integers.tla
+Parsing file ...\Temp\Sequences.tla
+Parsing file ...\Temp\FiniteSets.tla
+Parsing file ...\Temp\TLC.tla
+Parsing file ...\Temp\Apalache.tla
+Parsing file ...\Temp\Variants.tla
+Parsing file ...\Temp\Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Apalache
+Semantic processing of module Variants
+Semantic processing of module batch
+Starting... (2026-08-03 22:28:03)
+Implied-temporal checking--satisfiability problem has 1 branches.
+Computing initial states...
+Error: current state is not a legal state
+While working on the initial state:
+/\ payloadSent = [ Alice |-> [Alice |-> FALSE, Bob |-> FALSE],
+  Bob |-> [Alice |-> FALSE, Bob |-> FALSE] ]
+/\ payloadState = [ Alice |->
+      [ Alice |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |-> {},
+              payloadId |-> 0,
+              acks |-> {} ],
+        Bob |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |-> {},
+              payloadId |-> 0,
+              acks |-> {} ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |-> {},
+              payloadId |-> 0,
+              acks |-> {} ],
+        Bob |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |-> {},
+              payloadId |-> 0,
+              acks |-> {} ] ] ]
+/\ nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ],
+  Bob |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ messageStore = [Alice |-> {}, Bob |-> {}]
+/\ payloadReceived = [ Alice |-> [Alice |-> FALSE, Bob |-> FALSE],
+  Bob |-> [Alice |-> FALSE, Bob |-> FALSE] ]
+/\ nextPayloadId = null
+/\ payloadExchangeState = null
+
+Finished in 01s at (2026-08-03 22:28:03)
+
+[failure] TLC encountered an error (1765ms).
+error: TLC error (see output above)
+Auto-closing Apalache server on port 8822...

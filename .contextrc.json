@@ -1,0 +1,26 @@
+{
+  "name": "DecSaf",
+  "version": "1.0.0",
+  "stack": [
+    "JavaScript",
+    "Node.js"
+  ],
+  "entryPoints": [],
+  "testFramework": "Unknown",
+  "conventions": "Standard formatting",
+  "architecture": "Standard src folder structure",
+  "ignore": [
+    "node_modules",
+    "dist",
+    "build",
+    "*.test.ts",
+    "*.spec.ts",
+    "coverage",
+    ".git",
+    ".context"
+  ],
+  "contextBudget": 4000,
+  "maxActiveFiles": 5,
+  "embeddingModel": "Xenova/all-MiniLM-L6-v2",
+  "chunkSize": 60
+}

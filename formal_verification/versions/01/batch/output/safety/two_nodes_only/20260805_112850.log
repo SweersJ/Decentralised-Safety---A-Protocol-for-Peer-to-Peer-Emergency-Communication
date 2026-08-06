@@ -1,0 +1,4 @@
+Apalache launcher not found:
+  C:\Users\...\.quint\apalache-dist-powersetfilter\apalache\bin\apalache-mc.bat
+Run this once to download it:
+  quint verify "batch.qnt"

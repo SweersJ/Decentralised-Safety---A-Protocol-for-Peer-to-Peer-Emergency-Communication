@@ -438,10 +438,10 @@ module batch {
 
     // Init action for tests that require an actual sync from Alice to Bob.
     action initWithMessagesToSyncTwoNodes() = {
-        nondet aliceIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).oneOf()
-        nondet bobIds = MESSAGES.keys().powerset().filter(s =>
+        val aliceIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).chooseSome()
+        val bobIds = MESSAGES.keys().powerset().filter(s =>
             aliceIds.exists(id => not(id.in(s)))
-        ).oneOf()
+        ).chooseSome()
         val randomMessageIds = Map(ALICE -> aliceIds, BOB -> bobIds)
         all {
             nodeState' = initNodeState(randomMessageIds),
@@ -454,8 +454,8 @@ module batch {
 
     // Init action for tests that require no sync delta from Alice to Bob.
     action initWithoutMessagesToSyncTwoNodes() = {
-        nondet bobIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).oneOf()
-        nondet aliceIds = bobIds.powerset().filter(s => s.size() > 0).oneOf()
+        val bobIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).chooseSome()
+        val aliceIds = bobIds.powerset().filter(s => s.size() > 0).chooseSome()
         val randomMessageIds = Map(ALICE -> aliceIds, BOB -> bobIds)
         all {
             nodeState' = initNodeState(randomMessageIds),

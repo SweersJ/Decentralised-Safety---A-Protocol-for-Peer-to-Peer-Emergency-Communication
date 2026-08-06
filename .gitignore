@@ -9,3 +9,4 @@ __pycache__/
 _apalache-out/
 
 apalache.jar
+.context/

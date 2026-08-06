@@ -1,11 +1,3 @@
-# Usage statistics is OFF. We care about your privacy.
-# If you want to help our project, consider enabling statistics with config --enable-stats=true.
-
-Output directory: .../DecSaf/formal_verification/versions/01/batch/_apalache-out/server/2026-08-05T15-21-38_6392093278559717703
-# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@15:21:38.740
-Starting checker server on port 8822...                           I@15:21:38.744
-The Apalache server is running on port 8822. Press Ctrl-C to stop.
-PASS #0: SanyParser                                               I@15:21:41.707
 --------------------------------- MODULE batch ---------------------------------
 
 EXTENDS Integers, Sequences, FiniteSets, TLC, Apalache, Variants

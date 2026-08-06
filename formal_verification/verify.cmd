@@ -4,7 +4,7 @@
 @rem
 @rem PURPOSE:
 @rem   Manages the lifecycle of an Apalache verification server and runs
-@rem   formal verification on TLA+ specifications using Quint.
+@rem   formal verification and TLA+ compilation using Quint.
 @rem
 @rem   Solution for spawn EINVAL error when running .bat files on Windows
 @rem   in the apalache.js file. On Windows, .bat files require shell: true
@@ -26,6 +26,7 @@
 @rem   quint-args    Optional arguments passed to quint verify command
 @rem   --keep-server Keep the Apalache server running after verification
 @rem   --close-terminal Close the calling cmd.exe after verification
+@rem   --compile     Compile the spec to TLA+ instead of verifying it
 @rem
 @rem EXAMPLES:
 @rem   verify.cmd versions/00-test/bank.qnt --invariant=no_negatives
@@ -46,6 +47,7 @@ set "PORT=8822"
 set "SERVER=localhost:%PORT%"
 set "KEEP_SERVER=0"
 set "CLOSE_TERMINAL=0"
+set "COMPILE=0"
 set "SCRIPT_STARTED_SERVER=0"
 @rem default: 0.56.1, options: 0.56.1, 0.59.1-SNAPSHOT, powsetfilter
 set "APALACHE_VERSION=powsetfilter"
@@ -65,6 +67,8 @@ if /I "%~1"=="--keep-server" (
   set "KEEP_SERVER=1"
 ) else if /I "%~1"=="--close-terminal" (
   set "CLOSE_TERMINAL=1"
+) else if /I "%~1"=="--compile" (
+  set "COMPILE=1"
 ) else (
   set "QUINT_ARGS=%QUINT_ARGS% %~1"
 )
@@ -101,8 +105,12 @@ if errorlevel 1 (
   echo Reusing existing Apalache server on port %PORT%.
 )
 
-echo Running verification for "%SPEC%" with arguments "%QUINT_ARGS%"...
-call quint verify "%SPEC%" --server-endpoint=%SERVER% %QUINT_ARGS%
+if "%COMPILE%"=="1" (
+  call quint compile "%SPEC%" --target tlaplus --server-endpoint=%SERVER% %QUINT_ARGS%
+) else (
+  echo Running verification for "%SPEC%" with arguments "%QUINT_ARGS%"...
+  call quint verify "%SPEC%" --server-endpoint=%SERVER% %QUINT_ARGS%
+)
 set "VERIFY_EXIT=%ERRORLEVEL%"
 
 if "%SCRIPT_STARTED_SERVER%"=="1" (

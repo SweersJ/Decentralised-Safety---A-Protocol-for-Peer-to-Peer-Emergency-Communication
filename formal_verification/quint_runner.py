@@ -898,13 +898,11 @@ class QuintRunner(tk.Tk):
         def _compile() -> None:
             try:
                 if platform.system() == "Windows":
-                    # Use PowerShell so quint's bundled tools unpack correctly (cmd /c breaks it)
-                    ps_cmd = (
-                        f'quint compile "{self._qnt_path.name}" --target tlaplus'
-                        f' | Out-File -Encoding UTF8 "{tla_path.name}"'
-                    )
+                    # Compilation uses Apalache too. Route it through verify.cmd so
+                    # Windows gets the same managed server lifecycle as verification.
                     result = subprocess.run(
-                        ["powershell", "-NoProfile", "-Command", ps_cmd],
+                        ["cmd", "/d", "/c", "call", str(VERIFY_CMD),
+                         str(self._qnt_path), "--compile"],
                         capture_output=True,
                         text=True,
                         cwd=str(self._qnt_path.parent),
@@ -924,14 +922,21 @@ class QuintRunner(tk.Tk):
             if result.returncode != 0:
                 self._enqueue(f"\u274c  Compile failed (exit {result.returncode})\n", "err")
                 return
-            if platform.system() == "Windows":
-                # Strip Apalache preamble from the file PowerShell wrote
-                raw = tla_path.read_text(encoding="utf-8-sig")
-            else:
+            try:
                 raw = result.stdout
-            # Remove any server/diagnostic lines injected before the TLA+ module
-            m = re.search(r'^-{4,}', raw, re.MULTILINE)
-            tla_path.write_text(raw[m.start():] if m else raw, encoding="utf-8")
+                # A generated TLA+ module begins with its four-or-more-dash delimiter.
+                m = re.search(r'^-{4,}', raw, re.MULTILINE)
+                if not m:
+                    self._enqueue("\u274c  Compile produced no TLA+ module.\n", "err")
+                    return
+                module = raw[m.start():]
+                end = re.search(r'^={4,}\s*$', module, re.MULTILINE)
+                if end:
+                    module = module[:end.end()] + "\n"
+                tla_path.write_text(module, encoding="utf-8")
+            except OSError as exc:
+                self._enqueue(f"\u274c  Could not read compiled file: {exc}\n", "err")
+                return
             self._enqueue(f"\u2705  Compiled \u2192 {tla_path.name}\n", "ok")
             self.after(0, lambda: self._open_viewer_window(
                 tla_path,

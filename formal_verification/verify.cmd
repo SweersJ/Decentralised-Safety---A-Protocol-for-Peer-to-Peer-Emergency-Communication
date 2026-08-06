@@ -15,15 +15,17 @@
 @rem   - Reuses existing server instances for efficiency
 @rem   - Accepts optional Quint verification arguments
 @rem   - Supports --keep-server flag to maintain server after verification
+@rem   - Supports --close-terminal to close the calling cmd.exe when finished
 @rem   - Validates spec file and Apalache binary existence before execution
 @rem
 @rem USAGE:
-@rem   verify.cmd <spec-file> [quint-args...] [--keep-server]
+@rem   verify.cmd <spec-file> [quint-args...] [--keep-server] [--close-terminal]
 @rem
 @rem PARAMETERS:
 @rem   spec-file     Path to the .qnt specification file to verify
 @rem   quint-args    Optional arguments passed to quint verify command
 @rem   --keep-server Keep the Apalache server running after verification
+@rem   --close-terminal Close the calling cmd.exe after verification
 @rem
 @rem EXAMPLES:
 @rem   verify.cmd versions/00-test/bank.qnt --invariant=no_negatives
@@ -43,8 +45,11 @@ setlocal EnableExtensions EnableDelayedExpansion
 set "PORT=8822"
 set "SERVER=localhost:%PORT%"
 set "KEEP_SERVER=0"
+set "CLOSE_TERMINAL=0"
 set "SCRIPT_STARTED_SERVER=0"
-set "APALACHE_BIN=%USERPROFILE%\.quint\apalache-dist-0.56.1\apalache\bin\apalache-mc.bat"
+@rem default: 0.56.1, options: 0.56.1, 0.59.1-SNAPSHOT, powsetfilter
+set "APALACHE_VERSION=powsetfilter"
+set "APALACHE_BIN=%USERPROFILE%\.quint\apalache-dist-%APALACHE_VERSION%\apalache\bin\apalache-mc.bat"
 
 if /I "%~1"=="-h" goto :usage
 if /I "%~1"=="--help" goto :usage
@@ -58,6 +63,8 @@ set "QUINT_ARGS="
 if "%~1"=="" goto :args_done
 if /I "%~1"=="--keep-server" (
   set "KEEP_SERVER=1"
+) else if /I "%~1"=="--close-terminal" (
+  set "CLOSE_TERMINAL=1"
 ) else (
   set "QUINT_ARGS=%QUINT_ARGS% %~1"
 )
@@ -82,10 +89,11 @@ if not exist "%APALACHE_BIN%" (
 call :is_listening %PORT%
 if errorlevel 1 (
   echo Starting Apalache server on port %PORT%...
-  start "apalache-server-%PORT%" /min "%APALACHE_BIN%" server --port=%PORT%
+  start "" /b cmd /d /c call "%APALACHE_BIN%" server --port=%PORT%
   call :wait_for_port %PORT% 30
   if errorlevel 1 (
     echo Failed to start Apalache server on port %PORT%.
+    call :stop_port_pids %PORT%
     exit /b 1
   )
   set "SCRIPT_STARTED_SERVER=1"
@@ -106,6 +114,12 @@ if "%SCRIPT_STARTED_SERVER%"=="1" (
   )
 )
 
+if "%CLOSE_TERMINAL%"=="1" (
+  endlocal
+  exit %VERIFY_EXIT%
+)
+
+endlocal
 exit /b %VERIFY_EXIT%
 
 @rem :usage
@@ -116,7 +130,7 @@ exit /b %VERIFY_EXIT%
 @rem     exit /b 1
 :usage
 echo Usage:
-echo   verify.cmd [spec-file] [quint-args] [--keep-server]
+echo   verify.cmd [spec-file] [quint-args] [--keep-server] [--close-terminal]
 echo .
 echo Examples:
 echo   cmd /c verify.cmd versions/00/bank.qnt --invariant=no_negatives
@@ -177,7 +191,7 @@ goto wait_loop
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":%~1 .*LISTENING"') do (
   if not defined SEEN_%%P (
     set "SEEN_%%P=1"
-    taskkill /PID %%P /F >nul 2>nul
+    taskkill /PID %%P /T /F >nul 2>nul
   )
 )
 exit /b 0

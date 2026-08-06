@@ -9,14 +9,13 @@ import json
 import queue
 import re
 import shlex
-import sys
 import platform
 import subprocess
 import threading
 from datetime import datetime
 from pathlib import Path
 import tkinter as tk
-from tkinter import ttk, filedialog, scrolledtext, messagebox
+from tkinter import ttk, filedialog, messagebox
 
 # ─── paths ──────────────────────────────────────────────────────────────────
 
@@ -31,6 +30,17 @@ _DECL_RE = re.compile(r"^[ \t]{0,8}(val|run|temporal)\s+(\w+)\s*=\s*$", re.MULTI
 
 # val names starting with `can_` are witnesses; all other vals are safety invariants.
 _WITNESS_RE = re.compile(r"^can_")
+
+# Hide machine-specific WSL prefixes in command output. Match path segments rather
+# than one exact absolute path so this also works for other users/directories.
+_WSL_THESIS_REPO_RE = re.compile(
+    r"(?<![\w.-])/mnt/c(?:/[^/\r\n]+)*/thesis_repo(?=/|\s|$)",
+    re.IGNORECASE,
+)
+
+
+def _shorten_log_paths(text: str) -> str:
+    return _WSL_THESIS_REPO_RE.sub("...", text)
 
 _CATEGORIES: dict[str, dict] = {
     "tests":    {"label": "Tests",              "folder": "tests"},
@@ -153,6 +163,75 @@ def _collect_grammar_patterns() -> tuple[
 _LINE_PATS, _BLOCK_PATS = _collect_grammar_patterns()
 
 
+# ─── TLA+ syntax highlighting ────────────────────────────────────────────────
+
+# Tag colours for the TLA+ viewer (configured low-priority first in _open_viewer_window)
+_TLA_TAG_COLORS: list[tuple[str, str]] = [
+    ("tla_function",   "#dcdcaa"),  # operator/function names
+    ("tla_definition", "#4ec9b0"),  # names being defined  (word ==)
+    ("tla_operator",   "#d7ba7d"),  # embedded \land, etc.
+    ("tla_temporal",   "#d7ba7d"),  # [] <> ~>
+    ("tla_kw",         "#569cd6"),  # EXTENDS, VARIABLES, …
+    ("tla_ctrl",       "#c586c0"),  # IF THEN ELSE CASE OTHER
+    ("tla_primed",     "#9cdcfe"),  # x'
+    ("tla_constant",   "#4fc1ff"),  # TRUE FALSE
+    ("tla_number",     "#b5cea8"),
+    ("tla_string",     "#ce9178"),
+    ("tla_comment",    "#6a9955"),  # highest priority – overrides everything
+]
+
+# Line-match patterns applied in order (later entries override earlier)
+_TLA_LINE_PATS: list[tuple[re.Pattern, str]] = [
+    (re.compile(
+        r'\b(?:EXTENDS|VARIABLES?|CONSTANTS?|LET|IN|EXCEPT|ENABLED|UNCHANGED|'
+        r'LAMBDA|DOMAIN|CHOOSE|LOCAL|ASSUME|ASSUMPTION|AXIOM|RECURSIVE|INSTANCE|'
+        r'WITH|THEOREM|SUBSET|UNION|SF_|WF_|USE|DEFS|BY|DEF|SUFFICES|PROVE|'
+        r'OBVIOUS|NEW|QED|PICK|HIDE|DEFINE|WITNESS|HAVE|TAKE|PROOF|ACTION|'
+        r'COROLLARY|LEMMA|OMITTED|ONLY|PROPOSITION|STATE|TEMPORAL)\b'
+    ), "tla_kw"),
+    (re.compile(r'\b(?:IF|THEN|ELSE|CASE|OTHER)\b'), "tla_ctrl"),
+    (re.compile(r'\b(?:TRUE|FALSE)\b'), "tla_constant"),
+    (re.compile(
+        r'\\(?:land|lor|lnot|neg|equiv|implies|iff|in|notin|subseteq|supseteq|'
+        r'union|intersect|cup|cap|leq|geq|forall|exists|times|div|cdot|star|'
+        r'circ|oplus|ominus|otimes|bullet|[a-zA-Z]+)\b'
+    ), "tla_operator"),
+    (re.compile(r'\[\]|<>|~>'), "tla_temporal"),
+    (re.compile(r"\b\w+'"), "tla_primed"),
+    # definition name: word before == (not ===)
+    (re.compile(r'\b\w+(?=\s*==(?!=))'), "tla_definition"),
+    # operator/function call: word before (
+    (re.compile(r'\b\w+(?=\s*\()'), "tla_function"),
+    (re.compile(r'\b\d+\b'), "tla_number"),
+    # strings override keywords that fall inside them
+    (re.compile(r'"[^"\\]*(?:\\.[^"\\]*)*"'), "tla_string"),
+    # line comment: \* to end of line (highest priority, applied last)
+    (re.compile(r'\\\*.*$'), "tla_comment"),
+]
+
+
+def _highlight_tla(widget: tk.Text, lines: list[str]) -> None:
+    """Apply TLA+ syntax highlighting."""
+    full_text = "\n".join(lines)
+
+    # Block comments (* ... *) – span multiple lines
+    for m in re.finditer(r'\(\*.*?\*\)', full_text, re.DOTALL):
+        sl = full_text.count("\n", 0, m.start()) + 1
+        sc = m.start() - (full_text.rfind("\n", 0, m.start()) + 1)
+        el = full_text.count("\n", 0, m.end()) + 1
+        ec = m.end() - (full_text.rfind("\n", 0, m.end()) + 1)
+        widget.tag_add("tla_comment", f"{sl}.{sc}", f"{el}.{ec}")
+
+    for i, line in enumerate(lines, 1):
+        # Separator lines ----+ / ====+
+        if re.match(r'^[\-=]{4,}\s*$', line):
+            widget.tag_add("tla_comment", f"{i}.0", f"{i}.end")
+            continue
+        for pat, tag in _TLA_LINE_PATS:
+            for m in pat.finditer(line):
+                widget.tag_add(tag, f"{i}.{m.start()}", f"{i}.{m.end()}")
+
+
 def _highlight_qnt(widget: tk.Text, lines: list[str]) -> None:
     """Apply Quint syntax highlighting from the loaded grammar patterns."""
     # block patterns (/* ... */ comments) require full-text span tracking
@@ -229,6 +308,8 @@ def build_command(
     # --keep-server only understood by verify.cmd wrapper
     if platform.system() == "Windows" and VERIFY_CMD.exists() and opts.get("keep_server"):
         cmd.append("--keep-server")
+    if platform.system() == "Windows" and VERIFY_CMD.exists():
+        cmd.append("--close-terminal")
     return cmd
 
 
@@ -258,6 +339,7 @@ class QuintRunner(tk.Tk):
         self._log_queue: queue.Queue[tuple[str, str | None]] = queue.Queue()
         self._running = False
         self._file_viewer: tk.Toplevel | None = None
+        self._compiled_file_viewer: tk.Toplevel | None = None
 
         self._build_ui()
         self._setup_scroll_routing()
@@ -303,6 +385,7 @@ class QuintRunner(tk.Tk):
         btn_row = ttk.Frame(out_frame)
         btn_row.pack(fill="x", pady=(0, 4))
         ttk.Button(btn_row, text="View file", command=self._open_file_viewer).pack(side="left", padx=2)
+        ttk.Button(btn_row, text="View compiled file", command=self._open_compiled_file_viewer).pack(side="left", padx=2)
         ttk.Button(btn_row, text="Clear", command=self._log_clear).pack(side="right", padx=2)
 
         out_inner = ttk.Frame(out_frame)
@@ -417,6 +500,7 @@ class QuintRunner(tk.Tk):
         # ── run button ─────────────────────────────────────────────────────
         self.run_btn = ttk.Button(right, text="▶  Run selected", command=self._run_selected)
         self.run_btn.pack(fill="x", padx=4, pady=10)
+
     def _setup_scroll_routing(self) -> None:
         """Route mousewheel to the declarations canvas or let Text widgets self-scroll."""
         # snapshot refs now; avoids AttributeError if _route fires before _build_ui finishes
@@ -440,6 +524,7 @@ class QuintRunner(tk.Tk):
         self.bind_all("<MouseWheel>", _route)
         self.bind_all("<Button-4>",   _route)
         self.bind_all("<Button-5>",   _route)
+
     # ── file handling ─────────────────────────────────────────────────────────
 
     def _browse(self) -> None:
@@ -473,7 +558,7 @@ class QuintRunner(tk.Tk):
         "liveness": "Liveness  →  quint verify --temporal",
     }
 
-    _STATUS_ICON: dict[str, str] = {"ok": "\u2705", "violation": "\u26a0\ufe0f", "error": "\u274c"}
+    _STATUS_ICON: dict[str, str] = {"ok": "\u2705", "violation": "\u26a0\ufe0f", "error": "\u274c", "unknown": "\u25cb"}
 
     def _populate_declarations(self) -> None:
         for w in self._inner.winfo_children():
@@ -494,7 +579,7 @@ class QuintRunner(tk.Tk):
                 row = ttk.Frame(section)
                 row.pack(fill="x", anchor="w")
                 ttk.Checkbutton(row, text=name, variable=var).pack(side="left")
-                icon = self._STATUS_ICON.get(self._status.get((cat, name), ""), "")
+                icon = self._STATUS_ICON.get(self._status.get((cat, name), "unknown"), self._STATUS_ICON.get("unknown", "?"))
                 lbl = tk.Label(row, text=icon, font=("Consolas", 9), anchor="w", width=2)
                 lbl.pack(side="left", padx=2)
                 self._status_labels[(cat, name)] = lbl
@@ -508,7 +593,7 @@ class QuintRunner(tk.Tk):
         self._status[(cat, name)] = status
         lbl = self._status_labels.get((cat, name))
         if lbl and lbl.winfo_exists():
-            lbl.configure(text=self._STATUS_ICON.get(status, ""))
+            lbl.configure(text=self._STATUS_ICON.get(status, self._STATUS_ICON.get("unknown", "?")))
 
     # ── run logic ─────────────────────────────────────────────────────────────
 
@@ -605,6 +690,7 @@ class QuintRunner(tk.Tk):
                 pass
             captured: list[str] = []
             for line in proc.stdout:
+                line = _shorten_log_paths(line)
                 captured.append(line)
                 self._enqueue(line)
             proc.wait()
@@ -647,6 +733,7 @@ class QuintRunner(tk.Tk):
         self.output_text.configure(state="normal")
         self.output_text.delete("1.0", "end")
         self.output_text.configure(state="disabled")
+
     # ── config import / export ──────────────────────────────────────────────────────
 
     def _import_config(self, startup_path: str | None = None) -> None:
@@ -700,19 +787,20 @@ class QuintRunner(tk.Tk):
         Path(path).write_text(json.dumps(cfg, indent=2), encoding="utf-8")
         self._log(f"Config exported to {Path(path).name}\n", "info")
 
-    # ── file viewer ─────────────────────────────────────────────────────────────────
+    # ── file viewer (shared helper + per-format entry points) ───────────────────────
 
-    def _open_file_viewer(self) -> None:
-        if not self._qnt_path or not self._qnt_path.exists():
-            messagebox.showwarning("No file", "Scan a .qnt file first.")
-            return
-        if self._file_viewer and self._file_viewer.winfo_exists():
-            self._file_viewer.lift()
-            return
-
+    def _open_viewer_window(
+        self,
+        file_path: Path,
+        title: str,
+        tag_colors: list[tuple[str, str]],
+        highlight_fn,
+        viewer_ref_setter,
+    ) -> None:
+        """Open a read-only syntax-highlighted file viewer window."""
         win = tk.Toplevel(self)
-        self._file_viewer = win
-        win.title(f"View: {self._qnt_path.name}")
+        viewer_ref_setter(win)
+        win.title(title)
         win.geometry("900x650")
 
         frame = ttk.Frame(win)
@@ -734,19 +822,8 @@ class QuintRunner(tk.Tk):
             bg="#1e1e1e", fg="#d4d4d4", xscrollcommand=xsb.set,
             cursor="arrow",
         )
-        # configure lowest-priority first; comment last = highest priority
-        content.tag_configure("namespace", foreground="#c8c8c8")
-        content.tag_configure("kw",        foreground="#569cd6")
-        content.tag_configure("operator",  foreground="#d7ba7d")
-        content.tag_configure("number",    foreground="#b5cea8")
-        content.tag_configure("function",  foreground="#dcdcaa")
-        content.tag_configure("type_name", foreground="#4ec9b0")
-        content.tag_configure("constant",  foreground="#4fc1ff")
-        content.tag_configure("variable",  foreground="#9cdcfe")
-        content.tag_configure("property",  foreground="#9cdcfe")
-        content.tag_configure("primed",    foreground="#9cdcfe")
-        content.tag_configure("string",    foreground="#ce9178")
-        content.tag_configure("comment",   foreground="#6a9955")
+        for tag, color in tag_colors:  # configure lowest-priority first
+            content.tag_configure(tag, foreground=color)
         content.pack(side="left", fill="both", expand=True)
 
         def _sync_yview(*args: object) -> None:
@@ -755,34 +832,116 @@ class QuintRunner(tk.Tk):
 
         ysb.configure(command=_sync_yview)
         xsb.configure(command=content.xview)
+        content.configure(yscrollcommand=lambda *a: (ysb.set(*a), ln_text.yview_moveto(a[0])))
 
-        def _on_content_scroll(*args: object) -> None:
-            ysb.set(*args)
-            ln_text.yview_moveto(args[0])
-
-        content.configure(yscrollcommand=_on_content_scroll)
-
-        lines = self._qnt_path.read_text(encoding="utf-8").splitlines()
+        lines = file_path.read_text(encoding="utf-8").splitlines()
         ln_text.configure(state="normal")
         for i, line in enumerate(lines, 1):
             ln_text.insert("end", f"{i:>4}\n")
             content.insert("end", line + "\n")
-        _highlight_qnt(content, lines)
+        highlight_fn(content, lines)
         ln_text.configure(state="disabled")
 
-        # keep content in normal state so tag colors render; block edits via bindings
         content.bind("<Key>", lambda e: "break" if not (e.state & 0x4) else None)
         content.bind("<<Paste>>", lambda e: "break")
 
         def _viewer_scroll(e: tk.Event) -> str:
             delta = -1 * (e.delta // 120) if e.delta else (-1 if e.num == 4 else 1)
             _sync_yview("scroll", delta, "units")
-            return "break"  # prevent double-scroll from class bindings
+            return "break"
 
         for w in (content, ln_text):
             w.bind("<MouseWheel>", _viewer_scroll)
             w.bind("<Button-4>",   _viewer_scroll)
             w.bind("<Button-5>",   _viewer_scroll)
+
+    def _open_file_viewer(self) -> None:
+        if not self._qnt_path or not self._qnt_path.exists():
+            messagebox.showwarning("No file", "Scan a .qnt file first.")
+            return
+        if self._file_viewer and self._file_viewer.winfo_exists():
+            self._file_viewer.lift()
+            return
+        _QNT_TAG_COLORS = [
+            ("namespace", "#c8c8c8"),
+            ("kw",        "#569cd6"),
+            ("operator",  "#d7ba7d"),
+            ("number",    "#b5cea8"),
+            ("function",  "#dcdcaa"),
+            ("type_name", "#4ec9b0"),
+            ("constant",  "#4fc1ff"),
+            ("variable",  "#9cdcfe"),
+            ("property",  "#9cdcfe"),
+            ("primed",    "#9cdcfe"),
+            ("string",    "#ce9178"),
+            ("comment",   "#6a9955"),
+        ]
+        self._open_viewer_window(
+            self._qnt_path,
+            f"View: {self._qnt_path.name}",
+            _QNT_TAG_COLORS,
+            _highlight_qnt,
+            lambda w: setattr(self, "_file_viewer", w),
+        )
+
+    def _open_compiled_file_viewer(self) -> None:
+        if not self._qnt_path or not self._qnt_path.exists():
+            messagebox.showwarning("No file", "Scan a .qnt file first.")
+            return
+        if self._compiled_file_viewer and self._compiled_file_viewer.winfo_exists():
+            self._compiled_file_viewer.lift()
+            return
+
+        tla_path = self._qnt_path.with_suffix(".tla")
+        self._log(f"Compiling {self._qnt_path.name} → TLA+…\n", "info")
+
+        def _compile() -> None:
+            try:
+                if platform.system() == "Windows":
+                    # Use PowerShell so quint's bundled tools unpack correctly (cmd /c breaks it)
+                    ps_cmd = (
+                        f'quint compile "{self._qnt_path.name}" --target tlaplus'
+                        f' | Out-File -Encoding UTF8 "{tla_path.name}"'
+                    )
+                    result = subprocess.run(
+                        ["powershell", "-NoProfile", "-Command", ps_cmd],
+                        capture_output=True,
+                        text=True,
+                        cwd=str(self._qnt_path.parent),
+                    )
+                else:
+                    result = subprocess.run(
+                        ["quint", "compile", self._qnt_path.name, "--target", "tlaplus"],
+                        capture_output=True,
+                        text=True,
+                        cwd=str(self._qnt_path.parent),
+                    )
+            except FileNotFoundError:
+                self._enqueue("\u274c  quint not found. Is it installed and on PATH?\n", "err")
+                return
+            if result.stderr:
+                self._enqueue(result.stderr, "warn")
+            if result.returncode != 0:
+                self._enqueue(f"\u274c  Compile failed (exit {result.returncode})\n", "err")
+                return
+            if platform.system() == "Windows":
+                # Strip Apalache preamble from the file PowerShell wrote
+                raw = tla_path.read_text(encoding="utf-8-sig")
+            else:
+                raw = result.stdout
+            # Remove any server/diagnostic lines injected before the TLA+ module
+            m = re.search(r'^-{4,}', raw, re.MULTILINE)
+            tla_path.write_text(raw[m.start():] if m else raw, encoding="utf-8")
+            self._enqueue(f"\u2705  Compiled \u2192 {tla_path.name}\n", "ok")
+            self.after(0, lambda: self._open_viewer_window(
+                tla_path,
+                f"View compiled: {tla_path.name}",
+                _TLA_TAG_COLORS,
+                _highlight_tla,
+                lambda w: setattr(self, "_compiled_file_viewer", w),
+            ))
+
+        threading.Thread(target=_compile, daemon=True).start()
 
 # ─── entry point ─────────────────────────────────────────────────────────────
 

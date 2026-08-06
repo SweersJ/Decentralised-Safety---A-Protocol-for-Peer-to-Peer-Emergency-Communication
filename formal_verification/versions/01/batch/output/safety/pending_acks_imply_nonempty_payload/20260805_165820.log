@@ -1,0 +1,40 @@
+Starting Apalache server on port 8822...
+Running verification for "batch.qnt" with arguments " --invariant pending_acks_imply_nonempty_payload --out-itf output\safety\pending_acks_imply_nonempty_payload\20260805_165820.itf.json"...
+[ok] No violation found (1555815ms).
+You may increase --max-steps.
+Use --verbosity to produce more (or less) output.
+Reusing existing Apalache server on port 8822.
+Running verification for "batch.qnt" with arguments " --invariant pending_acks_imply_nonempty_payload --out-itf output\safety\pending_acks_imply_nonempty_payload\20260805_165820.itf.json"...
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+Error: 14 UNAVAILABLE: read ECONNRESET
+    at callErrorFromStatus (...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@grpc\grpc-js\build\src\call.js:32:19)
+    at Object.onReceiveStatus (...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@grpc\grpc-js\build\src\client.js:193:76)
+    at Object.onReceiveStatus (...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:367:141)
+    at Object.onReceiveStatus (...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:327:181)
+    at ...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@grpc\grpc-js\build\src\resolving-call.js:135:78
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+for call at
+    at ServiceClientImpl.makeUnaryRequest (...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@grpc\grpc-js\build\src\client.js:161:32)
+    at ServiceClientImpl.run (...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@grpc\grpc-js\build\src\make-client.js:105:19)
+    at Object.<anonymous> (...\Roaming\npm\node_modules\@informalsystems\quint\dist\src\apalache.js:271:55)
+    at node:internal/util:513:21
+    at new Promise (<anonymous>)
+    at Object.run (node:internal/util:499:12)
+    at Object.check (...\Roaming\npm\node_modules\@informalsystems\quint\dist\src\apalache.js:183:28)
+    at ...\Roaming\npm\node_modules\@informalsystems\quint\dist\src\verify.js:88:53
+    at EitherConstructor.asyncChain (...\Roaming\npm\node_modules\@informalsystems\quint\node_modules\@sweet-monads\either\cjs\index.js:125:16)
+    at verifyWithApalache (...\Roaming\npm\node_modules\@informalsystems\quint\dist\src\verify.js:88:29) {
+  code: 14,
+  details: 'read ECONNRESET',
+  metadata: Metadata {
+    internalRepr: Map(0) {},
+    opaqueData: Map(0) {},
+    options: {}
+  }
+}
+
+Node.js v24.15.0
+Auto-closing Apalache server on port 8822...

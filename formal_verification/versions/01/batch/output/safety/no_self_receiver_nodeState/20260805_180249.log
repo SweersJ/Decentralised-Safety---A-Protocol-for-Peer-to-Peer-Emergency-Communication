@@ -1,0 +1,12 @@
+Starting Apalache server on port 8822...
+Running verification for "batch.qnt" with arguments " --invariant no_self_receiver_nodeState --out-itf output\safety\no_self_receiver_nodeState\20260805_180249.itf.json"...
+[ok] No violation found (190836ms).
+You may increase --max-steps.
+Use --verbosity to produce more (or less) output.
+Auto-closing Apalache server on port 8822...
+
+...\DecSaf\formal_verification\versions\01\batch>y
+'y' is not recognized as an internal or external command,
+operable program or batch file.
+
+...\formal_verification\versions\01\batch>

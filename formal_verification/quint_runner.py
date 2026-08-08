@@ -377,8 +377,8 @@ class QuintRunner(tk.Tk):
 
         cfg_frame = ttk.Frame(top)
         cfg_frame.pack(fill="x", pady=(4, 0))
-        ttk.Button(cfg_frame, text="⬆  Import config", command=self._import_config).pack(side="left", padx=2)
-        ttk.Button(cfg_frame, text="⬇  Export config", command=self._export_config).pack(side="left", padx=2)
+        ttk.Button(cfg_frame, text="Import config", command=self._import_config).pack(side="left", padx=2)
+        ttk.Button(cfg_frame, text="Export config", command=self._export_config).pack(side="left", padx=2)
 
         # main split
         paned = ttk.PanedWindow(self, orient="horizontal")
@@ -506,7 +506,7 @@ class QuintRunner(tk.Tk):
                   foreground="gray").grid(row=4, column=0, columnspan=2, sticky="w")
 
         # ── run button ─────────────────────────────────────────────────────
-        self.run_btn = ttk.Button(right, text="▶  Run selected", command=self._run_selected)
+        self.run_btn = ttk.Button(right, text=">>  Run selected", command=self._run_selected)
         self.run_btn.pack(fill="x", padx=4, pady=10)
 
     def _setup_scroll_routing(self) -> None:
@@ -566,7 +566,8 @@ class QuintRunner(tk.Tk):
         "liveness": "Liveness  →  quint verify --temporal",
     }
 
-    _STATUS_ICON: dict[str, str] = {"ok": "\u2705", "violation": "\u26a0\ufe0f", "error": "\u274c", "unknown": "\u25cb"}
+    _STATUS_ICON:  dict[str, str]  = {"ok": "[ok]", "violation": "[!]", "error": "[x]", "unknown": "[?]"}
+    _STATUS_COLOR: dict[str, str]  = {"ok": "#4caf50", "violation": "#ff9800", "error": "#f44336", "unknown": "#858585"}
 
     def _populate_declarations(self) -> None:
         for w in self._inner.winfo_children():
@@ -587,8 +588,11 @@ class QuintRunner(tk.Tk):
                 row = ttk.Frame(section)
                 row.pack(fill="x", anchor="w")
                 ttk.Checkbutton(row, text=name, variable=var).pack(side="left")
-                icon = self._STATUS_ICON.get(self._status.get((cat, name), "unknown"), self._STATUS_ICON.get("unknown", "?"))
-                lbl = tk.Label(row, text=icon, font=("Consolas", 9), anchor="w", width=2)
+                cur_status = self._status.get((cat, name), "unknown")
+                icon  = self._STATUS_ICON.get(cur_status, "[?]")
+                color = self._STATUS_COLOR.get(cur_status, "#858585")
+                lbl = tk.Label(row, text=icon, font=("Consolas", 9), anchor="w",
+                               width=4, foreground=color)
                 lbl.pack(side="left", padx=2)
                 self._status_labels[(cat, name)] = lbl
 
@@ -601,7 +605,10 @@ class QuintRunner(tk.Tk):
         self._status[(cat, name)] = status
         lbl = self._status_labels.get((cat, name))
         if lbl and lbl.winfo_exists():
-            lbl.configure(text=self._STATUS_ICON.get(status, self._STATUS_ICON.get("unknown", "?")))
+            lbl.configure(
+                text=self._STATUS_ICON.get(status, "[?]"),
+                foreground=self._STATUS_COLOR.get(status, "#858585"),
+            )
 
     # ── run logic ─────────────────────────────────────────────────────────────
 
@@ -646,7 +653,7 @@ class QuintRunner(tk.Tk):
     def _run_tasks(self, tasks: list[tuple[str, str, str]], opts: dict) -> None:
         for cat, eff_cat, name in tasks:
             self._run_one(cat, eff_cat, name, opts)
-        self._enqueue("\n✅  All done.\n", "ok")
+        self._enqueue("\n[OK]  All done.\n", "ok")
         self.after(0, lambda: self._set_running(False))
 
     _FOLDER: dict[str, str] = {
@@ -670,7 +677,7 @@ class QuintRunner(tk.Tk):
         # quote for display only; subprocess receives the list directly
         display = (subprocess.list2cmdline(cmd) if platform.system() == "Windows"
                    else shlex.join(cmd))
-        self._enqueue(f"\n▶  {display}\n", "cmd")
+        self._enqueue(f"\n>>  {display}\n", "cmd")
         # verify categories capture stdout to .log; run/test use --out-itf for the trace
         save_log = effective_cat in ("safety_verify", "liveness")
         rc, output = self._exec(cmd, log_file=log_file if save_log else None)
@@ -706,12 +713,12 @@ class QuintRunner(tk.Tk):
             if log_file:
                 log_file.write_text(text, encoding="utf-8")
             if proc.returncode == 0:
-                self._enqueue("\u2705  OK\n", "ok")
+                self._enqueue("[OK]\n", "ok")
             else:
-                self._enqueue(f"\u274c  exit {proc.returncode}\n", "err")
+                self._enqueue(f"[FAIL]  exit {proc.returncode}\n", "err")
             return proc.returncode, text
         except FileNotFoundError as exc:
-            self._enqueue(f"\u274c  Command not found: {exc}\n", "err")
+            self._enqueue(f"[ERROR]  Command not found: {exc}\n", "err")
             return -1, ""
 
     # ── thread-safe logging ───────────────────────────────────────────────────
@@ -923,19 +930,19 @@ class QuintRunner(tk.Tk):
                         cwd=str(self._qnt_path.parent),
                     )
             except FileNotFoundError:
-                self._enqueue("\u274c  quint not found. Is it installed and on PATH?\n", "err")
+                self._enqueue("[ERROR]  quint not found. Is it installed and on PATH?\n", "err")
                 return
             if result.stderr:
                 self._enqueue(result.stderr, "warn")
             if result.returncode != 0:
-                self._enqueue(f"\u274c  Compile failed (exit {result.returncode})\n", "err")
+                self._enqueue(f"[FAIL]  Compile failed (exit {result.returncode})\n", "err")
                 return
             try:
                 raw = result.stdout
                 # A generated TLA+ module begins with its four-or-more-dash delimiter.
                 m = re.search(r'^-{4,}', raw, re.MULTILINE)
                 if not m:
-                    self._enqueue("\u274c  Compile produced no TLA+ module.\n", "err")
+                    self._enqueue("[ERROR]  Compile produced no TLA+ module.\n", "err")
                     return
                 module = raw[m.start():]
                 end = re.search(r'^={4,}\s*$', module, re.MULTILINE)
@@ -943,9 +950,9 @@ class QuintRunner(tk.Tk):
                     module = module[:end.end()] + "\n"
                 tla_path.write_text(module, encoding="utf-8")
             except OSError as exc:
-                self._enqueue(f"\u274c  Could not read compiled file: {exc}\n", "err")
+                self._enqueue(f"[ERROR]  Could not read compiled file: {exc}\n", "err")
                 return
-            self._enqueue(f"\u2705  Compiled \u2192 {tla_path.name}\n", "ok")
+            self._enqueue(f"[OK]  Compiled -> {tla_path.name}\n", "ok")
             self.after(0, lambda: self._open_viewer_window(
                 tla_path,
                 f"View compiled: {tla_path.name}",

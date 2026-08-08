@@ -11,6 +11,7 @@ import re
 import shlex
 import platform
 import subprocess
+import tempfile
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -31,16 +32,23 @@ _DECL_RE = re.compile(r"^[ \t]{0,8}(val|run|temporal)\s+(\w+)\s*=\s*$", re.MULTI
 # val names starting with `can_` are witnesses; all other vals are safety invariants.
 _WITNESS_RE = re.compile(r"^can_")
 
-# Hide machine-specific WSL prefixes in command output. Match path segments rather
-# than one exact absolute path so this also works for other users/directories.
+# Hide machine-specific WSL prefixes in command output.
 _WSL_THESIS_REPO_RE = re.compile(
-    r"(?<![\w.-])/mnt/c(?:/[^/\r\n]+)*/thesis_repo(?=/|\s|$)",
+    r"(?<![\.\w.-])/mnt/c(?:/[^/\r\n]+)*/thesis_repo(?=/|\s|$)",
     re.IGNORECASE,
 )
+# SCRIPT_DIR is formal_verification/; two parents up is the thesis_repo root.
+_WIN_THESIS_REPO_RE = re.compile(re.escape(str(SCRIPT_DIR.parent.parent)), re.IGNORECASE)
+
+# Hide the OS temp directory (e.g. C:\Users\<user>\AppData\Local\Temp).
+_TEMP_DIR_RE = re.compile(re.escape(tempfile.gettempdir()), re.IGNORECASE)
 
 
 def _shorten_log_paths(text: str) -> str:
-    return _WSL_THESIS_REPO_RE.sub("...", text)
+    text = _WSL_THESIS_REPO_RE.sub("...", text)
+    text = _WIN_THESIS_REPO_RE.sub("...", text)
+    text = _TEMP_DIR_RE.sub("<tmp>", text)
+    return text
 
 _CATEGORIES: dict[str, dict] = {
     "tests":    {"label": "Tests",              "folder": "tests"},

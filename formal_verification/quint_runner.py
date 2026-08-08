@@ -6,6 +6,7 @@ Usage:
 """
 
 import json
+import os
 import queue
 import re
 import shlex
@@ -344,6 +345,8 @@ class QuintRunner(tk.Tk):
         self._checks: dict[str, dict[str, tk.BooleanVar]] = {}
         self._status: dict[tuple[str, str], str] = {}
         self._status_labels: dict[tuple[str, str], tk.Label] = {}
+        self._date_labels: dict[tuple[str, str], tk.Label] = {}
+        self._last_files: dict[tuple[str, str], Path | None] = {}
         self._log_queue: queue.Queue[tuple[str, str | None]] = queue.Queue()
         self._running = False
         self._file_viewer: tk.Toplevel | None = None
@@ -569,11 +572,53 @@ class QuintRunner(tk.Tk):
     _STATUS_ICON:  dict[str, str]  = {"ok": "[ok]", "violation": "[!]", "error": "[x]", "unknown": "[?]"}
     _STATUS_COLOR: dict[str, str]  = {"ok": "#4caf50", "violation": "#ff9800", "error": "#f44336", "unknown": "#858585"}
 
+    def _last_result_for(self, cat: str, name: str) -> tuple[str, str | None, Path | None]:
+        """Return (status, datetime_str, file_path) from the most recent output file."""
+        if not self._qnt_path:
+            return "unknown", None, None
+        folder = _CATEGORIES[cat]["folder"]
+        out_dir = self._qnt_path.parent / "output" / folder / name
+        if not out_dir.is_dir():
+            return "unknown", None, None
+        files = sorted(
+            [f for f in out_dir.iterdir() if f.suffix in (".json", ".log")],
+            key=lambda f: f.name,
+        )
+        if not files:
+            return "unknown", None, None
+        last = files[-1]
+        m = re.match(r'^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})', last.name)
+        dt_str = f"{m.group(1)}-{m.group(2)}-{m.group(3)} {m.group(4)}:{m.group(5)}" if m else None
+        status = "unknown"
+        try:
+            if last.suffix == ".json":
+                data = json.loads(last.read_text(encoding="utf-8"))
+                meta_status = data.get("#meta", {}).get("status", "")
+                if meta_status == "ok":
+                    status = "ok"
+                elif meta_status:
+                    status = "violation"
+            elif last.suffix == ".log":
+                content = last.read_text(encoding="utf-8")
+                lower = content.lower()
+                if any(kw in lower for kw in ("violation", "violated", "counterexample",
+                                              "invariant not", "assertion")):
+                    status = "violation"
+                elif any(kw in lower for kw in ("[ok]", "no error", "verified", "the outcome is ok")):
+                    status = "ok"
+                elif "error" in lower or "exception" in lower:
+                    status = "error"
+        except Exception:
+            pass
+        return status, dt_str, last
+
     def _populate_declarations(self) -> None:
         for w in self._inner.winfo_children():
             w.destroy()
         self._checks.clear()
         self._status_labels.clear()
+        self._date_labels.clear()
+        self._last_files.clear()
 
         for cat, label in self._SECTION_LABELS.items():
             names = self._groups.get(cat, [])
@@ -583,32 +628,72 @@ class QuintRunner(tk.Tk):
             section.pack(fill="x", padx=4, pady=4)
             self._checks[cat] = {}
             for name in names:
-                var = tk.BooleanVar(value=True)
-                self._checks[cat][name] = var
-                row = ttk.Frame(section)
-                row.pack(fill="x", anchor="w")
-                ttk.Checkbutton(row, text=name, variable=var).pack(side="left")
-                cur_status = self._status.get((cat, name), "unknown")
+                hist_status, hist_dt, hist_file = self._last_result_for(cat, name)
+                if (cat, name) not in self._status:
+                    self._status[(cat, name)] = hist_status
+                self._last_files[(cat, name)] = hist_file
+                cur_status = self._status[(cat, name)]
                 icon  = self._STATUS_ICON.get(cur_status, "[?]")
                 color = self._STATUS_COLOR.get(cur_status, "#858585")
+
+                var = tk.BooleanVar(value=True)
+                self._checks.setdefault(cat, {})[name] = var
+                row = ttk.Frame(section)
+                row.pack(fill="x", anchor="w")
+
+                # status + datetime on the left for column alignment
                 lbl = tk.Label(row, text=icon, font=("Consolas", 9), anchor="w",
                                width=4, foreground=color)
-                lbl.pack(side="left", padx=2)
+                lbl.pack(side="left", padx=(0, 2))
                 self._status_labels[(cat, name)] = lbl
+
+                date_lbl = tk.Label(row, text=hist_dt or "", font=("Consolas", 9),
+                                    foreground="#4e9fce", anchor="w", width=16,
+                                    cursor="hand2")
+                date_lbl.pack(side="left", padx=(0, 6))
+                date_lbl.bind("<Button-1>", lambda e, c=cat, n=name: self._open_last_file(c, n))
+                self._date_labels[(cat, name)] = date_lbl
+
+                ttk.Checkbutton(row, text=name, variable=var).pack(side="left")
+
+    def _open_last_file(self, cat: str, name: str) -> None:
+        path = self._last_files.get((cat, name))
+        if not path or not path.exists():
+            messagebox.showinfo("No output", f"No output file found for '{name}'.")
+            return
+        if platform.system() == "Windows":
+            os.startfile(path)
+        elif platform.system() == "Darwin":
+            subprocess.run(["open", str(path)], check=False)
+        else:
+            # WSL: convert to Windows path and delegate to explorer.exe
+            is_wsl = Path("/proc/version").exists() and "microsoft" in Path("/proc/version").read_text().lower()
+            if is_wsl:
+                result = subprocess.run(["wslpath", "-w", str(path)], capture_output=True, text=True)
+                win_path = result.stdout.strip()
+                subprocess.run(["explorer.exe", win_path], check=False)
+            else:
+                subprocess.run(["xdg-open", str(path)], check=False)
 
     def _set_all(self, value: bool) -> None:
         for cat_vars in self._checks.values():
             for var in cat_vars.values():
                 var.set(value)
 
-    def _update_status_label(self, cat: str, name: str, status: str) -> None:
+    def _update_status_label(self, cat: str, name: str, status: str,
+                              file_path: Path | None = None) -> None:
         self._status[(cat, name)] = status
+        if file_path is not None:
+            self._last_files[(cat, name)] = file_path
         lbl = self._status_labels.get((cat, name))
         if lbl and lbl.winfo_exists():
             lbl.configure(
                 text=self._STATUS_ICON.get(status, "[?]"),
                 foreground=self._STATUS_COLOR.get(status, "#858585"),
             )
+        date_lbl = self._date_labels.get((cat, name))
+        if date_lbl and date_lbl.winfo_exists():
+            date_lbl.configure(text=datetime.now().strftime("%Y-%m-%d %H:%M"))
 
     # ── run logic ─────────────────────────────────────────────────────────────
 
@@ -682,7 +767,8 @@ class QuintRunner(tk.Tk):
         save_log = effective_cat in ("safety_verify", "liveness")
         rc, output = self._exec(cmd, log_file=log_file if save_log else None)
         status = _determine_status(rc, output)
-        self.after(0, lambda s=status: self._update_status_label(cat, name, s))
+        result_file = log_file if save_log else itf_file
+        self.after(0, lambda s=status, f=result_file: self._update_status_label(cat, name, s, f))
 
     def _exec(self, cmd: list[str], log_file: Path | None) -> tuple[int, str]:
         # On Windows, npm-installed quint is quint.cmd; CreateProcess can't find .cmd files

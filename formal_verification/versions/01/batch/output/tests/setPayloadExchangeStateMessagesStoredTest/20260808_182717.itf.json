@@ -1,0 +1,334 @@
+{
+    "#meta": {
+        "format": "ITF",
+        "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+        "source": "tests_unit.qnt",
+        "status": "ok",
+        "command": "quint test tests_unit.qnt --match setPayloadExchangeStateMessagesStoredTest --out-itf output/tests/setPayloadExchangeStateMessagesStoredTest/20260808_182717.itf.json",
+        "description": "Created by Quint on Sat Aug 08 2026 18:27:26 GMT+0200 (Central European Summer Time)",
+        "timestamp": 1786206446448
+    },
+    "vars": [
+        "messageStore",
+        "nodeState",
+        "payloadExchangeState",
+        "payloadState"
+    ],
+    "states": [
+        {
+            "#meta": {
+                "index": 0
+            },
+            "messageStore": {
+                "#map": [
+                    [
+                        "Alice",
+                        {
+                            "#set": [
+                                {
+                                    "body": "Need insulin at shelter A",
+                                    "groupId": "group-alpha",
+                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                                    "timestamp": {
+                                        "#bigint": "1751966400"
+                                    }
+                                },
+                                {
+                                    "body": "Offer: 2L water near station",
+                                    "groupId": "group-alpha",
+                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                    "timestamp": {
+                                        "#bigint": "1751966400"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    [
+                        "Bob",
+                        {
+                            "#set": [
+                                {
+                                    "body": "Offer: 2L water near station",
+                                    "groupId": "group-alpha",
+                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                    "timestamp": {
+                                        "#bigint": "1751966400"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                ]
+            },
+            "nodeState": {
+                "#map": [
+                    [
+                        "Alice",
+                        {
+                            "#map": [
+                                [
+                                    "Alice",
+                                    {
+                                        "messages": {
+                                            "#set": []
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ],
+                                [
+                                    "Bob",
+                                    {
+                                        "messages": {
+                                            "#set": [
+                                                {
+                                                    "body": "Need insulin at shelter A",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ]
+                            ]
+                        }
+                    ],
+                    [
+                        "Bob",
+                        {
+                            "#map": [
+                                [
+                                    "Alice",
+                                    {
+                                        "messages": {
+                                            "#set": [
+                                                {
+                                                    "body": "Offer: 2L water near station",
+                                                    "groupId": "group-alpha",
+                                                    "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                                                    "timestamp": {
+                                                        "#bigint": "1751966400"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ],
+                                [
+                                    "Bob",
+                                    {
+                                        "messages": {
+                                            "#set": []
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ]
+                            ]
+                        }
+                    ]
+                ]
+            },
+            "payloadExchangeState": {
+                "#map": [
+                    [
+                        "Alice",
+                        {
+                            "#map": [
+                                [
+                                    "Alice",
+                                    {
+                                        "ackDetermined": false,
+                                        "messagesStored": false,
+                                        "phase": {
+                                            "tag": "Idle",
+                                            "value": {
+                                                "#tup": []
+                                            }
+                                        }
+                                    }
+                                ],
+                                [
+                                    "Bob",
+                                    {
+                                        "ackDetermined": false,
+                                        "messagesStored": false,
+                                        "phase": {
+                                            "tag": "Idle",
+                                            "value": {
+                                                "#tup": []
+                                            }
+                                        }
+                                    }
+                                ]
+                            ]
+                        }
+                    ],
+                    [
+                        "Bob",
+                        {
+                            "#map": [
+                                [
+                                    "Alice",
+                                    {
+                                        "ackDetermined": false,
+                                        "messagesStored": false,
+                                        "phase": {
+                                            "tag": "Idle",
+                                            "value": {
+                                                "#tup": []
+                                            }
+                                        }
+                                    }
+                                ],
+                                [
+                                    "Bob",
+                                    {
+                                        "ackDetermined": false,
+                                        "messagesStored": false,
+                                        "phase": {
+                                            "tag": "Idle",
+                                            "value": {
+                                                "#tup": []
+                                            }
+                                        }
+                                    }
+                                ]
+                            ]
+                        }
+                    ]
+                ]
+            },
+            "payloadState": {
+                "#map": [
+                    [
+                        "Alice",
+                        {
+                            "#map": [
+                                [
+                                    "Alice",
+                                    {
+                                        "acks": {
+                                            "#set": []
+                                        },
+                                        "messages": {
+                                            "#set": []
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "payloadId": {
+                                            "#bigint": "0"
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ],
+                                [
+                                    "Bob",
+                                    {
+                                        "acks": {
+                                            "#set": []
+                                        },
+                                        "messages": {
+                                            "#set": []
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "payloadId": {
+                                            "#bigint": "0"
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ]
+                            ]
+                        }
+                    ],
+                    [
+                        "Bob",
+                        {
+                            "#map": [
+                                [
+                                    "Alice",
+                                    {
+                                        "acks": {
+                                            "#set": []
+                                        },
+                                        "messages": {
+                                            "#set": []
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "payloadId": {
+                                            "#bigint": "0"
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ],
+                                [
+                                    "Bob",
+                                    {
+                                        "acks": {
+                                            "#set": []
+                                        },
+                                        "messages": {
+                                            "#set": []
+                                        },
+                                        "offers": {
+                                            "#set": []
+                                        },
+                                        "payloadId": {
+                                            "#bigint": "0"
+                                        },
+                                        "requests": {
+                                            "#set": []
+                                        }
+                                    }
+                                ]
+                            ]
+                        }
+                    ]
+                ]
+            }
+        }
+    ]
+}

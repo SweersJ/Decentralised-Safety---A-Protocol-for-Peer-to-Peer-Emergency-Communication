@@ -556,14 +556,14 @@ TLC2 Version 2.19 of 08 August 2024
 Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
 (Use the -nowarning option to disable this warning.)
 Running breadth-first search Model-Checking with fp 12 and seed 8695808709139630666 with 20 workers on 20 cores with 8192MB heap and 64MB offheap memory [pid: 32272] (Windows 11 10.0 amd64, Oracle Corporation 17.0.12 x86_64, MSBDiskFPSet, DiskStateQueue).
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\quint-tlc-6cVPFB\batch.tla
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\Integers.tla
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\Sequences.tla
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\FiniteSets.tla
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\TLC.tla
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\Apalache.tla
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\Variants.tla
-Parsing file C:\Users\JarnoS\AppData\Local\Temp\Naturals.tla
+Parsing file C:\Users\...\AppData\Local\Temp\quint-tlc-6cVPFB\batch.tla
+Parsing file C:\Users\...\AppData\Local\Temp\Integers.tla
+Parsing file C:\Users\...\AppData\Local\Temp\Sequences.tla
+Parsing file C:\Users\...\AppData\Local\Temp\FiniteSets.tla
+Parsing file C:\Users\...\AppData\Local\Temp\TLC.tla
+Parsing file C:\Users\...\AppData\Local\Temp\Apalache.tla
+Parsing file C:\Users\...\AppData\Local\Temp\Variants.tla
+Parsing file C:\Users\...\AppData\Local\Temp\Naturals.tla
 Semantic processing of module Naturals
 Semantic processing of module Integers
 Semantic processing of module Sequences

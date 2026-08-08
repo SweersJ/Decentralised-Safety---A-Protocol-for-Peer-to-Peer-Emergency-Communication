@@ -1,0 +1,35 @@
+Starting Apalache server on port 8822...
+# Usage statistics is OFF. We care about your privacy.
+# If you want to help our project, consider enabling statistics with config --enable-stats=true.
+
+Output directory: ...\DecSaf\formal_verification\versions\01\batch\_apalache-out\server\2026-08-08T18-24-49_15999019722469737679
+# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@18:24:49.342
+Starting checker server on port 8822...                           I@18:24:49.342
+The Apalache server is running on port 8822. Press Ctrl-C to stop.
+Running verification for "batch.qnt" with arguments " --temporal pending_ack_is_eventually_cleared --out-itf output\liveness\pending_ack_is_eventually_cleared\20260808_182447.itf.json"...
+
+  WARNING: Apalache has experimental support for temporal properties and might give incorrect results.
+  Consider using --backend tlc, which fully supports temporal properties.
+
+Do you want to proceed with Apalache anyway? (y/N) aug 08, 2026 6:24:52 P.M. com.google.protobuf.GeneratedMessage warnPre22Gencode
+WARNING: Vulnerable protobuf generated type in use: io.grpc.reflection.v1alpha.ServerReflectionRequest
+As of 2022/09/29 (release 21.7) makeExtensionsImmutable should not be called from protobuf gencode. If you are seeing this message, your gencode is vulnerable to a denial of service attack. You should regenerate your code using protobuf 25.6 or later. Use the latest version that meets your needs. However, if you understand the risks and wish to continue with vulnerable gencode, you can set the system property `-Dcom.google.protobuf.use_unsafe_pre22_gencode` on the command line to silence this warning. You also can set `-Dcom.google.protobuf.error_on_unsafe_pre22_gencode` to throw an error instead. See security vulnerability: https://github.com/protocolbuffers/protobuf/security/advisories/GHSA-h4h5-3hr4-j3g2
+PASS #0: SanyParser                                               I@18:24:52.931
+PASS #1: TypeCheckerSnowcat                                       I@18:24:54.555
+ > Running Snowcat .::.                                           I@18:24:54.555
+ > Your types are purrfect!                                       I@18:24:57.334
+ > All expressions are typed                                      I@18:24:57.334
+PASS #2: ConfigurationPass                                        I@18:24:57.336
+  > Set the initialization predicate to q::init                   I@18:24:57.346
+  > Set the transition predicate to q::step                       I@18:24:57.347
+  > Set a temporal property to q::temporalProps                   I@18:24:57.349
+PASS #3: DesugarerPass                                            I@18:24:57.358
+  > Desugaring...                                                 I@18:24:57.358
+PASS #4: InlinePass                                               I@18:24:57.391
+Leaving only relevant operators: CInitPrimed, q::init, q::initPrimed, q::step, q::temporalProps I@18:24:57.391
+PASS #5: TemporalPass                                             I@18:24:57.703
+  > Rewriting temporal operators...                               I@18:24:57.703
+  > Found 1 temporal properties                                   I@18:24:57.776
+  > Adding logic for loop finding                                 I@18:24:57.776
+error: Handling fairness is not supported yet!
+Auto-closing Apalache server on port 8822...

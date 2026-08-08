@@ -766,6 +766,14 @@ class QuintRunner(tk.Tk):
         # verify categories capture stdout to .log; run/test use --out-itf for the trace
         save_log = effective_cat in ("safety_verify", "liveness")
         rc, output = self._exec(cmd, log_file=log_file if save_log else None)
+        if not save_log and itf_file.exists():
+            try:
+                itf_file.write_text(
+                    json.dumps(json.loads(itf_file.read_text(encoding="utf-8")), indent=2),
+                    encoding="utf-8",
+                )
+            except Exception:
+                pass
         status = _determine_status(rc, output)
         result_file = log_file if save_log else itf_file
         self.after(0, lambda s=status, f=result_file: self._update_status_label(cat, name, s, f))

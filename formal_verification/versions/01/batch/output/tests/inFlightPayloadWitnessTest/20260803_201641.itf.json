@@ -1,19 +1,19 @@
 {
-    "#meta": {
-        "format": "ITF",
-        "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
-        "source": "batch.qnt",
-        "status": "error",
-        "command": "quint test batch.qnt --match inFlightPayloadWitnessTest --out-itf output/tests/inFlightPayloadWitnessTest/20260803_201641.itf.json",
-        "description": "Created by Quint on Mon Aug 03 2026 20:17:42 GMT+0200 (Central European Summer Time)",
-        "timestamp": 1785781062874
-    },
-    "vars": [],
-    "states": [
-        {
-            "#meta": {
-                "index": 0
-            }
-        }
-    ]
+  "#meta": {
+    "format": "ITF",
+    "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+    "source": "batch.qnt",
+    "status": "error",
+    "command": "quint test batch.qnt --match inFlightPayloadWitnessTest --out-itf output/tests/inFlightPayloadWitnessTest/20260803_201641.itf.json",
+    "description": "Created by Quint on Mon Aug 03 2026 20:17:42 GMT+0200 (Central European Summer Time)",
+    "timestamp": 1785781062874
+  },
+  "vars": [],
+  "states": [
+    {
+      "#meta": {
+        "index": 0
+      }
+    }
+  ]
 }

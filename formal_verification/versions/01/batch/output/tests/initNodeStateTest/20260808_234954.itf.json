@@ -4,9 +4,9 @@
     "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
     "source": "tests_unit.qnt",
     "status": "ok",
-    "command": "quint test tests_unit.qnt --match isPeerPairTest --out-itf output\\tests\\isPeerPairTest\\20260808_152920.itf.json",
-    "description": "Created by Quint on Sat Aug 08 2026 15:29:21 GMT+0200 (Midden-Europese zomertijd)",
-    "timestamp": 1786195761845
+    "command": "quint test tests_unit.qnt --match initNodeStateTest --out-itf output/tests/initNodeStateTest/20260808_234954.itf.json",
+    "description": "Created by Quint on Sat Aug 08 2026 23:50:02 GMT+0200 (Central European Summer Time)",
+    "timestamp": 1786225802239
   },
   "vars": [
     "messageStore",

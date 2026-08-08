@@ -1,1 +1,1105 @@
-{"#meta":{"format":"ITF","format-description":"https://apalache-mc.org/docs/adr/015adr-trace.html","source":"batch.qnt","status":"ok","command":"quint test batch.qnt --match inFlightPayloadWitnessTest --out-itf output\\tests\\inFlightPayloadWitnessTest\\20260804_145450.itf.json","description":"Created by Quint on Tue Aug 04 2026 14:54:54 GMT+0200 (Midden-Europese zomertijd)","timestamp":1785848094538},"vars":["messageStore","nodeState","payloadReceived","payloadSent","payloadState"],"states":[{"#meta":{"index":0},"messageStore":{"#map":[["Alice",{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]}],["Bob",{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Road blocked at bridge","groupId":"group-charlie","messageId":"f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e","timestamp":{"#bigint":"1751966400"}}]}]]},"nodeState":{"#map":[["Alice",{"#map":[["Alice",{"messages":{"#set":[]},"offers":{"#set":[]},"requests":{"#set":[]}}],["Bob",{"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"requests":{"#set":[]}}]]}],["Bob",{"#map":[["Alice",{"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Road blocked at bridge","groupId":"group-charlie","messageId":"f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"requests":{"#set":[]}}],["Bob",{"messages":{"#set":[]},"offers":{"#set":[]},"requests":{"#set":[]}}]]}]]},"payloadReceived":{"#map":[["Alice",{"#map":[["Alice",false],["Bob",false]]}],["Bob",{"#map":[["Alice",false],["Bob",false]]}]]},"payloadSent":{"#map":[["Alice",{"#map":[["Alice",false],["Bob",false]]}],["Bob",{"#map":[["Alice",false],["Bob",false]]}]]},"payloadState":{"#map":[["Alice",{"#map":[["Alice",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}],["Bob",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}]]}],["Bob",{"#map":[["Alice",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}],["Bob",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}]]}]]}},{"#meta":{"index":1},"messageStore":{"#map":[["Alice",{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]}],["Bob",{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Road blocked at bridge","groupId":"group-charlie","messageId":"f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e","timestamp":{"#bigint":"1751966400"}}]}]]},"nodeState":{"#map":[["Alice",{"#map":[["Alice",{"messages":{"#set":[]},"offers":{"#set":[]},"requests":{"#set":[]}}],["Bob",{"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"requests":{"#set":[]}}]]}],["Bob",{"#map":[["Alice",{"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Road blocked at bridge","groupId":"group-charlie","messageId":"f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"requests":{"#set":[]}}],["Bob",{"messages":{"#set":[]},"offers":{"#set":[]},"requests":{"#set":[]}}]]}]]},"payloadReceived":{"#map":[["Alice",{"#map":[["Alice",false],["Bob",false]]}],["Bob",{"#map":[["Alice",false],["Bob",false]]}]]},"payloadSent":{"#map":[["Alice",{"#map":[["Alice",false],["Bob",false]]}],["Bob",{"#map":[["Alice",false],["Bob",false]]}]]},"payloadState":{"#map":[["Alice",{"#map":[["Alice",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}],["Bob",{"acks":{"#set":[]},"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}]]}],["Bob",{"#map":[["Alice",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}],["Bob",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}]]}]]}},{"#meta":{"index":2},"messageStore":{"#map":[["Alice",{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]}],["Bob",{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Road blocked at bridge","groupId":"group-charlie","messageId":"f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e","timestamp":{"#bigint":"1751966400"}}]}]]},"nodeState":{"#map":[["Alice",{"#map":[["Alice",{"messages":{"#set":[]},"offers":{"#set":[]},"requests":{"#set":[]}}],["Bob",{"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"requests":{"#set":[]}}]]}],["Bob",{"#map":[["Alice",{"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Road blocked at bridge","groupId":"group-charlie","messageId":"f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"requests":{"#set":[]}}],["Bob",{"messages":{"#set":[]},"offers":{"#set":[]},"requests":{"#set":[]}}]]}]]},"payloadReceived":{"#map":[["Alice",{"#map":[["Alice",false],["Bob",false]]}],["Bob",{"#map":[["Alice",false],["Bob",false]]}]]},"payloadSent":{"#map":[["Alice",{"#map":[["Alice",false],["Bob",true]]}],["Bob",{"#map":[["Alice",false],["Bob",false]]}]]},"payloadState":{"#map":[["Alice",{"#map":[["Alice",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}],["Bob",{"acks":{"#set":[]},"messages":{"#set":[{"body":"Need insulin at shelter A","groupId":"group-alpha","messageId":"741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75","timestamp":{"#bigint":"1751966400"}},{"body":"Offer: 2L water near station","groupId":"group-alpha","messageId":"12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c","timestamp":{"#bigint":"1751966400"}},{"body":"Request: flashlight batteries","groupId":"group-bravo","messageId":"4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1","timestamp":{"#bigint":"1751966400"}}]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}]]}],["Bob",{"#map":[["Alice",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}],["Bob",{"acks":{"#set":[]},"messages":{"#set":[]},"offers":{"#set":[]},"payloadId":{"#bigint":"0"},"requests":{"#set":[]}}]]}]]}}]}
+{
+  "#meta": {
+    "format": "ITF",
+    "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+    "source": "batch.qnt",
+    "status": "ok",
+    "command": "quint test batch.qnt --match inFlightPayloadWitnessTest --out-itf output\\tests\\inFlightPayloadWitnessTest\\20260804_145450.itf.json",
+    "description": "Created by Quint on Tue Aug 04 2026 14:54:54 GMT+0200 (Midden-Europese zomertijd)",
+    "timestamp": 1785848094538
+  },
+  "vars": [
+    "messageStore",
+    "nodeState",
+    "payloadReceived",
+    "payloadSent",
+    "payloadState"
+  ],
+  "states": [
+    {
+      "#meta": {
+        "index": 0
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Road blocked at bridge",
+                  "groupId": "group-charlie",
+                  "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Road blocked at bridge",
+                          "groupId": "group-charlie",
+                          "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadReceived": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadSent": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 1
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Road blocked at bridge",
+                  "groupId": "group-charlie",
+                  "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Road blocked at bridge",
+                          "groupId": "group-charlie",
+                          "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadReceived": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadSent": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 2
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Road blocked at bridge",
+                  "groupId": "group-charlie",
+                  "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Road blocked at bridge",
+                          "groupId": "group-charlie",
+                          "messageId": "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadReceived": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadSent": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  true
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  false
+                ],
+                [
+                  "Bob",
+                  false
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}

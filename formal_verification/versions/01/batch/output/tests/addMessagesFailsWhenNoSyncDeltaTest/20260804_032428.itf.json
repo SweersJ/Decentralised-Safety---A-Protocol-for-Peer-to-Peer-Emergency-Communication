@@ -1,19 +1,19 @@
 {
-    "#meta": {
-        "format": "ITF",
-        "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
-        "source": "batch.qnt",
-        "status": "violation",
-        "command": "quint test batch.qnt --match addMessagesFailsWhenNoSyncDeltaTest --out-itf output\\tests\\addMessagesFailsWhenNoSyncDeltaTest\\20260804_032428.itf.json",
-        "description": "Created by Quint on Tue Aug 04 2026 03:24:30 GMT+0200 (Midden-Europese zomertijd)",
-        "timestamp": 1785806670774
-    },
-    "vars": [],
-    "states": [
-        {
-            "#meta": {
-                "index": 0
-            }
-        }
-    ]
+  "#meta": {
+    "format": "ITF",
+    "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+    "source": "batch.qnt",
+    "status": "violation",
+    "command": "quint test batch.qnt --match addMessagesFailsWhenNoSyncDeltaTest --out-itf output\\tests\\addMessagesFailsWhenNoSyncDeltaTest\\20260804_032428.itf.json",
+    "description": "Created by Quint on Tue Aug 04 2026 03:24:30 GMT+0200 (Midden-Europese zomertijd)",
+    "timestamp": 1785806670774
+  },
+  "vars": [],
+  "states": [
+    {
+      "#meta": {
+        "index": 0
+      }
+    }
+  ]
 }

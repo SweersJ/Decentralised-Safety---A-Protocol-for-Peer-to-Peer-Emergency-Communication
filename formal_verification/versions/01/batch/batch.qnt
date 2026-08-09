@@ -636,8 +636,15 @@ module batch {
                     (
                         // Allow both directions to be empty only when both directions are idle.
                         (
-                            getPayloadExchangeState(sender,receiver).phase == Idle and
-                            payloadExchangeState.get(receiver).get(sender).phase == Idle
+                            (
+                                getPayloadExchangeState(sender, receiver).phase == Idle or
+                                getPayloadExchangeState(sender, receiver).phase == AckReceived
+                            ) 
+                            and
+                            (
+                                getPayloadExchangeState(receiver, sender).phase == Idle or
+                                getPayloadExchangeState(receiver, sender).phase == AckReceived
+                            )
                         )
                         or
                         // During sync activity, at least one direction must differ from EMPTY_PAYLOAD.

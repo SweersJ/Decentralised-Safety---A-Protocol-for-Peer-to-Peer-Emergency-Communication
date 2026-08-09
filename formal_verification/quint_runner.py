@@ -44,11 +44,18 @@ _WIN_THESIS_REPO_RE = re.compile(re.escape(str(SCRIPT_DIR.parent.parent)), re.IG
 # Hide the OS temp directory (e.g. C:\Users\<user>\AppData\Local\Temp).
 _TEMP_DIR_RE = re.compile(re.escape(tempfile.gettempdir()), re.IGNORECASE)
 
+# Hide the user home directory (C:\Users\<user> or C:/Users/<user>).
+_HOME_DIR_RE = re.compile(
+    re.escape(str(Path.home())).replace(r"\/", r"[/\\]").replace("/", r"[/\\]").replace("\\\\", r"[/\\]"),
+    re.IGNORECASE,
+)
+
 
 def _shorten_log_paths(text: str) -> str:
     text = _WSL_THESIS_REPO_RE.sub("...", text)
     text = _WIN_THESIS_REPO_RE.sub("...", text)
     text = _TEMP_DIR_RE.sub("<tmp>", text)
+    text = _HOME_DIR_RE.sub("...", text)
     return text
 
 _CATEGORIES: dict[str, dict] = {

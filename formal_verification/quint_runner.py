@@ -26,9 +26,13 @@ VERIFY_CMD = SCRIPT_DIR / "verify.cmd"
 
 # ─── parsing ────────────────────────────────────────────────────────────────
 
-# Only match declarations whose body begins on the next line (line ends with `=`).
-# Limit to ≤ 8 spaces of indentation to exclude action-local vals.
-_DECL_RE = re.compile(r"^[ \t]{0,8}(val|run|temporal)\s+(\w+)\s*=\s*$", re.MULTILINE)
+# Match declarations whose body starts on the next line, plus inline test bodies
+# written as `run testName = all {`. Limit indentation to exclude action-local vals.
+_DECL_RE = re.compile(
+    r"^[ \t]{0,8}(val|temporal)\s+(\w+)\s*=\s*$"
+    r"|^[ \t]{0,8}(run)\s+(\w+)\s*=\s*(?:all\s*\{\s*)?$",
+    re.MULTILINE,
+)
 
 # val names starting with `can_` are witnesses; all other vals are safety invariants.
 _WITNESS_RE = re.compile(r"^can_")
@@ -71,7 +75,7 @@ def parse_qnt(path: Path) -> dict[str, list[str]]:
     seen: set[str] = set()
     groups: dict[str, list[str]] = {k: [] for k in _CATEGORIES}
     for m in _DECL_RE.finditer(text):
-        kind, name = m.group(1), m.group(2)
+        kind, name = (m.group(1), m.group(2)) if m.group(1) else (m.group(3), m.group(4))
         if name in seen:
             continue
         seen.add(name)

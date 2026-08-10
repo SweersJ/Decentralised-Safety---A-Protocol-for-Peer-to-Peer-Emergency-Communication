@@ -86,13 +86,13 @@ module batch {
     
     // Payload state kept per sender -> receiver.
     var payloadState: Node -> (Node -> Payload)
+    
+    // a single state variable that indicates the state of the payload exchange between two nodes.
+    var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
 
     // TODO: add the payload generator
     // Payload-id generator for future send actions.
     // var nextPayloadId: int
-    
-    // a single state variable that indicates the state of the payload exchange between two nodes.
-    var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
 
     // ------------------------------------------------------------------------------------
     // HELPER FUNCTIONS
@@ -144,7 +144,7 @@ module batch {
 
     // check if the sender has messages to send to the receiver, otherwise it doesn't make sense to add messages to the payload with no messages.
     def hasSyncDelta(sender: Node, receiver: Node): bool = {
-        messageStore.get(sender).size() > 0 and    
+        getMessagesMessageStore(sender).size() > 0 and    
         getNodeState(sender,receiver).messages.size() > 0
     }
 
@@ -207,6 +207,10 @@ module batch {
 
     // > GETTER FUNCTIONS
 
+    def getMessagesMessageStore(sender: Node): Set[Message] = {
+        messageStore.get(sender)
+    }
+
     def getNodeState(sender: Node, receiver: Node): NodeState = {
         nodeState.get(sender).get(receiver)
     }
@@ -248,13 +252,6 @@ module batch {
     }
 
     // > GENERAL FUNCTIONS
-
-    pure def excludeMessagesById(
-        messages: Set[Message],
-        ids: Set[MessageId]
-    ): Set[Message] = {
-        messages.filter(message => not(message.messageId.in(ids)))
-    }
     
     // ------------------------------------------------------------------------------------
     // INIT ACTIONS
@@ -341,7 +338,7 @@ module batch {
             )
         ),
         payloadExchangeState' = 
-            val currentPayloadExchangeState = payloadExchangeState.get(sender).get(receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(sender, receiver)
             setPayloadExchangeState(
                 sender, 
                 receiver, 
@@ -589,9 +586,9 @@ module batch {
     // -------------------------------------------------------------------------------------
 
     def isDefaultNodeState(n: Node): bool = {
-        nodeState.get(n).get(n).messages.size() == 0 and
-        nodeState.get(n).get(n).offers.size() == 0 and
-        nodeState.get(n).get(n).requests.size() == 0
+        getNodeState(n, n).messages.size() == 0 and
+        getNodeState(n, n).offers.size() == 0 and
+        getNodeState(n, n).requests.size() == 0
     }
 
     def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
@@ -608,7 +605,7 @@ module batch {
     }
 
     def hasInFlightPayload(sender: Node, receiver: Node): bool = {
-        payloadExchangeState.get(sender).get(receiver).phase == MessagesSent
+        getPayloadExchangeState(sender, receiver).phase == MessagesSent
     }
 
     // -------------------------------------------------------------------------------------
@@ -662,7 +659,7 @@ module batch {
                 receiver => 
                     isPeerPair(sender, receiver) implies
                     getNodeState(sender,receiver).messages.forall(
-                        m => m.in(messageStore.get(sender))
+                        m => m.in(getMessagesMessageStore(sender))
                     )
             )
         )

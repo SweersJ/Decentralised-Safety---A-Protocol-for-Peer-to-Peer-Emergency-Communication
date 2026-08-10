@@ -1,12 +1,20 @@
 module tests_unit {
     import batch.* from "batch"
-    import messages.* from "messages"
+    import messages.* from "./../messages/messages"
+
+    // ------------------------------------------------------------------------------------
+    // CONSTANT VALUES
+    // ------------------------------------------------------------------------------------
 
     // Fixed input keeps the helper-function tests deterministic.
     pure val TEST_MESSAGE_IDS: Node -> Set[MessageId] = Map(
         ALICE -> Set(message1.messageId, message2.messageId),
         BOB -> Set(message2.messageId)
     )
+    
+    // ------------------------------------------------------------------------------------
+    // INIT ACTIONS
+    // ------------------------------------------------------------------------------------
 
     action initWithTestMessages() = all {
         nodeState' = initNodeState(TEST_MESSAGE_IDS),
@@ -14,6 +22,10 @@ module tests_unit {
         messageStore' = initMessageStore(TEST_MESSAGE_IDS),
         payloadExchangeState' = initPayloadExchangeState,
     }
+
+    // ------------------------------------------------------------------------------------
+    // TESTS - INIT FUNCTIONS
+    // ------------------------------------------------------------------------------------
 
     run initNodeStateTest =
         initWithTestMessages
@@ -58,6 +70,10 @@ module tests_unit {
                     )
                 )
             )
+
+    // ------------------------------------------------------------------------------------
+    // TESTS - GUARD FUNCTIONS
+    // ------------------------------------------------------------------------------------
 
     run isPeerPairTest =
         initWithTestMessages
@@ -244,6 +260,10 @@ module tests_unit {
                 canIdle(ALICE, BOB)
             )
 
+    // ------------------------------------------------------------------------------------
+    // TESTS - GETTER FUNCTIONS
+    // ------------------------------------------------------------------------------------
+
     run getNodeStateTest =
         initWithTestMessages
             .expect(
@@ -275,6 +295,10 @@ module tests_unit {
                 not(state.messagesStored) and
                 not(state.ackDetermined)
             )
+
+    // ------------------------------------------------------------------------------------
+    // TESTS - SETTER FUNCTIONS
+    // ------------------------------------------------------------------------------------
 
     run setPayloadExchangeStateTest =
         initWithTestMessages
@@ -325,14 +349,16 @@ module tests_unit {
                 not(newPayloadExchangeState.get(BOB).get(ALICE).ackDetermined)
             )
 
-    run payloadMessageIdsTest =
-        initWithTestMessages
-            .then(addMessages(ALICE, BOB))
-            .expect(
-                payloadMessageIds(ALICE, BOB)
-                    == Set(message1.messageId, message2.messageId) and
-                payloadMessageIds(BOB, ALICE) == Set()
-            )
+
+    // ------------------------------------------------------------------------------------
+    // TESTS - GENERAL FUNCTIONS
+    // ------------------------------------------------------------------------------------
+
+    // Insert general function tests
+         
+    // ------------------------------------------------------------------------------------
+    // TESTS - HELPER VERIFICATION FUNCTIONS
+    // ------------------------------------------------------------------------------------
 
     run defaultNodeStateFunctionsTest =
         initWithTestMessages

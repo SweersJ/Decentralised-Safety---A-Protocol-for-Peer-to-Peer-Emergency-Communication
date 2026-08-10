@@ -1,5 +1,5 @@
 module batch {
-    import messages.* from "messages"
+    import messages.* from "./../messages/messages"
     
     // ------------------------------------------------------------------------------------
     // TYPES

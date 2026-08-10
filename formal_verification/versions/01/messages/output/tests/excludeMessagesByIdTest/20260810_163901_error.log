@@ -1,0 +1,15 @@
+
+  tests_unit
+    1) excludeMessagesByIdTest failed after 1 test(s)
+
+  1 failed
+
+  1) excludeMessagesByIdTest:
+      error: [QNT508] Assertion failed
+    Use --seed=0x4053f996ff5123fe --match=excludeMessagesByIdTest to repeat.
+
+
+  Use --verbosity=3 to show executions.
+  Further debug with: quint test --verbosity=3 tests_unit.qnt
+error: Tests failed
+[FAIL]  exit 1

@@ -1,4 +1,5 @@
 module messages {
+    import basicSpells.* from "./../../../spells/basicSpells"
     // ------------------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------------------
@@ -11,6 +12,7 @@ module messages {
         timestamp: int,
         body: str
     }
+
 
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES
@@ -67,11 +69,11 @@ module messages {
     }
 
     // ------------------------------------------------------------------------------------
-    // HELPER FUNCTIONS
+    // GETTER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
     pure def getMessage(messageId: MessageId): Message = {
-        MESSAGES.get(messageId)
+        getOrElse(MESSAGES, messageId, EMPTY_MESSAGE)
     }
 
     pure def getMessages(messageIds: Set[MessageId]): Set[Message] = {
@@ -84,5 +86,20 @@ module messages {
 
     pure def getRandomMessageIds(): Set[MessageId] = {
         getMessageIdsPowerset.chooseSome()
+    }
+
+    pure def getSetMessageIds(messages: Set[Message]): Set[MessageId] = {
+        messages.map(message => message.messageId)
+    }
+
+    // ------------------------------------------------------------------------------------
+    // GENERAL FUNCTIONS
+    // ------------------------------------------------------------------------------------
+
+    pure def excludeMessagesById(
+        messages: Set[Message],
+        ids: Set[MessageId]
+    ): Set[Message] = {
+        messages.filter(message => not(message.messageId.in(ids)))
     }
 }

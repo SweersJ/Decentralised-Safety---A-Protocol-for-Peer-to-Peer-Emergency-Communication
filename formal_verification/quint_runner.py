@@ -774,9 +774,9 @@ class QuintRunner(tk.Tk):
         display = (subprocess.list2cmdline(cmd) if platform.system() == "Windows"
                    else shlex.join(cmd))
         self._enqueue(f"\n>>  {display}\n", "cmd")
-        # verify categories capture stdout to .log; run/test use --out-itf for the trace
+        # Verify categories always capture stdout; every category captures it on errors.
         save_log = effective_cat in ("safety_verify", "liveness")
-        rc, output = self._exec(cmd, log_file=log_file if save_log else None)
+        rc, output = self._exec(cmd, log_file=None)
         if not save_log and itf_file.exists():
             try:
                 itf_file.write_text(
@@ -786,7 +786,15 @@ class QuintRunner(tk.Tk):
             except Exception:
                 pass
         status = _determine_status(rc, output)
-        result_file = log_file if save_log else itf_file
+        if status != "ok":
+            log_file = out_dir / f"{timestamp}_error.log"
+            log_file.write_text(output, encoding="utf-8")
+            result_file = log_file
+        elif save_log:
+            log_file.write_text(output, encoding="utf-8")
+            result_file = log_file
+        else:
+            result_file = itf_file
         self.after(0, lambda s=status, f=result_file: self._update_status_label(cat, name, s, f))
 
     def _exec(self, cmd: list[str], log_file: Path | None) -> tuple[int, str]:
@@ -820,11 +828,14 @@ class QuintRunner(tk.Tk):
             if proc.returncode == 0:
                 self._enqueue("[OK]\n", "ok")
             else:
-                self._enqueue(f"[FAIL]  exit {proc.returncode}\n", "err")
+                failure = f"[FAIL]  exit {proc.returncode}\n"
+                self._enqueue(failure, "err")
+                text += failure
             return proc.returncode, text
         except FileNotFoundError as exc:
-            self._enqueue(f"[ERROR]  Command not found: {exc}\n", "err")
-            return -1, ""
+            message = f"[ERROR]  Command not found: {exc}\n"
+            self._enqueue(message, "err")
+            return -1, message
 
     # ── thread-safe logging ───────────────────────────────────────────────────
 

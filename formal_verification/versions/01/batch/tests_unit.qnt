@@ -374,6 +374,15 @@ module tests_unit {
                 isDefaultPayloadState(ALICE, BOB)
             )
 
+    run payloadMessageIdsTest =
+        initWithTestMessages
+            .then(addMessages(ALICE, BOB))
+            .expect(
+                payloadMessageIds(ALICE, BOB)
+                    == Set(message1.messageId, message2.messageId) and
+                payloadMessageIds(BOB, ALICE) == Set()
+            )
+
     run hasInFlightPayloadTest =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))

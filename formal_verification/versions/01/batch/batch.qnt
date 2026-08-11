@@ -1088,24 +1088,20 @@ module batch {
                 can_have_pending_acks and can_have_delivered_payload
             )
 
-    // run storeReceivedMessagesPreservesExistingMessagesTest =
-    //     initWithMessagesToSyncTwoNodes
-    //         .then(addMessages(ALICE, BOB))
-    //         .then(sendMessagesPayload(ALICE, BOB))
-    //         .then(receiveMessagesPayload(ALICE, BOB))
-    //         .then(
-    //             val oldBobStore = messageStore.get(BOB)
-    //             storeReceivedMessages(ALICE, BOB)
-    //                 .then(
-    //                     messageStore' = messageStore
-    //                     nodeState' = nodeState
-    //                     payloadState' = payloadState
-    //                     payloadExchangeState' = payloadExchangeState
-    //                     assert(
-    //                         oldBobStore.forall(
-    //                             m => m.in(messageStore.get(BOB))
-    //                         )
-    //                     )
-    //                 )
-    //         )
+    run storeReceivedMessagesPreservesExistingMessagesTest =
+        initWithMessagesToSyncTwoNodes
+            .then(addMessages(ALICE, BOB))
+            .then(sendMessagesPayload(ALICE, BOB))
+            .then(receiveMessagesPayload(ALICE, BOB))
+            .then(
+                {
+                    val oldBobStore = messageStore.get(BOB)
+                    storeReceivedMessages(ALICE, BOB)
+                        .expect(
+                            oldBobStore.forall(
+                                m => m.in(messageStore.get(BOB))
+                            )
+                        )
+                }
+            )
 }

@@ -1,5 +1,4 @@
 sequenceDiagram
-    autonumber
     participant MessageStore_Alice@{ "type" : "database" } as Message store (Alice)
     participant NodeState_Alice@{ "type" : "database" } as Node state (Alice)
     participant PayloadState_Alice@{ "type" : "database" } as Payload state (Alice)
@@ -8,14 +7,16 @@ sequenceDiagram
     participant PayloadState_Bob@{ "type" : "database" } as Payload state (Bob)
     participant NodeState_Bob@{ "type" : "database" } as Node state (Bob)
     participant MessageStore_Bob@{ "type" : "database" } as Message store (Bob)
+    autonumber
+
     Note over Alice, Bob: batch data sync
 
-    Note over Alice, Bob: Initial state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1]<br/>NodeState_A->B = {messages:[M1,M2,M3], offers:[], requests:[]}<br/>NodeState_B->A = {messages:[M1], offers:[], requests:[]}
+    Note over MessageStore_Alice, MessageStore_Bob: Initial state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1]<br/>NodeState_A->B = {messages:[M1,M2,M3], offers:[], requests:[]}<br/>NodeState_B->A = {messages:[M1], offers:[], requests:[]}
 
     Alice->>PayloadState_Alice: create payload with messages {messages:[M1,M2,M3], acks:[]}
     activate PayloadState_Alice
     PayloadState_Alice->>NodeState_Alice: retrieve message IDs for Bob
-    NodeState_Alice->>MessageStore_Alice: retrieve messages with IDs for Bob
+    NodeState_Alice->>MessageStore_Alice: retrieve messages with IDs for Bob to Alice
     MessageStore_Alice-->>PayloadState_Alice: return messages for Bob
     PayloadState_Alice-->>Alice: return payload with messages for Bob
     Alice->>Bob: send payload with messages
@@ -23,12 +24,12 @@ sequenceDiagram
     Bob->>PayloadState_Bob: create payload with received payload
     PayloadState_Bob-->>Bob: return payload with received messages
     activate PayloadState_Bob
-    par a
+    par message storing
         Bob->>MessageStore_Bob: store missing messages M2 and M3 from payload
         Note right of Bob: Bob already has M1,<br/>so only new messages are added to MessageStore_Bob.
         
-        Bob->>NodeState_Bob: remove messages from NodeState for Alice that they already have send in their payload {messages:[], offers:[], requests:[]}
-    and b
+        Bob->>NodeState_Bob: remove messages from Bob's NodeState to Alice that Alice already have send in their payload {messages:[], offers:[], requests:[]}
+    and determination acknowledgements
         Bob->>PayloadState_Bob: add ACKs for received messages to payload
         PayloadState_Bob-->>Bob: return payload with ACKs
     end
@@ -36,6 +37,6 @@ sequenceDiagram
     deactivate PayloadState_Bob
     deactivate PayloadState_Alice
 
-    Alice->>NodeState_Alice: remove acknowledged messages from NodeState for Bob
+    Alice->>NodeState_Alice: remove acknowledged messages from NodeState for Alice to Bob
     Note left of Alice: ACKs for M1, M2, M3 received.<br/>NodeState_A->B becomes {messages:[], offers:[], requests:[]}.
-    Note over Alice, Bob: Final state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1, M2, M3]<br/>NodeState_A->B = {messages:[], offers:[], requests:[]}<br/>NodeState_B->A = {messages:[], offers:[], requests:[]}
+    Note over MessageStore_Alice, MessageStore_Bob: Final state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1, M2, M3]<br/>NodeState_A->B = {messages:[], offers:[], requests:[]}<br/>NodeState_B->A = {messages:[], offers:[], requests:[]}

@@ -1,0 +1,30 @@
+
+  tests_unit
+    1) defaultPayloadExchangeStateFunctionsText failed after 1 test(s)
+
+  1 failed
+
+  1) defaultPayloadExchangeStateFunctionsText:
+       Error [QNT508]: Expect condition does not hold true
+        at .../DecSaf/formal_verification/versions/01/batch/tests_unit.qnt:378:9
+        378:         initWithTestMessages
+                     ^^^^^^^^^^^^^^^^^^^^
+        379:             .expect(
+             ^^^^^^^^^^^^^^^^^^^^
+        380:                 isDefaultPayloadExchangeState(ALICE, ALICE) and
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        381:                 isDefaultPayloadExchangeState(BOB, BOB) and
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        382:                 not(isDefaultPayloadExchangeState(ALICE, BOB)) and
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        383:                 not(isDefaultPayloadExchangeState(BOB, ALICE))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        384:             )
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    Use --seed=0x63f0b7aa5cf94c39 --match=defaultPayloadExchangeStateFunctionsText to repeat.
+
+
+  Use --verbosity=3 to show executions.
+  Further debug with: quint test --verbosity=3 tests_unit.qnt
+error: Tests failed
+[FAIL]  exit 1

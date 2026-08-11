@@ -1,0 +1,4 @@
+[error] Runtime error (28ms at 0 traces/second).
+error: [QNT516] Failed to launch Rust evaluator: spawn /home/jsweers/.quint/rust-evaluator-v0.6.0-dev_3/quint_evaluator EACCES
+error: Runtime error
+[FAIL]  exit 1

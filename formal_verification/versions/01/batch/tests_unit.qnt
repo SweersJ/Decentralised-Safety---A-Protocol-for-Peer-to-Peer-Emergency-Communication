@@ -363,8 +363,10 @@ module tests_unit {
     run defaultNodeStateFunctionsTest =
         initWithTestMessages
             .expect(
-                isDefaultNodeState(ALICE) and
-                isDefaultNodeState(BOB)
+                isDefaultNodeState(ALICE, ALICE) and
+                isDefaultNodeState(BOB, BOB) and
+                not(isDefaultNodeState(ALICE, BOB)) and
+                not(isDefaultNodeState(BOB, ALICE))
             )
 
     run defaultPayloadStateFunctionsTest =
@@ -372,6 +374,15 @@ module tests_unit {
             .expect(
                 isDefaultPayloadState(ALICE, ALICE) and
                 isDefaultPayloadState(ALICE, BOB)
+            )
+
+    run defaultPayloadExchangeStateFunctionsText = 
+        initWithTestMessages
+            .expect(
+                isDefaultPayloadExchangeState(ALICE, ALICE) and
+                isDefaultPayloadExchangeState(BOB, BOB) and
+                isDefaultPayloadExchangeState(ALICE, BOB) and
+                isDefaultPayloadExchangeState(BOB, ALICE)
             )
 
     run payloadMessageIdsTest =

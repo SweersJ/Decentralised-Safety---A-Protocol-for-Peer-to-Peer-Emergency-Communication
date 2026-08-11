@@ -1,0 +1,1255 @@
+An example execution:
+
+[State 0]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[State 1]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[State 2]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[State 3]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[State 4]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[State 5]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" ->
+            { ackDetermined: false, messagesStored: false, phase: MessagesSent }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[State 6]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesReceived
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[State 7]
+{
+  messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          },
+          {
+            body: "Road blocked at bridge",
+            groupId: "group-charlie",
+            messageId:
+              "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" ->
+            {
+              ackDetermined: false,
+              messagesStored: true,
+              phase: MessagesReceived
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Road blocked at bridge",
+                    groupId: "group-charlie",
+                    messageId:
+                      "f576172d148bd27bc56a66d62d5d6222914be28552da8ceba08727c25524ee9e",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            },
+          "Bob" ->
+            {
+              acks: Set(),
+              messages: Set(),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }
+        )
+    )
+}
+
+[violation] Found an issue (78ms at 269 traces/second).
+Use --verbosity=3 to show executions.
+error: Invariant violated
+[FAIL]  exit 1

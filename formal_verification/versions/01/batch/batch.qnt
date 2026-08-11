@@ -604,7 +604,7 @@ module batch {
     }
 
     def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
-        getPayload(sender,receiver).messages.map(m => m.messageId)
+        getSetMessageIds(getPayload(sender,receiver).messages)
     }
 
     def hasInFlightPayload(sender: Node, receiver: Node): bool = {
@@ -712,6 +712,27 @@ module batch {
                 )
             )
         )
+
+    val sent_ack_ids_match_stored_messages  =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).phase == AckSent 
+                        implies
+                        getPayload(sender, receiver).acks.forall(
+                            id => id.in(
+                                getSetMessageIds(messageStore.get(receiver))
+                            )
+                        )
+                    )
+            )
+        )
+    
+    val sent_acks_are_sound =
+        sent_ack_ids_match_stored_messages
+        and ack_ids_match_payload_messages
+        and pending_acks_imply_nonempty_payload
 
     val pending_acks_imply_nonempty_payload =
         NODES.forall(

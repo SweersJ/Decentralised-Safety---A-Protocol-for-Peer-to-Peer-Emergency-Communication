@@ -496,6 +496,13 @@ class QuintRunner(tk.Tk):
                         variable=self.opt_safety_cmd, value="verify").grid(
             row=6, column=0, columnspan=2, sticky="w")
 
+        self.opt_combined_invariants = tk.BooleanVar()
+        ttk.Checkbutton(
+            run_tab,
+            text="Run selected invariants together (--invariants)",
+            variable=self.opt_combined_invariants,
+        ).grid(row=7, column=0, columnspan=2, sticky="w", pady=(8, 0))
+
         # ── quint verify tab ───────────────────────────────────────────────
         verify_tab = ttk.Frame(nb, padding=10)
         nb.add(verify_tab, text="quint verify")
@@ -716,6 +723,7 @@ class QuintRunner(tk.Tk):
             "backend":    self.opt_backend.get(),
             "keep_server": self.opt_keep_server.get(),
             "safety_cmd": self.opt_safety_cmd.get(),
+            "combined_invariants": self.opt_combined_invariants.get(),
         }
 
     def _run_selected(self) -> None:
@@ -747,6 +755,11 @@ class QuintRunner(tk.Tk):
         self.run_btn.configure(state="disabled" if state else "normal")
 
     def _run_tasks(self, tasks: list[tuple[str, str, str]], opts: dict) -> None:
+        if opts.get("combined_invariants"):
+            invariants = [name for _, eff_cat, name in tasks if eff_cat == "safety_run"]
+            if invariants:
+                self._run_invariants_together(invariants, opts)
+                tasks = [task for task in tasks if task[1] != "safety_run"]
         for cat, eff_cat, name in tasks:
             self._run_one(cat, eff_cat, name, opts)
         self._enqueue("\n[OK]  All done.\n", "ok")
@@ -756,6 +769,43 @@ class QuintRunner(tk.Tk):
         "tests": "tests", "safety_run": "safety", "safety_verify": "safety",
         "witness": "witness", "liveness": "liveness",
     }
+
+    def _run_invariants_together(self, names: list[str], opts: dict) -> None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_dir = self._qnt_path.parent / "output" / "safety" / "combined"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        itf_file = out_dir / f"{timestamp}.itf.json"
+        log_file = out_dir / f"{timestamp}_error.log"
+        rel_itf = itf_file.relative_to(self._qnt_path.parent)
+        cmd = ["quint", "run", self._qnt_path.name, "--invariants", *names,
+               "--out-itf", str(rel_itf)]
+        if opts.get("mbt"):
+            cmd.append("--mbt")
+        if opts.get("seed", "").strip():
+            cmd += ["--seed", opts["seed"].strip()]
+        if opts.get("max_steps", "").strip():
+            cmd += ["--max-steps", opts["max_steps"].strip()]
+
+        display = (subprocess.list2cmdline(cmd) if platform.system() == "Windows"
+                   else shlex.join(cmd))
+        self._enqueue(f"\n>>  {display}\n", "cmd")
+        rc, output = self._exec(cmd, log_file=None)
+        status = _determine_status(rc, output)
+        result_file = itf_file
+        if status != "ok":
+            log_file.write_text(output, encoding="utf-8")
+            result_file = log_file
+        elif itf_file.exists():
+            try:
+                itf_file.write_text(
+                    json.dumps(json.loads(itf_file.read_text(encoding="utf-8")), indent=2),
+                    encoding="utf-8",
+                )
+            except Exception:
+                pass
+        for name in names:
+            self.after(0, lambda n=name, s=status, f=result_file:
+                       self._update_status_label("safety", n, s, f))
 
     def _run_one(self, cat: str, effective_cat: str, name: str, opts: dict) -> None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -889,6 +939,7 @@ class QuintRunner(tk.Tk):
             self.opt_backend.set(o.get("backend", "apalache"))
             self.opt_keep_server.set(o.get("keep_server", False))
             self.opt_safety_cmd.set(o.get("safety_cmd", "run"))
+            self.opt_combined_invariants.set(o.get("combined_invariants", False))
         if "checks" in cfg:
             for cat, names in cfg["checks"].items():
                 for name, value in names.items():

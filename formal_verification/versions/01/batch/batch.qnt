@@ -661,17 +661,6 @@ module batch {
             n => isDefaultPayloadExchangeState(n, n)
         )
 
-    val pending_messages_belong_to_sender_store =
-        NODES.forall(
-            sender => NODES.forall(
-                receiver => 
-                    isPeerPair(sender, receiver) implies
-                    getNodeState(sender,receiver).messages.forall(
-                        m => m.in(getMessagesMessageStore(sender))
-                    )
-            )
-        )
-
     val payload_messages_are_pending_or_known_by_receiver =
         NODES.forall(
             sender => NODES.forall(

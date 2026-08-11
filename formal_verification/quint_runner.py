@@ -10,6 +10,7 @@ import os
 import queue
 import re
 import shlex
+import socket
 import platform
 import subprocess
 import tempfile
@@ -23,6 +24,26 @@ from tkinter import ttk, filedialog, messagebox
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 VERIFY_CMD = SCRIPT_DIR / "verify.cmd"
+APALACHE_DEFAULT_PORT = 8822
+
+
+def _next_available_port(start: int = APALACHE_DEFAULT_PORT) -> int:
+    """Return the first TCP port available for an Apalache server."""
+    for port in range(start, 65536):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            try:
+                sock.bind(("127.0.0.1", port))
+            except OSError:
+                continue
+            return port
+    raise RuntimeError(f"No available TCP port found from {start} onward")
+
+
+def _apalache_env() -> dict[str, str]:
+    """Build an environment that directs verify.cmd to a free server port."""
+    env = os.environ.copy()
+    env["PORT"] = str(_next_available_port())
+    return env
 
 # ─── parsing ────────────────────────────────────────────────────────────────
 
@@ -853,6 +874,10 @@ class QuintRunner(tk.Tk):
         self.after(0, lambda s=status, f=result_file: self._update_status_label(cat, name, s, f))
 
     def _exec(self, cmd: list[str], log_file: Path | None) -> tuple[int, str]:
+        env = None
+        if platform.system() == "Windows" and any(
+                Path(part).name.lower() == "verify.cmd" for part in cmd):
+            env = _apalache_env()
         # On Windows, npm-installed quint is quint.cmd; CreateProcess can't find .cmd files
         if platform.system() == "Windows" and cmd and cmd[0] == "quint":
             cmd = ["cmd", "/c"] + cmd
@@ -864,6 +889,7 @@ class QuintRunner(tk.Tk):
                 stdin=subprocess.PIPE,
                 text=True,
                 cwd=str(self._qnt_path.parent),
+                env=env,
             )
             # auto-confirm any interactive prompts (e.g. quint verify temporal warning)
             try:
@@ -1093,6 +1119,7 @@ class QuintRunner(tk.Tk):
                         capture_output=True,
                         text=True,
                         cwd=str(self._qnt_path.parent),
+                        env=_apalache_env(),
                     )
                 else:
                     result = subprocess.run(

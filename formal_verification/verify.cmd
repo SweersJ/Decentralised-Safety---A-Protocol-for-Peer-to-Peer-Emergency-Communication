@@ -43,7 +43,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
-set "PORT=8822"
+if not defined PORT set "PORT=8822"
 set "SERVER=localhost:%PORT%"
 set "KEEP_SERVER=0"
 set "CLOSE_TERMINAL=0"

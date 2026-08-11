@@ -54,8 +54,11 @@ _HOME_DIR_RE = re.compile(
     re.IGNORECASE,
 )
 
+_QUINT_JAR_HOME_RE = re.compile(r"jar:file:/home/[^/\r\n]+/\.quint(?=/|\s|$)")
+
 
 def _shorten_log_paths(text: str) -> str:
+    text = _QUINT_JAR_HOME_RE.sub("jar:file:/~/.quint", text)
     text = _WSL_THESIS_REPO_RE.sub("...", text)
     text = _WIN_THESIS_REPO_RE.sub("...", text)
     text = _TEMP_DIR_RE.sub("<tmp>", text)

@@ -1,0 +1,9 @@
+
+ Error [QNT000]: extraneous input 'run' expecting {<EOF>, 'module', DOCCOMMENT}
+
+  at .../DecSaf/formal_verification/versions/01/batch/tests_unit.qnt:387:5
+  387:     run payloadMessageIdsTest =
+           ^^^
+
+error: parsing failed
+[FAIL]  exit 1

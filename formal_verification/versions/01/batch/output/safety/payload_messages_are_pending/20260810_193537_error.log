@@ -1,0 +1,8 @@
+[error] Runtime error (54ms at 0 traces/second).
+error: [QNT516] Rust evaluator exited with code 1
+Error: missing field `command` at line 1 column 556195
+
+Location:
+    src/main.rs:330:9
+error: Runtime error
+[FAIL]  exit 1

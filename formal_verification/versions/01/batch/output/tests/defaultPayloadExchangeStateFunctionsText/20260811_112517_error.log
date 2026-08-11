@@ -1,0 +1,20 @@
+
+  tests_unit
+    1) defaultPayloadExchangeStateFunctionsText failed after 1 test(s)
+
+  1 failed
+
+  1) defaultPayloadExchangeStateFunctionsText:
+       Error [QNT502]: Variable payloadExchangeState not set
+        at .../DecSaf/formal_verification/versions/01/batch/batch.qnt:223:9
+        223:         payloadExchangeState.get(sender).get(receiver)
+                     ^^^^^^^^^^^^^^^^^^^^
+          at getPayloadExchangeState(sender, receiver) (.../DecSaf/formal_verification/versions/01/batch/batch.qnt:600:36)
+          at isDefaultPayloadExchangeState(ALICE, ALICE) (.../DecSaf/formal_verification/versions/01/batch/tests_unit.qnt:378:16)
+    Use --seed=0xf3fbd7dc51bca3df --match=defaultPayloadExchangeStateFunctionsText to repeat.
+
+
+  Use --verbosity=3 to show executions.
+  Further debug with: quint test --verbosity=3 tests_unit.qnt
+error: Tests failed
+[FAIL]  exit 1

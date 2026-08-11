@@ -1,0 +1,10 @@
+[TLC] Compiling to TLA+ (via Apalache)...
+# Usage statistics is OFF. We care about your privacy.
+# If you want to help our project, consider enabling statistics with config --enable-stats=true.
+
+Output directory: .../DecSaf/formal_verification/versions/01/batch/_apalache-out/server/2026-08-11T22-48-00_7573441217601024804
+# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@22:48:00.474
+Starting checker server on port 8822...                           I@22:48:00.478
+The Apalache server is running on port 8822. Press Ctrl-C to stop.
+Error while starting Apalache server: Failed to bind to address 0.0.0.0/0.0.0.0:8822: Address already in use E@22:48:01.179
+[FAIL]  exit 1

@@ -392,6 +392,7 @@ module batch {
         // Next state updates
         messageStore' = messageStore.setBy(
             receiver,
+            // With the use of union no previous messages can be removed, thus proving monotonicity.
             receiverStore => receiverStore.union(
                 getPayload(sender,receiver).messages
             )
@@ -758,7 +759,20 @@ module batch {
     // -------------------------------------------------------------------------------------
     // LIVENESS PROPOSITIONS
     // -------------------------------------------------------------------------------------
-   
+
+    /// NOT CONVERTABLE TO TLA+
+    /// This proposition produces error:
+    ///     [] followed by action not of form [A]_v
+    /// Therefore it can't be used
+    // temporal messageStores_are_monotonic = 
+    //     always(
+    //         NODES.forall(
+    //             n => messageStore.get(n).subseteq(
+    //                 next(messageStore.get(n))
+    //             )
+    //         )
+    //     )
+
     temporal fair_receive_messages_payload =
         someReceiveMessagesPayload.weakFair(Set(payloadExchangeState))
 
@@ -799,6 +813,172 @@ module batch {
                         getPayload(sender,receiver).acks.size() > 0
                         leadsTo getPayload(sender,receiver).acks.size() == 0
                 )
+            )
+        )
+
+    /// Not liveness, but temporal safety property
+    /// NOT CONVERTABLE TO TLA+
+    /// This proposition produces error:
+    ///     [] followed by action not of form [A]_v
+    /// Therefore it can't be used
+    // temporal pending_message_id_removed_only_after_storage =
+    //     NODES.forall(
+    //         sender => NODES.forall(
+    //             receiver =>
+    //                 isPeerPair(sender, receiver) implies
+    //                 MESSAGES.keys().forall(
+    //                     id =>
+    //                         always(
+    //                             (
+    //                                 id.in(
+    //                                     getSetMessageIds(
+    //                                         getNodeState(sender, receiver).messages
+    //                                     )
+    //                                 )
+    //                                 and next(
+    //                                     not(
+    //                                         id.in(
+    //                                             getSetMessageIds(
+    //                                                 getNodeState(sender, receiver).messages
+    //                                             )
+    //                                         )
+    //                                     )
+    //                                 )
+    //                             )
+    //                             implies next(
+    //                                 id.in(
+    //                                     getSetMessageIds(
+    //                                         getMessagesMessageStore(receiver)
+    //                                     )
+    //                                 )
+    //                             )
+    //                         )
+    //                 )
+    //         )
+    //     )
+
+    temporal acknowledged_messages_are_eventually_removed =
+        fair_receive_ack_payload implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver =>
+                        isPeerPair(sender, receiver) implies
+                        MESSAGES.keys().forall(
+                            id =>
+                                id.in(getPayload(sender, receiver).acks)
+                                leadsTo (
+                                    not(
+                                        id.in(
+                                            getSetMessageIds(
+                                                getNodeState(sender, receiver).messages
+                                            )
+                                        )
+                                    )
+                                    and not(
+                                        id.in(
+                                            payloadMessageIds(sender, receiver)
+                                        )
+                                    )
+                                )
+                        )
+                )
+            )
+        )
+
+    temporal pending_messages_are_eventually_delivered =
+        delivery_fairness implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver =>
+                        isPeerPair(sender, receiver) implies
+                        MESSAGES.keys().forall(
+                            id =>
+                                id.in(
+                                    getSetMessageIds(
+                                        getNodeState(sender, receiver).messages
+                                    )
+                                )
+                                leadsTo id.in(
+                                    getSetMessageIds(
+                                        getMessagesMessageStore(receiver)
+                                    )
+                                )
+                        )
+                )
+            )
+        )
+
+    temporal pending_messages_are_eventually_cleared =
+        protocol_fairness implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver =>
+                        isPeerPair(sender, receiver) implies
+                        MESSAGES.keys().forall(
+                            id =>
+                                id.in(
+                                    getSetMessageIds(
+                                        getNodeState(sender, receiver).messages
+                                    )
+                                )
+                                leadsTo not(
+                                    id.in(
+                                        getSetMessageIds(
+                                            getNodeState(sender, receiver).messages
+                                        )
+                                    )
+                                )
+                        )
+                )
+            )
+        )
+
+    temporal protocol_fairness =
+        delivery_fairness
+        and acknowledgement_fairness
+        and NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies
+                        idle(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+            )
+        )
+
+    temporal delivery_fairness =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        addMessages(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+                        and
+                        sendMessagesPayload(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+                        and
+                        receiveMessagesPayload(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+                        and
+                        storeReceivedMessages(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+                    )
+            )
+        )
+
+    temporal acknowledgement_fairness =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        determineAck(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+                        and
+                        sendAckPayload(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+                        and
+                        receiveAckPayload(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+                    )
             )
         )
 
@@ -907,4 +1087,25 @@ module batch {
             .expect(
                 can_have_pending_acks and can_have_delivered_payload
             )
+
+    // run storeReceivedMessagesPreservesExistingMessagesTest =
+    //     initWithMessagesToSyncTwoNodes
+    //         .then(addMessages(ALICE, BOB))
+    //         .then(sendMessagesPayload(ALICE, BOB))
+    //         .then(receiveMessagesPayload(ALICE, BOB))
+    //         .then(
+    //             val oldBobStore = messageStore.get(BOB)
+    //             storeReceivedMessages(ALICE, BOB)
+    //                 .then(
+    //                     messageStore' = messageStore
+    //                     nodeState' = nodeState
+    //                     payloadState' = payloadState
+    //                     payloadExchangeState' = payloadExchangeState
+    //                     assert(
+    //                         oldBobStore.forall(
+    //                             m => m.in(messageStore.get(BOB))
+    //                         )
+    //                     )
+    //                 )
+    //         )
 }

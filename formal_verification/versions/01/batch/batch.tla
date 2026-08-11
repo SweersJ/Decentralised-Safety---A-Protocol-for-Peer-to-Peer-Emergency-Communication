@@ -7,22 +7,10 @@ EXTENDS Integers, Sequences, FiniteSets, TLC, Apalache, Variants
 *)
 Offer == Variant("Offer", [tag |-> "UNIT"])
 
-VARIABLE
-  (*
-    @type: (Str -> (Str -> Bool));
-  *)
-  payloadSent
-
 (*
   @type: (() => None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }));
 *)
 Request == Variant("Request", [tag |-> "UNIT"])
-
-VARIABLE
-  (*
-    @type: (Str -> (Str -> Bool));
-  *)
-  payloadReceived
 
 (*
   @type: (() => None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }));
@@ -32,30 +20,35 @@ None == Variant("None", [tag |-> "UNIT"])
 (*
   @type: ((Str, Str) => Bool);
 *)
-isPeerPair(sender_274, receiver_274) == sender_274 /= receiver_274
+isPeerPair(sender_257, receiver_257) == sender_257 /= receiver_257
 
 (*
-  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
+  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
 *)
 Idle == Variant("Idle", [tag |-> "UNIT"])
 
 (*
-  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
+  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
+*)
+MessagesAdded == Variant("MessagesAdded", [tag |-> "UNIT"])
+
+(*
+  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
 *)
 MessagesSent == Variant("MessagesSent", [tag |-> "UNIT"])
 
 (*
-  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
+  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
 *)
 MessagesReceived == Variant("MessagesReceived", [tag |-> "UNIT"])
 
 (*
-  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
+  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
 *)
 AckSent == Variant("AckSent", [tag |-> "UNIT"])
 
 (*
-  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
+  @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
 *)
 AckReceived == Variant("AckReceived", [tag |-> "UNIT"])
 
@@ -74,6 +67,17 @@ VARIABLE
     @type: (Str -> Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }));
   *)
   messageStore
+
+VARIABLE
+  (*
+    @type: (Str -> (Str -> { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) }));
+  *)
+  payloadExchangeState
+
+(*
+  @type: (((a -> b), a) => Bool);
+*)
+has(m_2670, key_2670) == key_2670 \in DOMAIN m_2670
 
 (*
   @type: (() => { body: Str, groupId: Str, messageId: Str, timestamp: Int });
@@ -126,6 +130,22 @@ message5 ==
     body |-> "Medic available at checkpoint"]
 
 (*
+  @type: (() => { body: Str, groupId: Str, messageId: Str, timestamp: Int });
+*)
+EMPTY_MESSAGE ==
+  [messageId |-> "", groupId |-> "", timestamp |-> 0, body |-> ""]
+
+(*
+  @type: (() => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+*)
+EMPTY_PAYLOAD ==
+  [payloadId |-> 0,
+    acks |-> {},
+    offers |-> {},
+    requests |-> {},
+    messages |-> {}]
+
+(*
   @type: (() => { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
 *)
 EMPTY_NODE_STATE == [offers |-> {}, requests |-> {}, messages |-> {}]
@@ -143,35 +163,22 @@ VARIABLE
   payloadState
 
 (*
-  @type: (() => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+  @type: ((Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int })) => Set(Str));
 *)
-EMPTY_PAYLOAD ==
-  [payloadId |-> 0,
-    acks |-> {},
-    offers |-> {},
-    requests |-> {},
-    messages |-> {}]
+getSetMessageIds(messages_2368) ==
+  { message_2366["messageId"]: message_2366 \in messages_2368 }
 
 (*
-  @type: ((Str, Str) => Bool);
+  @type: ((Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), Set(Str)) => Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }));
 *)
-hasInFlightPayload(sender_1193, receiver_1193) ==
-  payloadSent[sender_1193][receiver_1193]
-    /\ ~(payloadReceived[receiver_1193][sender_1193])
+excludeMessagesById(messages_2388, ids_2388) ==
+  { message_2386 \in messages_2388: ~(message_2386["messageId"] \in ids_2388) }
 
 (*
-  @type: ((Str, Str) => Bool);
+  @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
 *)
-canReceiveMessagesPayload(sender_422, receiver_422) ==
-  (isPeerPair(sender_422, receiver_422) /\ payloadSent[sender_422][receiver_422])
-    /\ ~(payloadReceived[receiver_422][sender_422])
-
-(*
-  @type: ((Str, Str) => Bool);
-*)
-canProcessDeliveredPayload(sender_444, receiver_444) ==
-  (isPeerPair(sender_444, receiver_444) /\ payloadSent[sender_444][receiver_444])
-    /\ payloadReceived[receiver_444][sender_444]
+EMPTY_PAYLOAD_EXCHANGE_STATE ==
+  [phase |-> Idle, messagesStored |-> FALSE, ackDetermined |-> FALSE]
 
 (*
   @type: (() => Set(Str));
@@ -184,6 +191,12 @@ NODES == { (ALICE), (BOB) }
 EMPTY_RECORD_STATE == [messageId |-> "", recordType |-> None]
 
 (*
+  @type: (((c -> d), c, d) => d);
+*)
+getOrElse(m_2712, key_2712, default_2712) ==
+  IF has(m_2712, key_2712) THEN m_2712[key_2712] ELSE default_2712
+
+(*
   @type: (() => (Str -> { body: Str, groupId: Str, messageId: Str, timestamp: Int }));
 *)
 MESSAGES ==
@@ -194,65 +207,64 @@ MESSAGES ==
     <<(message5)["messageId"], (message5)>> })
 
 (*
-  @type: ((Str) => Bool);
+  @type: ((Str) => Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }));
 *)
-isDefaultNodeState(n_1093) ==
-  (Cardinality(nodeState[n_1093][n_1093]["messages"]) = 0
-      /\ Cardinality(nodeState[n_1093][n_1093]["offers"]) = 0)
-    /\ Cardinality(nodeState[n_1093][n_1093]["requests"]) = 0
+getMessagesMessageStore(sender_500) == messageStore[sender_500]
 
 (*
-  @type: ((Str, Str) => Bool);
+  @type: ((Str, Str) => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
 *)
-isDefaultPayloadState(sender_1153, receiver_1153) ==
-  (((payloadState[sender_1153][receiver_1153]["payloadId"] = 0
-          /\ Cardinality(payloadState[sender_1153][receiver_1153]["acks"]) = 0)
-        /\ Cardinality(payloadState[sender_1153][receiver_1153]["offers"]) = 0)
-      /\ Cardinality(payloadState[sender_1153][receiver_1153]["requests"]) = 0)
-    /\ Cardinality(payloadState[sender_1153][receiver_1153]["messages"]) = 0
+getPayloadExchangeState(sender_536, receiver_536) ==
+  payloadExchangeState[sender_536][receiver_536]
 
 (*
-  @type: ((Str, Str) => Set(Str));
+  @type: ((Str, Str, AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }), Bool, Bool) => (Str -> (Str -> { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) })));
 *)
-payloadMessageIds(sender_1174, receiver_1174) ==
-  {
-    m_1172["messageId"]:
-      m_1172 \in payloadState[sender_1174][receiver_1174]["messages"]
-  }
+setPayloadExchangeState(sender_570, receiver_570, newPayloadExchangePhase_570, newMessagesStored_570,
+newAckDetermined_570) ==
+  LET (*
+    @type: (() => (Str -> (Str -> { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) })));
+  *)
+  __quint_var2 == payloadExchangeState
+  IN
+  [
+    (__quint_var2) EXCEPT
+      ![sender_570] =
+        LET (*
+          @type: (((Str -> { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) })) => (Str -> { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) }));
+        *)
+        __QUINT_LAMBDA1(senderState_568) ==
+          LET (*
+            @type: (() => (Str -> { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) }));
+          *)
+          __quint_var1 == senderState_568
+          IN
+          [
+            (__quint_var1) EXCEPT
+              ![receiver_570] =
+                LET (*
+                  @type: (({ ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) }) => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+                *)
+                __QUINT_LAMBDA0(receiverState_566) ==
+                  [phase |-> newPayloadExchangePhase_570,
+                    messagesStored |-> newMessagesStored_570,
+                    ackDetermined |-> newAckDetermined_570]
+                IN
+                __QUINT_LAMBDA0((__quint_var1)[receiver_570])
+          ]
+        IN
+        __QUINT_LAMBDA1((__quint_var2)[sender_570])
+  ]
 
 (*
-  @type: ((Str, Str) => Bool);
+  @type: ((Str, Str) => { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
 *)
-hasMessagesToProcess(sender_298, receiver_298) ==
-  Cardinality(messageStore[sender_298]) /= 0
-    /\ Cardinality(nodeState[sender_298][receiver_298]["messages"]) /= 0
+getNodeState(sender_512, receiver_512) == nodeState[sender_512][receiver_512]
 
 (*
-  @type: ((Str, Str) => Bool);
+  @type: ((Str, Str) => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
 *)
-hasSyncDelta(sender_321, receiver_321) ==
-  \E m_319 \in nodeState[sender_321][receiver_321]["messages"]:
-    ~(m_319 \in messageStore[receiver_321])
-
-(*
-  @type: ((Str, Str) => Bool);
-*)
-canSendMessagesPayload(sender_399, receiver_399) ==
-  (((isPeerPair(sender_399, receiver_399)
-          /\ Cardinality(payloadState[sender_399][receiver_399]["messages"])
-            /= 0)
-        /\ Cardinality(nodeState[sender_399][receiver_399]["messages"]) /= 0)
-      /\ ~(payloadSent[sender_399][receiver_399]))
-    /\ ~(payloadReceived[receiver_399][sender_399])
-
-(*
-  @type: ((Str, Str) => Bool);
-*)
-canReceiveAckPayload(sender_478, receiver_478) ==
-  ((isPeerPair(sender_478, receiver_478)
-        /\ Cardinality(payloadState[sender_478][receiver_478]["acks"]) /= 0)
-      /\ payloadSent[receiver_478][sender_478])
-    /\ ~(payloadReceived[sender_478][receiver_478])
+getPayload(sender_524, receiver_524) == payloadState[sender_524][receiver_524]
 
 (*
   @type: (() => Bool);
@@ -262,43 +274,26 @@ two_nodes_only == Cardinality((NODES)) = 2
 (*
   @type: (() => Bool);
 *)
-can_have_in_flight_payload ==
-  \E sender_1525 \in NODES:
-    \E receiver_1523 \in NODES:
-      sender_1525 /= receiver_1523
-        /\ hasInFlightPayload(sender_1525, receiver_1523)
-
-(*
-  @type: (() => Bool);
-*)
-can_have_delivered_payload ==
-  \E sender_1566 \in NODES:
-    \E receiver_1564 \in NODES:
-      sender_1566 /= receiver_1564
-        /\ payloadReceived[receiver_1564][sender_1566]
+messageStores_are_monotonic ==
+  [][
+    \A n_1605 \in NODES:
+      messageStore[n_1605] \subseteq messageStore[n_1605]'
+  ]_messageStore
 
 (*
   @type: ((Str) => { body: Str, groupId: Str, messageId: Str, timestamp: Int });
 *)
-getMessage(messageId_1817) == (MESSAGES)[messageId_1817]
+getMessage(messageId_2329) ==
+  getOrElse((MESSAGES), messageId_2329, (EMPTY_MESSAGE))
 
 (*
-  @type: (() => (Str -> (Str -> Bool)));
-*)
-initPayloadSentState ==
-  [ sender_223 \in NODES |-> [ receiver_221 \in NODES |-> FALSE ] ]
-
-(*
-  @type: (() => (Str -> (Str -> Bool)));
-*)
-initPayloadReceivedState ==
-  [ sender_238 \in NODES |-> [ receiver_236 \in NODES |-> FALSE ] ]
-
-(*
-  @type: (() => (Str -> (Str -> AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }))));
+  @type: (() => (Str -> (Str -> { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) })));
 *)
 initPayloadExchangeState ==
-  [ sender_253 \in NODES |-> [ receiver_251 \in NODES |-> Idle ] ]
+  [
+    sender_236 \in NODES |->
+      [ receiver_234 \in NODES |-> EMPTY_PAYLOAD_EXCHANGE_STATE ]
+  ]
 
 (*
   @type: (() => Set(Set(Str)));
@@ -306,547 +301,275 @@ initPayloadExchangeState ==
 getMessageIdsPowerset == SUBSET DOMAIN MESSAGES
 
 (*
-  @type: (() => Bool);
+  @type: ((Str, Str) => Bool);
 *)
-pending_messages_belong_to_sender_store ==
-  \A sender_1290 \in NODES:
-    \A receiver_1288 \in NODES:
-      sender_1290 /= receiver_1288
-        => (\A m_1285 \in nodeState[sender_1290][receiver_1288]["messages"]:
-          m_1285 \in messageStore[sender_1290])
+hasInFlightPayload(sender_1304, receiver_1304) ==
+  (getPayloadExchangeState(sender_1304, receiver_1304))["phase"] = MessagesSent
 
 (*
   @type: (() => Bool);
 *)
-pending_acks_imply_nonempty_payload ==
-  \A sender_1344 \in NODES:
-    \A receiver_1342 \in NODES:
-      Cardinality(payloadState[sender_1344][receiver_1342]["acks"]) > 0
-        => Cardinality(payloadState[sender_1344][receiver_1342]["messages"]) > 0
+can_have_delivered_payload ==
+  \E sender_2077 \in NODES:
+    \E receiver_2075 \in NODES:
+      isPeerPair(sender_2077, receiver_2075)
+        /\ (getPayloadExchangeState(sender_2077, receiver_2075))["phase"]
+          = MessagesReceived
 
 (*
-  @type: (() => Bool);
+  @type: ((Str, Str) => Bool);
 *)
-can_have_pending_messages ==
-  \E sender_1486 \in NODES:
-    \E receiver_1484 \in NODES:
-      sender_1486 /= receiver_1484
-        /\ Cardinality(nodeState[sender_1486][receiver_1484]["messages"]) > 0
+canReceiveMessagesPayload(sender_358, receiver_358) ==
+  isPeerPair(sender_358, receiver_358)
+    /\ (getPayloadExchangeState(sender_358, receiver_358))["phase"]
+      = MessagesSent
 
 (*
-  @type: (() => Bool);
+  @type: ((Str, Str) => Bool);
 *)
-can_have_payload_messages ==
-  \E sender_1509 \in NODES:
-    \E receiver_1507 \in NODES:
-      sender_1509 /= receiver_1507
-        /\ Cardinality(payloadState[sender_1509][receiver_1507]["messages"]) > 0
-
-(*
-  @type: (() => Bool);
-*)
-can_have_pending_acks ==
-  \E sender_1548 \in NODES:
-    \E receiver_1546 \in NODES:
-      sender_1548 /= receiver_1546
-        /\ Cardinality(payloadState[sender_1548][receiver_1546]["acks"]) > 0
+isDefaultPayloadExchangeState(sender_1276, receiver_1276) ==
+  LET (*
+    @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+  *)
+  payloadExchangeState_1275 ==
+    getPayloadExchangeState(sender_1276, receiver_1276)
+  IN
+  ((payloadExchangeState_1275)["phase"] = Idle
+      /\ ~((payloadExchangeState_1275)["messagesStored"]))
+    /\ ~((payloadExchangeState_1275)["ackDetermined"])
 
 (*
   @type: (() => (Str -> (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
 *)
 initPayloadState ==
-  [ sender_189 \in NODES |-> [ receiver_187 \in NODES |-> EMPTY_PAYLOAD ] ]
+  [ sender_202 \in NODES |-> [ receiver_200 \in NODES |-> EMPTY_PAYLOAD ] ]
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-receiveMessagesPayload(sender_649, receiver_649) ==
-  canReceiveMessagesPayload(sender_649, receiver_649)
-    /\ messageStore' := messageStore
-    /\ nodeState' := nodeState
-    /\ payloadState' := payloadState
-    /\ payloadSent' := payloadSent
-    /\ payloadReceived'
-      := (LET (*
-        @type: (() => (Str -> (Str -> Bool)));
-      *)
-      __quint_var2 == payloadReceived
-      IN
-      [
-        (__quint_var2) EXCEPT
-          ![receiver_649] =
-            LET (*
-              @type: (((Str -> Bool)) => (Str -> Bool));
-            *)
-            __QUINT_LAMBDA1(receiverState_644) ==
-              LET (*
-                @type: (() => (Str -> Bool));
-              *)
-              __quint_var1 == receiverState_644
-              IN
-              [
-                (__quint_var1) EXCEPT
-                  ![sender_649] =
-                    LET (*
-                      @type: ((Bool) => Bool);
-                    *)
-                    __QUINT_LAMBDA0(id__642) == TRUE
-                    IN
-                    __QUINT_LAMBDA0((__quint_var1)[sender_649])
-              ]
-            IN
-            __QUINT_LAMBDA1((__quint_var2)[receiver_649])
-      ])
+canStoreReceivedMessages(sender_384, receiver_384) ==
+  LET (*
+    @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+  *)
+  state == getPayloadExchangeState(sender_384, receiver_384)
+  IN
+  (isPeerPair(sender_384, receiver_384) /\ (state)["phase"] = MessagesReceived)
+    /\ ~((state)["messagesStored"])
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-storeReceivedMessages(sender_708, receiver_708) ==
-  canProcessDeliveredPayload(sender_708, receiver_708)
-    /\ messageStore'
-      := (LET (*
-        @type: (() => (Str -> Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int })));
-      *)
-      __quint_var3 == messageStore
-      IN
-      [
-        (__quint_var3) EXCEPT
-          ![receiver_708] =
-            LET (*
-              @type: ((Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int })) => Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }));
-            *)
-            __QUINT_LAMBDA2(receiverStore_668) ==
-              receiverStore_668
-                \union payloadState[sender_708][receiver_708]["messages"]
-            IN
-            __QUINT_LAMBDA2((__quint_var3)[receiver_708])
-      ])
-    /\ nodeState'
-      := (LET (*
-        @type: (() => (Str -> (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
-      *)
-      __quint_var5 == nodeState
-      IN
-      [
-        (__quint_var5) EXCEPT
-          ![receiver_708] =
-            LET (*
-              @type: (((Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-            *)
-            __QUINT_LAMBDA4(receiverState_694) ==
-              LET (*
-                @type: (() => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-              *)
-              __quint_var4 == receiverState_694
-              IN
-              [
-                (__quint_var4) EXCEPT
-                  ![sender_708] =
-                    LET (*
-                      @type: (({ messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
-                    *)
-                    __QUINT_LAMBDA3(senderState_692) ==
-                      [
-                        senderState_692 EXCEPT
-                          !["messages"] =
-                            senderState_692["messages"]
-                              \ payloadState[sender_708][receiver_708][
-                                "messages"
-                              ]
-                      ]
-                    IN
-                    __QUINT_LAMBDA3((__quint_var4)[sender_708])
-              ]
-            IN
-            __QUINT_LAMBDA4((__quint_var5)[receiver_708])
-      ])
-    /\ payloadState' := payloadState
-    /\ payloadSent' := payloadSent
-    /\ payloadReceived' := payloadReceived
+canDetermineAck(sender_410, receiver_410) ==
+  LET (*
+    @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+  *)
+  state == getPayloadExchangeState(sender_410, receiver_410)
+  IN
+  (isPeerPair(sender_410, receiver_410) /\ (state)["phase"] = MessagesReceived)
+    /\ ~((state)["ackDetermined"])
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-determineAck(sender_752, receiver_752) ==
-  canProcessDeliveredPayload(sender_752, receiver_752)
-    /\ messageStore' := messageStore
-    /\ nodeState' := nodeState
-    /\ payloadState'
-      := (LET (*
-        @type: (() => (Str -> (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
-      *)
-      __quint_var7 == payloadState
-      IN
-      [
-        (__quint_var7) EXCEPT
-          ![sender_752] =
-            LET (*
-              @type: (((Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-            *)
-            __QUINT_LAMBDA6(senderPayload_741) ==
-              LET (*
-                @type: (() => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-              *)
-              __quint_var6 == senderPayload_741
-              IN
-              [
-                (__quint_var6) EXCEPT
-                  ![receiver_752] =
-                    LET (*
-                      @type: (({ acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
-                    *)
-                    __QUINT_LAMBDA5(receiverState_739) ==
-                      [
-                        receiverState_739 EXCEPT
-                          !["acks"] =
-                            {
-                              m_735["messageId"]:
-                                m_735 \in receiverState_739["messages"]
-                            }
-                      ]
-                    IN
-                    __QUINT_LAMBDA5((__quint_var6)[receiver_752])
-              ]
-            IN
-            __QUINT_LAMBDA6((__quint_var7)[sender_752])
-      ])
-    /\ payloadSent' := payloadSent
-    /\ payloadReceived' := payloadReceived
+canAckPayload(sender_439, receiver_439) ==
+  LET (*
+    @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+  *)
+  state == getPayloadExchangeState(sender_439, receiver_439)
+  IN
+  ((isPeerPair(sender_439, receiver_439) /\ (state)["phase"] = MessagesReceived)
+      /\ (state)["messagesStored"])
+    /\ (state)["ackDetermined"]
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-sendAckPayload(sender_815, receiver_815) ==
-  canProcessDeliveredPayload(sender_815, receiver_815)
-    /\ messageStore' := messageStore
-    /\ nodeState' := nodeState
-    /\ payloadState' := payloadState
-    /\ payloadSent'
-      := (LET (*
-        @type: (() => (Str -> (Str -> Bool)));
-      *)
-      __quint_var11 ==
-        LET (*
-          @type: (() => (Str -> (Str -> Bool)));
-        *)
-        __quint_var9 == payloadSent
-        IN
-        [
-          (__quint_var9) EXCEPT
-            ![receiver_815] =
-              LET (*
-                @type: (((Str -> Bool)) => (Str -> Bool));
-              *)
-              __QUINT_LAMBDA8(receiverState_777) ==
-                LET (*
-                  @type: (() => (Str -> Bool));
-                *)
-                __quint_var8 == receiverState_777
-                IN
-                [
-                  (__quint_var8) EXCEPT
-                    ![sender_815] =
-                      LET (*
-                        @type: ((Bool) => Bool);
-                      *)
-                      __QUINT_LAMBDA7(id__775) == TRUE
-                      IN
-                      __QUINT_LAMBDA7((__quint_var8)[sender_815])
-                ]
-              IN
-              __QUINT_LAMBDA8((__quint_var9)[receiver_815])
-        ]
-      IN
-      [
-        (__quint_var11) EXCEPT
-          ![sender_815] =
-            LET (*
-              @type: (((Str -> Bool)) => (Str -> Bool));
-            *)
-            __QUINT_LAMBDA10(senderState_787) ==
-              LET (*
-                @type: (() => (Str -> Bool));
-              *)
-              __quint_var10 == senderState_787
-              IN
-              [
-                (__quint_var10) EXCEPT
-                  ![receiver_815] =
-                    LET (*
-                      @type: ((Bool) => Bool);
-                    *)
-                    __QUINT_LAMBDA9(id__785) == FALSE
-                    IN
-                    __QUINT_LAMBDA9((__quint_var10)[receiver_815])
-              ]
-            IN
-            __QUINT_LAMBDA10((__quint_var11)[sender_815])
-      ])
-    /\ payloadReceived'
-      := (LET (*
-        @type: (() => (Str -> (Str -> Bool)));
-      *)
-      __quint_var15 ==
-        LET (*
-          @type: (() => (Str -> (Str -> Bool)));
-        *)
-        __quint_var13 == payloadReceived
-        IN
-        [
-          (__quint_var13) EXCEPT
-            ![sender_815] =
-              LET (*
-                @type: (((Str -> Bool)) => (Str -> Bool));
-              *)
-              __QUINT_LAMBDA12(senderState_800) ==
-                LET (*
-                  @type: (() => (Str -> Bool));
-                *)
-                __quint_var12 == senderState_800
-                IN
-                [
-                  (__quint_var12) EXCEPT
-                    ![receiver_815] =
-                      LET (*
-                        @type: ((Bool) => Bool);
-                      *)
-                      __QUINT_LAMBDA11(id__798) == FALSE
-                      IN
-                      __QUINT_LAMBDA11((__quint_var12)[receiver_815])
-                ]
-              IN
-              __QUINT_LAMBDA12((__quint_var13)[sender_815])
-        ]
-      IN
-      [
-        (__quint_var15) EXCEPT
-          ![receiver_815] =
-            LET (*
-              @type: (((Str -> Bool)) => (Str -> Bool));
-            *)
-            __QUINT_LAMBDA14(receiverState_810) ==
-              LET (*
-                @type: (() => (Str -> Bool));
-              *)
-              __quint_var14 == receiverState_810
-              IN
-              [
-                (__quint_var14) EXCEPT
-                  ![sender_815] =
-                    LET (*
-                      @type: ((Bool) => Bool);
-                    *)
-                    __QUINT_LAMBDA13(id__808) == FALSE
-                    IN
-                    __QUINT_LAMBDA13((__quint_var14)[sender_815])
-              ]
-            IN
-            __QUINT_LAMBDA14((__quint_var15)[receiver_815])
-      ])
+canIdle(sender_491, receiver_491) ==
+  LET (*
+    @type: (() => AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }));
+  *)
+  phase == (getPayloadExchangeState(sender_491, receiver_491))["phase"]
+  IN
+  isPeerPair(sender_491, receiver_491) /\ (phase = Idle \/ phase = AckReceived)
+
+(*
+  @type: ((Str, Str) => Set(Str));
+*)
+payloadMessageIds(sender_1290, receiver_1290) ==
+  getSetMessageIds((getPayload(sender_1290, receiver_1290))["messages"])
 
 (*
   @type: (() => Bool);
 *)
-no_self_receiver_nodeState == \A n_1204 \in NODES: isDefaultNodeState(n_1204)
+payload_messages_are_pending_or_known_by_receiver ==
+  \A sender_1419 \in NODES:
+    \A receiver_1417 \in NODES:
+      isPeerPair(sender_1419, receiver_1417)
+        => (\A m_1414 \in (getPayload(sender_1419, receiver_1417))["messages"]:
+          m_1414 \in (getNodeState(sender_1419, receiver_1417))["messages"]
+            \/ m_1414 \in getMessagesMessageStore(receiver_1417))
 
 (*
   @type: (() => Bool);
 *)
-no_self_receiver_payloadState ==
-  \A n_1212 \in NODES: isDefaultPayloadState(n_1212, n_1212)
+payload_messages_belong_to_sender ==
+  \A sender_1444 \in NODES:
+    \A receiver_1442 \in NODES:
+      isPeerPair(sender_1444, receiver_1442)
+        => (\A m_1439 \in (getPayload(sender_1444, receiver_1442))["messages"]:
+          m_1439 \in getMessagesMessageStore(sender_1444))
 
 (*
   @type: (() => Bool);
 *)
-no_reverse_payloadState ==
-  \A sender_1262 \in NODES:
-    \A receiver_1260 \in NODES:
-      sender_1262 /= receiver_1260
-        => (((~(payloadSent[sender_1262][receiver_1260])
-                /\ ~(payloadReceived[receiver_1260][sender_1262]))
-              /\ ~(payloadSent[receiver_1260][sender_1262]))
-            /\ ~(payloadReceived[sender_1262][receiver_1260]))
-          \/ (~(isDefaultPayloadState(sender_1262, receiver_1260))
-            \/ ~(isDefaultPayloadState(receiver_1260, sender_1262)))
+pending_messages_belong_to_sender ==
+  \A sender_1475 \in NODES:
+    \A receiver_1473 \in NODES:
+      isPeerPair(sender_1475, receiver_1473)
+        => (\A m_1470 \in (getNodeState(sender_1475, receiver_1473))["messages"]:
+          m_1470 \in getMessagesMessageStore(sender_1475))
 
 (*
   @type: (() => Bool);
 *)
-ack_ids_match_payload_messages ==
-  \A sender_1314 \in NODES:
-    \A receiver_1312 \in NODES:
-      \A id_1310 \in payloadState[sender_1314][receiver_1312]["acks"]:
-        id_1310 \in payloadMessageIds(sender_1314, receiver_1312)
+sent_ack_ids_match_stored_messages ==
+  \A sender_1532 \in NODES:
+    \A receiver_1530 \in NODES:
+      isPeerPair(sender_1532, receiver_1530)
+        => ((getPayloadExchangeState(sender_1532, receiver_1530))["phase"]
+          = AckSent
+          => (\A id_1526 \in (getPayload(sender_1532, receiver_1530))["acks"]:
+            id_1526 \in getSetMessageIds(messageStore[receiver_1530])))
+
+(*
+  @type: (() => Bool);
+*)
+pending_acks_imply_nonempty_payload ==
+  \A sender_1564 \in NODES:
+    \A receiver_1562 \in NODES:
+      Cardinality((getPayload(sender_1564, receiver_1562))["acks"]) > 0
+        => Cardinality((getPayload(sender_1564, receiver_1562))["messages"]) > 0
+
+(*
+  @type: (() => Bool);
+*)
+pending_message_id_removed_only_after_storage ==
+  [](
+    [
+      \A sender_1766 \in NODES:
+        \A receiver_1764 \in NODES:
+          \A id_1761 \in DOMAIN MESSAGES:
+            isPeerPair(sender_1766, receiver_1764)
+              => (
+                /\ id_1761
+                     \in getSetMessageIds(
+                       (nodeState[sender_1766][receiver_1764])["messages"]
+                     )
+                /\ id_1761
+                     \notin getSetMessageIds(
+                       (nodeState'[sender_1766][receiver_1764])["messages"]
+                     )
+                => id_1761
+                     \in getSetMessageIds(
+                       messageStore'[receiver_1764]
+                     )
+              )
+    ]_<<nodeState, messageStore>>
+  )
+
+
+\* Orginal version
+\* pending_message_id_removed_only_after_storage ==
+\*   \A sender_1766 \in NODES:
+\*     \A receiver_1764 \in NODES:
+\*       isPeerPair(sender_1766, receiver_1764)
+\*         => (\A id_1761 \in DOMAIN MESSAGES:
+\*           [][id_1761
+\*               \in getSetMessageIds((getNodeState(sender_1766, receiver_1764))[
+\*                 "messages"
+\*               ])
+\*             /\ ~(id_1761
+\*               \in getSetMessageIds((getNodeState(sender_1766, receiver_1764))[
+\*                 "messages"
+\*               ]))'
+\*             => (id_1761
+\*               \in getSetMessageIds((getMessagesMessageStore(receiver_1764))))']_<<nodeState, messageStore>>)
+
+(*
+  @type: (() => Bool);
+*)
+can_have_pending_messages ==
+  \E sender_1999 \in NODES:
+    \E receiver_1997 \in NODES:
+      isPeerPair(sender_1999, receiver_1997)
+        /\ Cardinality((getNodeState(sender_1999, receiver_1997))["messages"])
+          > 0
+
+(*
+  @type: (() => Bool);
+*)
+can_have_payload_messages ==
+  \E sender_2020 \in NODES:
+    \E receiver_2018 \in NODES:
+      isPeerPair(sender_2020, receiver_2018)
+        /\ Cardinality((getPayload(sender_2020, receiver_2018))["messages"]) > 0
+
+(*
+  @type: (() => Bool);
+*)
+can_have_pending_acks ==
+  \E sender_2057 \in NODES:
+    \E receiver_2055 \in NODES:
+      isPeerPair(sender_2057, receiver_2055)
+        /\ Cardinality((getPayload(sender_2057, receiver_2055))["acks"]) > 0
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-canAddMessages(sender_353, receiver_353) ==
-  (((isPeerPair(sender_353, receiver_353)
-          /\ hasMessagesToProcess(sender_353, receiver_353))
-        /\ hasSyncDelta(sender_353, receiver_353))
-      /\ ~(payloadSent[sender_353][receiver_353]))
-    /\ ~(payloadReceived[receiver_353][sender_353])
+hasSyncDelta(sender_278, receiver_278) ==
+  Cardinality((getMessagesMessageStore(sender_278))) > 0
+    /\ Cardinality((getNodeState(sender_278, receiver_278))["messages"]) > 0
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-sendMessagesPayload(sender_616, receiver_616) ==
-  canSendMessagesPayload(sender_616, receiver_616)
-    /\ messageStore' := messageStore
-    /\ nodeState' := nodeState
-    /\ payloadState' := payloadState
-    /\ payloadSent'
-      := (LET (*
-        @type: (() => (Str -> (Str -> Bool)));
-      *)
-      __quint_var19 == payloadSent
-      IN
-      [
-        (__quint_var19) EXCEPT
-          ![sender_616] =
-            LET (*
-              @type: (((Str -> Bool)) => (Str -> Bool));
-            *)
-            __QUINT_LAMBDA16(senderState_608) ==
-              LET (*
-                @type: (() => (Str -> Bool));
-              *)
-              __quint_var18 == senderState_608
-              IN
-              [
-                (__quint_var18) EXCEPT
-                  ![receiver_616] =
-                    LET (*
-                      @type: ((Bool) => Bool);
-                    *)
-                    __QUINT_LAMBDA15(id__606) == TRUE
-                    IN
-                    __QUINT_LAMBDA15((__quint_var18)[receiver_616])
-              ]
-            IN
-            __QUINT_LAMBDA16((__quint_var19)[sender_616])
-      ])
-    /\ payloadReceived' := payloadReceived
+canReceiveAckPayload(sender_466, receiver_466) ==
+  (isPeerPair(sender_466, receiver_466)
+      /\ Cardinality((getPayload(sender_466, receiver_466))["acks"]) /= 0)
+    /\ (getPayloadExchangeState(sender_466, receiver_466))["phase"] = AckSent
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-receiveAckPayload(sender_891, receiver_891) ==
-  canReceiveAckPayload(sender_891, receiver_891)
-    /\ messageStore' := messageStore
-    /\ nodeState'
-      := (LET (*
-        @type: (() => (Str -> (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
-      *)
-      __quint_var21 == nodeState
-      IN
-      [
-        (__quint_var21) EXCEPT
-          ![sender_891] =
-            LET (*
-              @type: (((Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-            *)
-            __QUINT_LAMBDA18(senderState_854) ==
-              LET (*
-                @type: (() => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-              *)
-              __quint_var20 == senderState_854
-              IN
-              [
-                (__quint_var20) EXCEPT
-                  ![receiver_891] =
-                    LET (*
-                      @type: (({ messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
-                    *)
-                    __QUINT_LAMBDA17(receiverState_852) ==
-                      [
-                        receiverState_852 EXCEPT
-                          !["messages"] =
-                            {
-                              m_848 \in receiverState_852["messages"]:
-                                ~(m_848["messageId"]
-                                  \in payloadState[receiver_891][sender_891][
-                                    "acks"
-                                  ])
-                            }
-                      ]
-                    IN
-                    __QUINT_LAMBDA17((__quint_var20)[receiver_891])
-              ]
-            IN
-            __QUINT_LAMBDA18((__quint_var21)[sender_891])
-      ])
-    /\ payloadState'
-      := (LET (*
-        @type: (() => (Str -> (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
-      *)
-      __quint_var23 == payloadState
-      IN
-      [
-        (__quint_var23) EXCEPT
-          ![sender_891] =
-            LET (*
-              @type: (((Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-            *)
-            __QUINT_LAMBDA20(senderPayload_870) ==
-              LET (*
-                @type: (() => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
-              *)
-              __quint_var22 == senderPayload_870
-              IN
-              [
-                (__quint_var22) EXCEPT
-                  ![receiver_891] =
-                    LET (*
-                      @type: (({ acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
-                    *)
-                    __QUINT_LAMBDA19(receiverState_868) ==
-                      [ receiverState_868 EXCEPT !["acks"] = {} ]
-                    IN
-                    __QUINT_LAMBDA19((__quint_var22)[receiver_891])
-              ]
-            IN
-            __QUINT_LAMBDA20((__quint_var23)[sender_891])
-      ])
-    /\ payloadSent' := payloadSent
-    /\ payloadReceived'
-      := (LET (*
-        @type: (() => (Str -> (Str -> Bool)));
-      *)
-      __quint_var25 == payloadReceived
-      IN
-      [
-        (__quint_var25) EXCEPT
-          ![receiver_891] =
-            LET (*
-              @type: (((Str -> Bool)) => (Str -> Bool));
-            *)
-            __QUINT_LAMBDA22(receiverState_886) ==
-              LET (*
-                @type: (() => (Str -> Bool));
-              *)
-              __quint_var24 == receiverState_886
-              IN
-              [
-                (__quint_var24) EXCEPT
-                  ![sender_891] =
-                    LET (*
-                      @type: ((Bool) => Bool);
-                    *)
-                    __QUINT_LAMBDA21(id__884) == TRUE
-                    IN
-                    __QUINT_LAMBDA21((__quint_var24)[sender_891])
-              ]
-            IN
-            __QUINT_LAMBDA22((__quint_var25)[receiver_891])
-      ])
+isDefaultNodeState(sender_1204, receiver_1204) ==
+  LET (*
+    @type: (() => { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+  *)
+  nodeState_1203 == getNodeState(sender_1204, receiver_1204)
+  IN
+  (Cardinality((nodeState_1203)["messages"]) = 0
+      /\ Cardinality((nodeState_1203)["offers"]) = 0)
+    /\ Cardinality((nodeState_1203)["requests"]) = 0
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+isDefaultPayloadState(sender_1249, receiver_1249) ==
+  LET (*
+    @type: (() => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+  *)
+  payload == getPayload(sender_1249, receiver_1249)
+  IN
+  ((((payload)["payloadId"] = 0 /\ Cardinality((payload)["acks"]) = 0)
+        /\ Cardinality((payload)["offers"]) = 0)
+      /\ Cardinality((payload)["requests"]) = 0)
+    /\ Cardinality((payload)["messages"]) = 0
 
 (*
   @type: ((Set(Str)) => Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }));
 *)
-getMessages(messageIds_1830) ==
-  { getMessage(id_1828): id_1828 \in messageIds_1830 }
+getMessages(messageIds_2342) ==
+  { getMessage(id_2340): id_2340 \in messageIds_2342 }
 
 (*
   @type: (() => Set(Str));
@@ -856,100 +579,398 @@ getRandomMessageIds == CHOOSE __quint_var0 \in getMessageIdsPowerset: TRUE
 (*
   @type: (() => Bool);
 *)
-someReceiveMessagesPayload ==
-  \E sender \in NODES:
-    \E receiver \in { n_1012 \in NODES: n_1012 /= sender }:
-      receiveMessagesPayload(sender, receiver)
-
-(*
-  @type: (() => Bool);
-*)
-someDetermineAck ==
-  \E sender \in NODES:
-    \E receiver \in { n_1030 \in NODES: n_1030 /= sender }:
-      determineAck(sender, receiver)
-
-(*
-  @type: (() => Bool);
-*)
-someReceiveAckPayload ==
-  \E sender \in NODES:
-    \E receiver \in { n_1048 \in NODES: n_1048 /= sender }:
-      receiveAckPayload(sender, receiver)
+can_have_in_flight_payload ==
+  \E sender_2036 \in NODES:
+    \E receiver_2034 \in NODES:
+      isPeerPair(sender_2036, receiver_2034)
+        /\ hasInFlightPayload(sender_2036, receiver_2034)
 
 (*
   @type: ((Str, Str) => Bool);
 *)
-addMessages(sender_583, receiver_583) ==
-  canAddMessages(sender_583, receiver_583)
+receiveMessagesPayload(sender_777, receiver_777) ==
+  canReceiveMessagesPayload(sender_777, receiver_777)
+    /\ messageStore' := messageStore
+    /\ nodeState' := nodeState
+    /\ payloadState' := payloadState
+    /\ payloadExchangeState'
+      := (LET (*
+        @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+      *)
+      currentPayloadExchangeState ==
+        getPayloadExchangeState(sender_777, receiver_777)
+      IN
+      setPayloadExchangeState(sender_777, receiver_777, (MessagesReceived), (currentPayloadExchangeState)[
+        "messagesStored"
+      ], (currentPayloadExchangeState)["ackDetermined"]))
+
+(*
+  @type: (() => Bool);
+*)
+self_payloadExchangeState_is_always_empty ==
+  \A n_1386 \in NODES: isDefaultPayloadExchangeState(n_1386, n_1386)
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+idle(sender_654, receiver_654) ==
+  canIdle(sender_654, receiver_654)
+    /\ messageStore' := messageStore
+    /\ nodeState' := nodeState
+    /\ payloadState' := payloadState
+    /\ payloadExchangeState'
+      := (setPayloadExchangeState(sender_654, receiver_654, (Idle), FALSE, FALSE))
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+storeReceivedMessages(sender_844, receiver_844) ==
+  canStoreReceivedMessages(sender_844, receiver_844)
+    /\ messageStore'
+      := (LET (*
+        @type: (() => (Str -> Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int })));
+      *)
+      __quint_var7 == messageStore
+      IN
+      [
+        (__quint_var7) EXCEPT
+          ![receiver_844] =
+            LET (*
+              @type: ((Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int })) => Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }));
+            *)
+            __QUINT_LAMBDA2(receiverStore_794) ==
+              receiverStore_794
+                \union (getPayload(sender_844, receiver_844))["messages"]
+            IN
+            __QUINT_LAMBDA2((__quint_var7)[receiver_844])
+      ])
+    /\ nodeState'
+      := (LET (*
+        @type: (() => (Str -> (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
+      *)
+      __quint_var9 == nodeState
+      IN
+      [
+        (__quint_var9) EXCEPT
+          ![receiver_844] =
+            LET (*
+              @type: (((Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+            *)
+            __QUINT_LAMBDA4(receiverState_819) ==
+              LET (*
+                @type: (() => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+              *)
+              __quint_var8 == receiverState_819
+              IN
+              [
+                (__quint_var8) EXCEPT
+                  ![sender_844] =
+                    LET (*
+                      @type: (({ messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+                    *)
+                    __QUINT_LAMBDA3(senderState_817) ==
+                      [
+                        senderState_817 EXCEPT
+                          !["messages"] =
+                            excludeMessagesById(senderState_817["messages"], (getSetMessageIds((getPayload(sender_844,
+                            receiver_844))[
+                              "messages"
+                            ])))
+                      ]
+                    IN
+                    __QUINT_LAMBDA3((__quint_var8)[sender_844])
+              ]
+            IN
+            __QUINT_LAMBDA4((__quint_var9)[receiver_844])
+      ])
+    /\ payloadState' := payloadState
+    /\ payloadExchangeState'
+      := (LET (*
+        @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+      *)
+      currentPayloadExchangeState ==
+        getPayloadExchangeState(sender_844, receiver_844)
+      IN
+      setPayloadExchangeState(sender_844, receiver_844, (currentPayloadExchangeState)[
+        "phase"
+      ], TRUE, (currentPayloadExchangeState)["ackDetermined"]))
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+determineAck(sender_894, receiver_894) ==
+  canDetermineAck(sender_894, receiver_894)
     /\ messageStore' := messageStore
     /\ nodeState' := nodeState
     /\ payloadState'
       := (LET (*
         @type: (() => (Str -> (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
       *)
-      __quint_var29 == payloadState
+      __quint_var11 == payloadState
       IN
       [
-        (__quint_var29) EXCEPT
-          ![sender_583] =
+        (__quint_var11) EXCEPT
+          ![sender_894] =
             LET (*
               @type: (((Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
             *)
-            __QUINT_LAMBDA24(senderPayload_572) ==
+            __QUINT_LAMBDA6(senderPayload_872) ==
               LET (*
                 @type: (() => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
               *)
-              __quint_var28 == senderPayload_572
+              __quint_var10 == senderPayload_872
               IN
               [
-                (__quint_var28) EXCEPT
-                  ![receiver_583] =
+                (__quint_var10) EXCEPT
+                  ![receiver_894] =
                     LET (*
                       @type: (({ acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
                     *)
-                    __QUINT_LAMBDA23(receiverPayload_570) ==
+                    __QUINT_LAMBDA5(receiverState_870) ==
                       [
-                        receiverPayload_570 EXCEPT
-                          !["messages"] =
-                            receiverPayload_570["messages"]
-                              \union nodeState[sender_583][receiver_583][
-                                "messages"
-                              ]
+                        receiverState_870 EXCEPT
+                          !["acks"] =
+                            getSetMessageIds(receiverState_870["messages"])
                       ]
                     IN
-                    __QUINT_LAMBDA23((__quint_var28)[receiver_583])
+                    __QUINT_LAMBDA5((__quint_var10)[receiver_894])
               ]
             IN
-            __QUINT_LAMBDA24((__quint_var29)[sender_583])
+            __QUINT_LAMBDA6((__quint_var11)[sender_894])
       ])
-    /\ payloadSent' := payloadSent
-    /\ payloadReceived' := payloadReceived
+    /\ payloadExchangeState'
+      := (LET (*
+        @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+      *)
+      currentPayloadExchangeState ==
+        getPayloadExchangeState(sender_894, receiver_894)
+      IN
+      setPayloadExchangeState(sender_894, receiver_894, (currentPayloadExchangeState)[
+        "phase"
+      ], (currentPayloadExchangeState)["messagesStored"], TRUE))
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+sendAckPayload(sender_928, receiver_928) ==
+  canAckPayload(sender_928, receiver_928)
+    /\ messageStore' := messageStore
+    /\ nodeState' := nodeState
+    /\ payloadState' := payloadState
+    /\ payloadExchangeState'
+      := (LET (*
+        @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+      *)
+      currentPayloadExchangeState ==
+        getPayloadExchangeState(sender_928, receiver_928)
+      IN
+      setPayloadExchangeState(sender_928, receiver_928, (AckSent), (currentPayloadExchangeState)[
+        "messagesStored"
+      ], (currentPayloadExchangeState)["ackDetermined"]))
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+receiveAckPayload(sender_1013, receiver_1013) ==
+  canReceiveAckPayload(sender_1013, receiver_1013)
+    /\ messageStore' := messageStore
+    /\ nodeState'
+      := (LET (*
+        @type: (() => Set(Str));
+      *)
+      ackIds == (getPayload(sender_1013, receiver_1013))["acks"]
+      IN
+      LET (*
+        @type: (() => (Str -> (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
+      *)
+      __quint_var13 == nodeState
+      IN
+      [
+        (__quint_var13) EXCEPT
+          ![sender_1013] =
+            LET (*
+              @type: (((Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+            *)
+            __QUINT_LAMBDA8(senderState_960) ==
+              LET (*
+                @type: (() => (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+              *)
+              __quint_var12 == senderState_960
+              IN
+              [
+                (__quint_var12) EXCEPT
+                  ![receiver_1013] =
+                    LET (*
+                      @type: (({ messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+                    *)
+                    __QUINT_LAMBDA7(receiverState_958) ==
+                      [
+                        receiverState_958 EXCEPT
+                          !["messages"] =
+                            excludeMessagesById(receiverState_958["messages"], (ackIds))
+                      ]
+                    IN
+                    __QUINT_LAMBDA7((__quint_var12)[receiver_1013])
+              ]
+            IN
+            __QUINT_LAMBDA8((__quint_var13)[sender_1013])
+      ])
+    /\ payloadState'
+      := (LET (*
+        @type: (() => Set(Str));
+      *)
+      ackIds == (getPayload(sender_1013, receiver_1013))["acks"]
+      IN
+      LET (*
+        @type: (() => (Str -> (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
+      *)
+      __quint_var15 == payloadState
+      IN
+      [
+        (__quint_var15) EXCEPT
+          ![sender_1013] =
+            LET (*
+              @type: (((Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+            *)
+            __QUINT_LAMBDA10(senderPayload_990) ==
+              LET (*
+                @type: (() => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+              *)
+              __quint_var14 == senderPayload_990
+              IN
+              [
+                (__quint_var14) EXCEPT
+                  ![receiver_1013] =
+                    LET (*
+                      @type: (({ acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+                    *)
+                    __QUINT_LAMBDA9(receiverPayload_988) ==
+                      [
+                        [ receiverPayload_988 EXCEPT !["acks"] = {} ] EXCEPT
+                          !["messages"] =
+                            excludeMessagesById(receiverPayload_988["messages"],
+                            (ackIds))
+                      ]
+                    IN
+                    __QUINT_LAMBDA9((__quint_var14)[receiver_1013])
+              ]
+            IN
+            __QUINT_LAMBDA10((__quint_var15)[sender_1013])
+      ])
+    /\ payloadExchangeState'
+      := (LET (*
+        @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+      *)
+      currentPayloadExchangeState ==
+        getPayloadExchangeState(sender_1013, receiver_1013)
+      IN
+      setPayloadExchangeState(sender_1013, receiver_1013, (AckReceived), (currentPayloadExchangeState)[
+        "messagesStored"
+      ], (currentPayloadExchangeState)["ackDetermined"]))
+
+(*
+  @type: (() => Bool);
+*)
+payload_message_invariant ==
+  (payload_messages_are_pending_or_known_by_receiver
+      /\ payload_messages_belong_to_sender)
+    /\ pending_messages_belong_to_sender
+
+(*
+  @type: (() => Bool);
+*)
+ack_ids_match_payload_messages ==
+  \A sender_1497 \in NODES:
+    \A receiver_1495 \in NODES:
+      \A id_1493 \in (getPayload(sender_1497, receiver_1495))["acks"]:
+        id_1493 \in payloadMessageIds(sender_1497, receiver_1495)
+
+(*
+  @type: (() => Bool);
+*)
+determined_ack_covers_payload ==
+  \A sender_1592 \in NODES:
+    \A receiver_1590 \in NODES:
+      isPeerPair(sender_1592, receiver_1590)
+        => ((getPayloadExchangeState(sender_1592, receiver_1590))[
+          "ackDetermined"
+        ]
+          => (getPayload(sender_1592, receiver_1590))["acks"]
+            = payloadMessageIds(sender_1592, receiver_1590))
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+canAddMessages(sender_300, receiver_300) ==
+  (isPeerPair(sender_300, receiver_300)
+      /\ hasSyncDelta(sender_300, receiver_300))
+    /\ (getPayloadExchangeState(sender_300, receiver_300))["phase"] = Idle
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+canSendMessagesPayload(sender_340, receiver_340) ==
+  (((isPeerPair(sender_340, receiver_340)
+          /\ hasSyncDelta(sender_340, receiver_340))
+        /\ Cardinality((getPayload(sender_340, receiver_340))["messages"]) /= 0)
+      /\ Cardinality((getNodeState(sender_340, receiver_340))["messages"]) /= 0)
+    /\ (getPayloadExchangeState(sender_340, receiver_340))["phase"]
+      = MessagesAdded
+
+(*
+  @type: (() => Bool);
+*)
+self_nodeState_is_always_empty ==
+  \A n_1316 \in NODES: isDefaultNodeState(n_1316, n_1316)
+
+(*
+  @type: (() => Bool);
+*)
+self_payloadState_is_always_empty ==
+  \A n_1324 \in NODES: isDefaultPayloadState(n_1324, n_1324)
+
+(*
+  @type: (() => Bool);
+*)
+reverse_payloadState_is_always_empty ==
+  \A sender_1378 \in NODES:
+    \A receiver_1376 \in NODES:
+      isPeerPair(sender_1378, receiver_1376)
+        => (((getPayloadExchangeState(sender_1378, receiver_1376))["phase"]
+                = Idle
+              \/ (getPayloadExchangeState(sender_1378, receiver_1376))["phase"]
+                = AckReceived)
+            /\ ((getPayloadExchangeState(receiver_1376, sender_1378))["phase"]
+                = Idle
+              \/ (getPayloadExchangeState(receiver_1376, sender_1378))["phase"]
+                = AckReceived))
+          \/ (~(isDefaultPayloadState(sender_1378, receiver_1376))
+            \/ ~(isDefaultPayloadState(receiver_1376, sender_1378)))
 
 (*
   @type: (((Str -> Set(Str))) => (Str -> Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int })));
 *)
-initMessageStore(randomMessageIds_209) ==
-  [ node_207 \in NODES |-> getMessages(randomMessageIds_209[node_207]) ]
+initMessageStore(randomMessageIds_222) ==
+  [ node_220 \in NODES |-> getMessages(randomMessageIds_222[node_220]) ]
 
 (*
   @type: (() => (Str -> Set(Str)));
 *)
-initRandomMessageIds == [ n_263 \in NODES |-> getRandomMessageIds ]
+initRandomMessageIds == [ n_246 \in NODES |-> getRandomMessageIds ]
 
 (*
   @type: (((Str -> Set(Str))) => (Str -> (Str -> { messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
 *)
-initNodeState(randomMessageIds_175) ==
+initNodeState(randomMessageIds_188) ==
   [
-    sender_173 \in NODES |->
+    sender_186 \in NODES |->
       [
-        receiver_171 \in NODES |->
+        receiver_184 \in NODES |->
           [
             (EMPTY_NODE_STATE) EXCEPT
               !["messages"] =
-                IF sender_173 /= receiver_171
-                THEN getMessages(randomMessageIds_175[sender_173])
+                IF sender_186 /= receiver_184
+                THEN getMessages(randomMessageIds_188[sender_186])
                 ELSE (EMPTY_NODE_STATE)["messages"]
           ]
       ]
@@ -958,8 +979,208 @@ initNodeState(randomMessageIds_175) ==
 (*
   @type: (() => Bool);
 *)
+someReceiveMessagesPayload ==
+  \E sender \in NODES:
+    \E receiver \in { n_1128 \in NODES: n_1128 /= sender }:
+      receiveMessagesPayload(sender, receiver)
+
+(*
+  @type: (() => Bool);
+*)
+someDetermineAck ==
+  \E sender \in NODES:
+    \E receiver \in { n_1146 \in NODES: n_1146 /= sender }:
+      determineAck(sender, receiver)
+
+(*
+  @type: (() => Bool);
+*)
+someReceiveAckPayload ==
+  \E sender \in NODES:
+    \E receiver \in { n_1164 \in NODES: n_1164 /= sender }:
+      receiveAckPayload(sender, receiver)
+
+(*
+  @type: (() => Bool);
+*)
+sent_acks_are_sound ==
+  (sent_ack_ids_match_stored_messages /\ ack_ids_match_payload_messages)
+    /\ pending_acks_imply_nonempty_payload
+
+(*
+  @type: (() => Bool);
+*)
+acknowledgement_fairness ==
+  \A sender_1978 \in NODES:
+    \A receiver_1976 \in NODES:
+      isPeerPair(sender_1978, receiver_1976)
+        => (WF_{payloadExchangeState}(determineAck(sender_1978, receiver_1976))
+            /\ WF_{payloadExchangeState}(sendAckPayload(sender_1978, receiver_1976)))
+          /\ WF_{payloadExchangeState}(receiveAckPayload(sender_1978, receiver_1976))
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+addMessages(sender_709, receiver_709) ==
+  canAddMessages(sender_709, receiver_709)
+    /\ messageStore' := messageStore
+    /\ nodeState' := nodeState
+    /\ payloadState'
+      := (LET (*
+        @type: (() => (Str -> (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })));
+      *)
+      __quint_var17 == payloadState
+      IN
+      [
+        (__quint_var17) EXCEPT
+          ![sender_709] =
+            LET (*
+              @type: (((Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) })) => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+            *)
+            __QUINT_LAMBDA12(senderPayload_687) ==
+              LET (*
+                @type: (() => (Str -> { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }));
+              *)
+              __quint_var16 == senderPayload_687
+              IN
+              [
+                (__quint_var16) EXCEPT
+                  ![receiver_709] =
+                    LET (*
+                      @type: (({ acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) }) => { acks: Set(Str), messages: Set({ body: Str, groupId: Str, messageId: Str, timestamp: Int }), offers: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }), payloadId: Int, requests: Set({ messageId: Str, recordType: None({ tag: Str }) | Offer({ tag: Str }) | Request({ tag: Str }) }) });
+                    *)
+                    __QUINT_LAMBDA11(receiverPayload_685) ==
+                      [
+                        receiverPayload_685 EXCEPT
+                          !["messages"] =
+                            receiverPayload_685["messages"]
+                              \union (getNodeState(sender_709, receiver_709))[
+                                "messages"
+                              ]
+                      ]
+                    IN
+                    __QUINT_LAMBDA11((__quint_var16)[receiver_709])
+              ]
+            IN
+            __QUINT_LAMBDA12((__quint_var17)[sender_709])
+      ])
+    /\ payloadExchangeState'
+      := (LET (*
+        @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+      *)
+      currentPayloadExchangeState ==
+        getPayloadExchangeState(sender_709, receiver_709)
+      IN
+      setPayloadExchangeState(sender_709, receiver_709, (MessagesAdded), (currentPayloadExchangeState)[
+        "messagesStored"
+      ], (currentPayloadExchangeState)["ackDetermined"]))
+
+(*
+  @type: ((Str, Str) => Bool);
+*)
+sendMessagesPayload(sender_743, receiver_743) ==
+  canSendMessagesPayload(sender_743, receiver_743)
+    /\ messageStore' := messageStore
+    /\ nodeState' := nodeState
+    /\ payloadState' := payloadState
+    /\ payloadExchangeState'
+      := (LET (*
+        @type: (() => { ackDetermined: Bool, messagesStored: Bool, phase: AckReceived({ tag: Str }) | AckSent({ tag: Str }) | Idle({ tag: Str }) | MessagesAdded({ tag: Str }) | MessagesReceived({ tag: Str }) | MessagesSent({ tag: Str }) });
+      *)
+      currentPayloadExchangeState ==
+        getPayloadExchangeState(sender_743, receiver_743)
+      IN
+      setPayloadExchangeState(sender_743, receiver_743, (MessagesSent), (currentPayloadExchangeState)[
+        "messagesStored"
+      ], (currentPayloadExchangeState)["ackDetermined"]))
+
+(*
+  @type: (() => Bool);
+*)
+initWithMessagesToSyncTwoNodes ==
+  LET (*
+    @type: (() => Set(Str));
+  *)
+  aliceIds ==
+    CHOOSE __quint_var3 \in {
+      s_1023 \in SUBSET DOMAIN MESSAGES:
+        Cardinality(s_1023) > 0
+    }:
+      TRUE
+  IN
+  LET (*
+    @type: (() => Set(Str));
+  *)
+  bobIds ==
+    CHOOSE __quint_var4 \in {
+      s_1039 \in SUBSET DOMAIN MESSAGES:
+        \E id_1037 \in aliceIds: ~(id_1037 \in s_1039)
+    }:
+      TRUE
+  IN
+  LET (*
+    @type: (() => (Str -> Set(Str)));
+  *)
+  randomMessageIds == SetAsFun({ <<(ALICE), (aliceIds)>>, <<(BOB), (bobIds)>> })
+  IN
+  nodeState' := (initNodeState((randomMessageIds)))
+    /\ payloadState' := (initPayloadState)
+    /\ messageStore' := (initMessageStore((randomMessageIds)))
+    /\ payloadExchangeState' := (initPayloadExchangeState)
+
+(*
+  @type: (() => Bool);
+*)
+initWithoutMessagesToSyncTwoNodes ==
+  LET (*
+    @type: (() => Set(Str));
+  *)
+  bobIds ==
+    CHOOSE __quint_var5 \in {
+      s_1078 \in SUBSET DOMAIN MESSAGES:
+        Cardinality(s_1078) > 0
+    }:
+      TRUE
+  IN
+  LET (*
+    @type: (() => Set(Str));
+  *)
+  aliceIds ==
+    CHOOSE __quint_var6 \in {
+      s_1089 \in SUBSET bobIds:
+        Cardinality(s_1089) > 0
+    }:
+      TRUE
+  IN
+  LET (*
+    @type: (() => (Str -> Set(Str)));
+  *)
+  randomMessageIds == SetAsFun({ <<(ALICE), (aliceIds)>>, <<(BOB), (bobIds)>> })
+  IN
+  nodeState' := (initNodeState((randomMessageIds)))
+    /\ payloadState' := (initPayloadState)
+    /\ messageStore' := (initMessageStore((randomMessageIds)))
+    /\ payloadExchangeState' := (initPayloadExchangeState)
+
+(*
+  @type: (() => Bool);
+*)
+init ==
+  LET (*
+    @type: (() => (Str -> Set(Str)));
+  *)
+  randomMessageIds == initRandomMessageIds
+  IN
+  nodeState = initNodeState((randomMessageIds))
+    /\ payloadState = initPayloadState
+    /\ messageStore = initMessageStore((randomMessageIds))
+    /\ payloadExchangeState = initPayloadExchangeState
+
+(*
+  @type: (() => Bool);
+*)
 fair_receive_messages_payload ==
-  WF_{payloadReceived}(someReceiveMessagesPayload)
+  WF_{payloadExchangeState}(someReceiveMessagesPayload)
 
 (*
   @type: (() => Bool);
@@ -974,10 +1195,23 @@ fair_receive_ack_payload == WF_{nodeState}(someReceiveAckPayload)
 (*
   @type: (() => Bool);
 *)
+delivery_fairness ==
+  \A sender_1945 \in NODES:
+    \A receiver_1943 \in NODES:
+      isPeerPair(sender_1945, receiver_1943)
+        => ((WF_{payloadExchangeState}(addMessages(sender_1945, receiver_1943))
+              /\ WF_{payloadExchangeState}(sendMessagesPayload(sender_1945, receiver_1943)))
+            /\ WF_{payloadExchangeState}(receiveMessagesPayload(sender_1945, receiver_1943)))
+          /\ WF_{payloadExchangeState}(storeReceivedMessages(sender_1945, receiver_1943))
+
+(*
+  @type: (() => Bool);
+*)
 step ==
   \E sender \in NODES:
-    \E receiver \in { n_510 \in NODES: n_510 /= sender }:
-      addMessages(sender, receiver)
+    \E receiver \in { n_599 \in NODES: n_599 /= sender }:
+      idle(sender, receiver)
+        \/ addMessages(sender, receiver)
         \/ sendMessagesPayload(sender, receiver)
         \/ receiveMessagesPayload(sender, receiver)
         \/ storeReceivedMessages(sender, receiver)
@@ -988,119 +1222,86 @@ step ==
 (*
   @type: (() => Bool);
 *)
-initWithoutMessagesToSyncTwoNodes ==
-  LET (*
-    @type: (() => Set(Str));
-  *)
-  bobIds ==
-    CHOOSE __quint_var16 \in {
-      s_959 \in SUBSET DOMAIN MESSAGES:
-        Cardinality(s_959) > 0
-    }:
-      TRUE
-  IN
-  LET (*
-    @type: (() => Set(Str));
-  *)
-  aliceIds ==
-    CHOOSE __quint_var17 \in { s_970 \in SUBSET bobIds: Cardinality(s_970) > 0 }:
-      TRUE
-  IN
-  LET (*
-    @type: (() => (Str -> Set(Str)));
-  *)
-  randomMessageIds == SetAsFun({ <<(ALICE), (aliceIds)>>, <<(BOB), (bobIds)>> })
-  IN
-  nodeState' := (initNodeState((randomMessageIds)))
-    /\ payloadState' := (initPayloadState)
-    /\ messageStore' := (initMessageStore((randomMessageIds)))
-    /\ payloadSent' := (initPayloadSentState)
-    /\ payloadReceived' := (initPayloadReceivedState)
-
-(*
-  @type: (() => Bool);
-*)
-init ==
-  LET (*
-    @type: (() => (Str -> Set(Str)));
-  *)
-  randomMessageIds == initRandomMessageIds
-  IN
-  nodeState = initNodeState((randomMessageIds))
-    /\ payloadState = initPayloadState
-    /\ messageStore = initMessageStore((randomMessageIds))
-    /\ payloadSent = initPayloadSentState
-    /\ payloadReceived = initPayloadReceivedState
-
-(*
-  @type: (() => Bool);
-*)
-initWithMessagesToSyncTwoNodes ==
-  LET (*
-    @type: (() => Set(Str));
-  *)
-  aliceIds ==
-    CHOOSE __quint_var26 \in {
-      s_901 \in SUBSET DOMAIN MESSAGES:
-        Cardinality(s_901) > 0
-    }:
-      TRUE
-  IN
-  LET (*
-    @type: (() => Set(Str));
-  *)
-  bobIds ==
-    CHOOSE __quint_var27 \in {
-      s_917 \in SUBSET DOMAIN MESSAGES:
-        \E id_915 \in aliceIds: ~(id_915 \in s_917)
-    }:
-      TRUE
-  IN
-  LET (*
-    @type: (() => (Str -> Set(Str)));
-  *)
-  randomMessageIds == SetAsFun({ <<(ALICE), (aliceIds)>>, <<(BOB), (bobIds)>> })
-  IN
-  nodeState' := (initNodeState((randomMessageIds)))
-    /\ payloadState' := (initPayloadState)
-    /\ messageStore' := (initMessageStore((randomMessageIds)))
-    /\ payloadSent' := (initPayloadSentState)
-    /\ payloadReceived' := (initPayloadReceivedState)
-
-(*
-  @type: (() => Bool);
-*)
 in_flight_payload_is_eventually_received ==
   fair_receive_messages_payload
-    => (\A sender_1382 \in NODES:
-      \A receiver_1380 \in NODES:
-        sender_1382 /= receiver_1380
-          => hasInFlightPayload(sender_1382, receiver_1380)
-            ~> payloadReceived[receiver_1380][sender_1382])
+    => (\A sender_1646 \in NODES:
+      \A receiver_1644 \in NODES:
+        isPeerPair(sender_1646, receiver_1644)
+          => hasInFlightPayload(sender_1646, receiver_1644)
+            ~> (getPayloadExchangeState(sender_1646, receiver_1644))["phase"]
+              = MessagesReceived)
 
 (*
   @type: (() => Bool);
 *)
 pending_payload_is_eventually_acknowledged ==
   fair_receive_messages_payload /\ fair_determine_ack
-    => (\A sender_1426 \in NODES:
-      \A receiver_1424 \in NODES:
-        sender_1426 /= receiver_1424
-          => Cardinality(payloadState[sender_1426][receiver_1424]["messages"])
+    => (\A sender_1688 \in NODES:
+      \A receiver_1686 \in NODES:
+        isPeerPair(sender_1688, receiver_1686)
+          => Cardinality((getPayload(sender_1688, receiver_1686))["messages"])
               > 0
-            /\ payloadSent[sender_1426][receiver_1424]
-            ~> Cardinality(payloadState[sender_1426][receiver_1424]["acks"]) > 0)
+            /\ (getPayloadExchangeState(sender_1688, receiver_1686))["phase"]
+              = MessagesSent
+            ~> Cardinality((getPayload(sender_1688, receiver_1686))["acks"]) > 0)
 
 (*
   @type: (() => Bool);
 *)
 pending_ack_is_eventually_cleared ==
   fair_receive_ack_payload
-    => (\A sender_1462 \in NODES:
-      \A receiver_1460 \in NODES:
-        sender_1462 /= receiver_1460
-          => Cardinality(payloadState[sender_1462][receiver_1460]["acks"]) > 0
-            ~> Cardinality(payloadState[sender_1462][receiver_1460]["acks"]) = 0)
+    => (\A sender_1720 \in NODES:
+      \A receiver_1718 \in NODES:
+        isPeerPair(sender_1720, receiver_1718)
+          => Cardinality((getPayload(sender_1720, receiver_1718))["acks"]) > 0
+            ~> Cardinality((getPayload(sender_1720, receiver_1718))["acks"]) = 0)
+
+(*
+  @type: (() => Bool);
+*)
+acknowledged_messages_are_eventually_removed ==
+  fair_receive_ack_payload
+    => (\A sender_1809 \in NODES:
+      \A receiver_1807 \in NODES:
+        isPeerPair(sender_1809, receiver_1807)
+          => (\A id_1804 \in DOMAIN MESSAGES:
+            id_1804 \in (getPayload(sender_1809, receiver_1807))["acks"]
+              ~> ~(id_1804
+                  \in getSetMessageIds((getNodeState(sender_1809, receiver_1807))[
+                    "messages"
+                  ]))
+                /\ ~(id_1804 \in payloadMessageIds(sender_1809, receiver_1807))))
+
+(*
+  @type: (() => Bool);
+*)
+pending_messages_are_eventually_delivered ==
+  delivery_fairness
+    => (\A sender_1843 \in NODES:
+      \A receiver_1841 \in NODES:
+        isPeerPair(sender_1843, receiver_1841)
+          => (\A id_1838 \in DOMAIN MESSAGES:
+            id_1838
+              \in getSetMessageIds((getNodeState(sender_1843, receiver_1841))[
+                "messages"
+              ])
+              ~> id_1838
+                \in getSetMessageIds((getMessagesMessageStore(receiver_1841)))))
+
+(*
+  @type: (() => Bool);
+*)
+protocol_fairness ==
+  (delivery_fairness /\ acknowledgement_fairness)
+    /\ (\A sender_1904 \in NODES:
+      \A receiver_1902 \in NODES:
+        isPeerPair(sender_1904, receiver_1902)
+          => WF_{payloadExchangeState}(idle(sender_1904, receiver_1902)))
+
+(*
+  @type: (() => Bool);
+*)
+q_init == init
 
 (*
   @type: (() => Bool);
@@ -1110,6 +1311,20 @@ q_step == step
 (*
   @type: (() => Bool);
 *)
-q_init == init
+pending_messages_are_eventually_cleared ==
+  protocol_fairness
+    => (\A sender_1881 \in NODES:
+      \A receiver_1879 \in NODES:
+        isPeerPair(sender_1881, receiver_1879)
+          => (\A id_1876 \in DOMAIN MESSAGES:
+            id_1876
+              \in getSetMessageIds((getNodeState(sender_1881, receiver_1879))[
+                "messages"
+              ])
+              ~> ~(id_1876
+                \in getSetMessageIds((getNodeState(sender_1881, receiver_1879))[
+                  "messages"
+                ]))))
 
 ================================================================================
+

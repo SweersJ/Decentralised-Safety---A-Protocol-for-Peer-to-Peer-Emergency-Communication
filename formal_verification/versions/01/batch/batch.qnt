@@ -741,6 +741,19 @@ module batch {
                     implies getPayload(sender,receiver).messages.size() > 0
             )
         )
+    
+    val determined_ack_covers_payload =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).ackDetermined
+                        implies
+                        getPayload(sender, receiver).acks
+                            == payloadMessageIds(sender, receiver)
+                    )
+            )
+        )
 
     // -------------------------------------------------------------------------------------
     // LIVENESS PROPOSITIONS

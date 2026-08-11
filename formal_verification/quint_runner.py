@@ -341,8 +341,9 @@ def _determine_status(returncode: int, output: str) -> str:
     if returncode == 0:
         return "ok"
     lower = output.lower()
-    if any(kw in lower for kw in ("violation", "violated", "counterexample",
-                                   "invariant not", "failed", "assertion")):
+    if (any(kw in lower for kw in ("violated", "counterexample",
+                                    "invariant not", "failed", "assertion"))
+            or ("violation" in lower and "no violation" not in lower)):
         return "violation"
     return "error"
 
@@ -622,8 +623,9 @@ class QuintRunner(tk.Tk):
             elif last.suffix == ".log":
                 content = last.read_text(encoding="utf-8")
                 lower = content.lower()
-                if any(kw in lower for kw in ("violation", "violated", "counterexample",
-                                              "invariant not", "assertion")):
+                if (any(kw in lower for kw in ("violated", "counterexample",
+                                                "invariant not", "assertion"))
+                        or ("violation" in lower and "no violation" not in lower)):
                     status = "violation"
                 elif any(kw in lower for kw in ("[ok]", "no error", "verified", "the outcome is ok")):
                     status = "ok"

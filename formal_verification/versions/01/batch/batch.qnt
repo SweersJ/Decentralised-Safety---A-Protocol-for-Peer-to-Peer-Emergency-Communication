@@ -618,17 +618,17 @@ module batch {
     val two_nodes_only = 
         NODES.size() == 2
 
-    val no_self_receiver_nodeState = 
+    val self_nodeState_is_always_empty = 
         NODES.forall(
             n => isDefaultNodeState(n, n)
         )
 
-    val no_self_receiver_payloadState = 
+    val self_payloadState_is_always_empty = 
         NODES.forall(
             n => isDefaultPayloadState(n, n)
         )
 
-    val no_reverse_payloadState = 
+    val reverse_payloadState_is_always_empty = 
         NODES.forall(
             sender => NODES.forall(
                 receiver =>
@@ -656,7 +656,7 @@ module batch {
             )
         )
     
-    val no_self_receiver_payloadExchangeState = 
+    val self_payloadExchangeState_is_always_empty = 
         NODES.forall(
             n => isDefaultPayloadExchangeState(n, n)
         )

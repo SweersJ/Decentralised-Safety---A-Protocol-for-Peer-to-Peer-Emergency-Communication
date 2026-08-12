@@ -12,16 +12,16 @@ module batch {
     /// ! only for interactive !
     ///
     /// - @returns RecordType the record classification
-    type RecordType = Offer | Request | None
+    // type RecordType = Offer | Request | None
     
     /// Associate a message identifier with its synchronisation record classification.
     /// ! only for interactive !
     ///
     /// - @returns RecordState the synchronisation record state
-    type RecordState = { //TODO: add count and epoch in next version
-        messageId: MessageId, // Not used as map key, but as a value to be able to track the message ID in the record state.
-        recordType: RecordType
-    }
+    // type RecordState = { //TODO: add count and epoch in next version
+    //     messageId: MessageId, // Not used as map key, but as a value to be able to track the message ID in the record state.
+    //     recordType: RecordType
+    // }
 
     /// Identify a protocol payload with an id encoded as integer instead of UUID.
     ///
@@ -35,8 +35,8 @@ module batch {
     type Payload = {
         payloadId: PayloadId,
         acks: Set[MessageId],
-        offers: Set[RecordState], //TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
-        requests: Set[RecordState], //TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
+        // offers: Set[RecordState], //only for interactive  TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
+        // requests: Set[RecordState], //only for interactive  TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
         messages: Set[Message]
     }
 
@@ -44,8 +44,8 @@ module batch {
     ///
     /// - @returns NodeState the per-peer synchronisation state
     type NodeState = {
-        offers: Set[RecordState], //TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
-        requests: Set[RecordState], //TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
+        // offers: Set[RecordState], //only for interactive TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
+        // requests: Set[RecordState], //only for interactive TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
         messages: Set[Message]
     }
 
@@ -102,8 +102,8 @@ module batch {
     ///
     /// - @returns NodeState the empty node-state value
     pure val EMPTY_NODE_STATE: NodeState = {
-        offers: Set(),
-        requests: Set(),
+        // offers: Set(), //only for interactive
+        // requests: Set(), //only for interactive
         messages: Set()
     }
 
@@ -111,10 +111,10 @@ module batch {
     /// ! only for interactive !
     ///
     /// - @returns RecordState the empty record-state value
-    pure val EMPTY_RECORD_STATE: RecordState = {
-        messageId: "",
-        recordType: None
-    }
+    // pure val EMPTY_RECORD_STATE: RecordState = {
+    //     messageId: "",
+    //     recordType: None
+    // }
 
     /// Provide the default idle and unprocessed payload exchange state.
     ///
@@ -151,7 +151,9 @@ module batch {
     var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
 
     /// Payload-id generator for future send actions.
+    ///
     /// TODO: add the payload generator
+    ///
     /// - @returns int the next payload id for the next payload to be sent
     // var nextPayloadId: int
 
@@ -374,9 +376,9 @@ module batch {
 
     /// Return the payload state associated with a sender-receiver pair.
     ///
-    /// -@param Node sender the payload sender
-    /// -@param Node receiver the payload receiver
-    /// -@return Payload the computed result
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns Payload the computed result
     def getPayload(sender: Node, receiver: Node): Payload = {
         payloadState.get(sender).get(receiver)
     }

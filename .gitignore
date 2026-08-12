@@ -10,3 +10,4 @@ _apalache-out/
 
 apalache.jar
 .context/
+.agents/

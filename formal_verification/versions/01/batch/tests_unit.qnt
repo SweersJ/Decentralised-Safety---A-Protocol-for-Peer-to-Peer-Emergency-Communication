@@ -1,3 +1,6 @@
+/// Test batch protocol initialisation, guards, accessors, setters, and helpers.
+///
+/// -@return tests_unit the batch protocol unit-test module
 module tests_unit {
     import batch.* from "batch"
     import messages.* from "./../messages/messages"
@@ -6,7 +9,11 @@ module tests_unit {
     // CONSTANT VALUES
     // ------------------------------------------------------------------------------------
 
-    // Fixed input keeps the helper-function tests deterministic.
+    /// Associate each node with deterministic message identifiers for unit tests.
+    ///
+    /// Fixed input keeps the helper-function tests deterministic.
+    ///
+    /// -@return Node -> Set[MessageId] the test message identifiers by node
     pure val TEST_MESSAGE_IDS: Node -> Set[MessageId] = Map(
         ALICE -> Set(message1.messageId, message2.messageId),
         BOB -> Set(message2.messageId)
@@ -16,6 +23,9 @@ module tests_unit {
     // INIT ACTIONS
     // ------------------------------------------------------------------------------------
 
+    /// Initialise every protocol state variable with deterministic test messages.
+    ///
+    /// -@return bool whether the action is enabled and its transition constraints hold
     action initWithTestMessages() = all {
         nodeState' = initNodeState(TEST_MESSAGE_IDS),
         payloadState' = initPayloadState,
@@ -27,6 +37,9 @@ module tests_unit {
     // TESTS - INIT FUNCTIONS
     // ------------------------------------------------------------------------------------
 
+    /// Test node-state initialisation for peer and self pairs.
+    ///
+    /// -@return bool whether the test passes
     run initNodeStateTest =
         initWithTestMessages
             .expect(
@@ -36,6 +49,9 @@ module tests_unit {
                 nodeState.get(BOB).get(BOB) == EMPTY_NODE_STATE
             )
 
+    /// Test that every payload state is initially empty.
+    ///
+    /// -@return bool whether the test passes
     run initPayloadStateTest =
         initWithTestMessages
             .expect(
@@ -44,6 +60,9 @@ module tests_unit {
                 ))
             )
 
+    /// Test message-store initialisation from deterministic identifiers.
+    ///
+    /// -@return bool whether the test passes
     run initMessageStoreTest =
         initWithTestMessages
             .expect(
@@ -51,6 +70,9 @@ module tests_unit {
                 messageStore.get(BOB) == Set(message2)
             )
 
+    /// Test that every payload exchange state is initially empty.
+    ///
+    /// -@return bool whether the test passes
     run initPayloadExchangeStateTest =
         initWithTestMessages
             .expect(
@@ -60,6 +82,9 @@ module tests_unit {
                 ))
             )
 
+    /// Test that random initial identifiers cover each node and reference known messages.
+    ///
+    /// -@return bool whether the test passes
     run initRandomMessageIdsTest =
         initWithTestMessages
             .expect(
@@ -75,6 +100,9 @@ module tests_unit {
     // TESTS - GUARD FUNCTIONS
     // ------------------------------------------------------------------------------------
 
+    /// Test that only distinct protocol participants form peer pairs.
+    ///
+    /// -@return bool whether the test passes
     run isPeerPairTest =
         initWithTestMessages
             .expect(
@@ -84,6 +112,9 @@ module tests_unit {
                 not(isPeerPair(BOB, BOB))
             )
 
+    /// Test protocol guards in the initial state.
+    ///
+    /// -@return bool whether the test passes
     run initialGuardFunctionsTest =
         initWithTestMessages
             .expect(
@@ -99,6 +130,9 @@ module tests_unit {
                 canIdle(ALICE, BOB)
             )
 
+    /// Test protocol guards after messages are added to a payload.
+    ///
+    /// -@return bool whether the test passes
     run messagesAddedGuardFunctionsTest =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -113,6 +147,9 @@ module tests_unit {
                 not(canIdle(ALICE, BOB))
             )
 
+    /// Test protocol guards after a message payload is received.
+    ///
+    /// -@return bool whether the test passes
     run messagesReceivedGuardFunctionsTest =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -129,6 +166,9 @@ module tests_unit {
                 not(canIdle(ALICE, BOB))
             )
 
+    /// Test protocol guards after received messages are stored.
+    ///
+    /// -@return bool whether the test passes
     run receivedMessagesStoredGuardFunctionsTest =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -146,6 +186,9 @@ module tests_unit {
                 not(canIdle(ALICE, BOB))
             )
             
+    /// Test acknowledgement-send guards when acknowledgement determination precedes storage.
+    ///
+    /// -@return bool whether the test passes
     run sendAckPayloadGuardFunctionsPath1Test =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -164,6 +207,9 @@ module tests_unit {
                 not(canIdle(ALICE, BOB))
             )
     
+    /// Test acknowledgement-send guards when storage precedes acknowledgement determination.
+    ///
+    /// -@return bool whether the test passes
     run sendAckPayloadGuardFunctionsPath2Test =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -182,6 +228,9 @@ module tests_unit {
                 not(canIdle(ALICE, BOB))
             )
     
+    /// Test acknowledgement-receive guards when acknowledgement determination precedes storage.
+    ///
+    /// -@return bool whether the test passes
     run receiveAckPayloadGuardFunctionsPath1Test =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -201,6 +250,9 @@ module tests_unit {
                 not(canIdle(ALICE, BOB))
             )
     
+    /// Test acknowledgement-receive guards when storage precedes acknowledgement determination.
+    ///
+    /// -@return bool whether the test passes
     run receiveAckPayloadGuardFunctionsPath2Test =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -220,6 +272,9 @@ module tests_unit {
                 not(canIdle(ALICE, BOB))
             )
     
+    /// Test idle guards after completing the determination-before-storage path.
+    ///
+    /// -@return bool whether the test passes
     run idleGuardFunctionsPath1Test =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -240,6 +295,9 @@ module tests_unit {
                 canIdle(ALICE, BOB)
             )
     
+    /// Test idle guards after completing the storage-before-determination path.
+    ///
+    /// -@return bool whether the test passes
     run idleGuardFunctionsPath2Test =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -264,6 +322,9 @@ module tests_unit {
     // TESTS - GETTER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
+    /// Test retrieval of the node state for a peer pair.
+    ///
+    /// -@return bool whether the test passes
     run getNodeStateTest =
         initWithTestMessages
             .expect(
@@ -274,6 +335,9 @@ module tests_unit {
                 state.messages.size() == 2
             )
     
+    /// Test retrieval of an initially empty payload.
+    ///
+    /// -@return bool whether the test passes
     run getPayloadTest =
         initWithTestMessages
             .expect(
@@ -286,6 +350,9 @@ module tests_unit {
                 payload.messages.size() == 0
             )
 
+    /// Test retrieval of an initial payload exchange state.
+    ///
+    /// -@return bool whether the test passes
     run getPayloadExchangeStateTest =
         initWithTestMessages
             .expect(
@@ -300,6 +367,9 @@ module tests_unit {
     // TESTS - SETTER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
+    /// Test updating one peer pair's payload exchange phase.
+    ///
+    /// -@return bool whether the test passes
     run setPayloadExchangeStateTest =
         initWithTestMessages
             .expect(
@@ -316,6 +386,9 @@ module tests_unit {
                 newPayloadExchangeState.get(BOB).get(ALICE).phase == Idle
             )
 
+    /// Test updating one peer pair's messages-stored flag.
+    ///
+    /// -@return bool whether the test passes
     run setPayloadExchangeStateMessagesStoredTest =
         initWithTestMessages
             .expect(
@@ -333,6 +406,9 @@ module tests_unit {
             )
             
 
+    /// Test updating one peer pair's acknowledgement-determined flag.
+    ///
+    /// -@return bool whether the test passes
     run setPayloadExchangeStateAckDeterminedTest =
         initWithTestMessages
             .expect(
@@ -360,6 +436,9 @@ module tests_unit {
     // TESTS - HELPER VERIFICATION FUNCTIONS
     // ------------------------------------------------------------------------------------
 
+    /// Test recognition of default node states for self pairs.
+    ///
+    /// -@return bool whether the test passes
     run defaultNodeStateFunctionsTest =
         initWithTestMessages
             .expect(
@@ -369,6 +448,9 @@ module tests_unit {
                 not(isDefaultNodeState(BOB, ALICE))
             )
 
+    /// Test recognition of default payload states.
+    ///
+    /// -@return bool whether the test passes
     run defaultPayloadStateFunctionsTest =
         initWithTestMessages
             .expect(
@@ -376,6 +458,9 @@ module tests_unit {
                 isDefaultPayloadState(ALICE, BOB)
             )
 
+    /// Test recognition of default payload exchange states.
+    ///
+    /// -@return bool whether the test passes
     run defaultPayloadExchangeStateFunctionsText = 
         initWithTestMessages
             .expect(
@@ -385,6 +470,9 @@ module tests_unit {
                 isDefaultPayloadExchangeState(BOB, ALICE)
             )
 
+    /// Test extraction of message identifiers from directional payloads.
+    ///
+    /// -@return bool whether the test passes
     run payloadMessageIdsTest =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
@@ -394,6 +482,9 @@ module tests_unit {
                 payloadMessageIds(BOB, ALICE) == Set()
             )
 
+    /// Test detection of an in-flight directional payload.
+    ///
+    /// -@return bool whether the test passes
     run hasInFlightPayloadTest =
         initWithTestMessages
             .then(addMessages(ALICE, BOB))

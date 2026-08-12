@@ -1,6 +1,6 @@
 /// Model the two-node batch message synchronisation and acknowledgement protocol.
 ///
-/// -@return batch the protocol module
+/// - @returns batch the protocol module
 module batch {
     import messages.* from "./../messages/messages"
     
@@ -11,13 +11,13 @@ module batch {
     /// Classify a synchronisation record as an offer, request, or absent record.
     /// ! only for interactive !
     ///
-    /// -@return RecordType the record classification
+    /// - @returns RecordType the record classification
     type RecordType = Offer | Request | None
     
     /// Associate a message identifier with its synchronisation record classification.
     /// ! only for interactive !
     ///
-    /// -@return RecordState the synchronisation record state
+    /// - @returns RecordState the synchronisation record state
     type RecordState = { //TODO: add count and epoch in next version
         messageId: MessageId, // Not used as map key, but as a value to be able to track the message ID in the record state.
         recordType: RecordType
@@ -25,13 +25,13 @@ module batch {
 
     /// Identify a protocol payload with an id encoded as integer instead of UUID.
     ///
-    /// -@return PayloadId the integer payload identifier
+    /// - @returns PayloadId the integer payload identifier
     type PayloadId = int
     
     /// Represent the acknowledgements, records, and messages exchanged between peers.
     /// TODO add payload type to indicate if it is a batch or interactive payload or can it be determined already from the payload itself
     ///
-    /// -@return Payload the complete batch payload
+    /// - @returns Payload the complete batch payload
     type Payload = {
         payloadId: PayloadId,
         acks: Set[MessageId],
@@ -42,7 +42,7 @@ module batch {
 
     /// Represent a node's synchronisation knowledge for one peer.
     ///
-    /// -@return NodeState the per-peer synchronisation state
+    /// - @returns NodeState the per-peer synchronisation state
     type NodeState = {
         offers: Set[RecordState], //TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
         requests: Set[RecordState], //TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
@@ -51,12 +51,12 @@ module batch {
 
     /// Identify a protocol participant by name.
     ///
-    /// -@return Node the string node identifier
+    /// - @returns Node the string node identifier
     type Node = str
 
     /// Track the lifecycle phase and processing flags of a payload exchange.
     ///
-    /// -@return PayloadExchangeState the payload exchange lifecycle state
+    /// - @returns PayloadExchangeState the payload exchange lifecycle state
     type PayloadExchangeState = {
         phase: PayloadExchangePhase,
         messagesStored: bool,
@@ -65,7 +65,7 @@ module batch {
 
     /// Enumerate the phases of the batch payload exchange lifecycle.
     ///
-    /// -@return PayloadExchangePhase the current exchange phase
+    /// - @returns PayloadExchangePhase the current exchange phase
     type PayloadExchangePhase = Idle | MessagesAdded | MessagesSent | MessagesReceived | AckSent | AckReceived
 
     // ------------------------------------------------------------------------------------
@@ -74,33 +74,33 @@ module batch {
 
     /// Identify the Alice protocol participant.
     ///
-    /// -@return Node Alice's node identifier
+    /// - @returns Node Alice's node identifier
     pure val ALICE: Node = "Alice"
 
     /// Identify the Bob protocol participant.
     ///
-    /// -@return Node Bob's node identifier
+    /// - @returns Node Bob's node identifier
     pure val BOB: Node = "Bob"
 
     /// Collect all protocol participants in the model.
     ///
-    /// -@return Set[Node] the modeled nodes
+    /// - @returns Set[Node] the modeled nodes
     pure val NODES: Set[Node] = Set(ALICE, BOB)
 
     /// Provide the default payload containing no synchronisation data.
     ///
-    /// -@return Payload the empty payload value
+    /// - @returns Payload the empty payload value
     pure val EMPTY_PAYLOAD: Payload = {
         payloadId: 0, //TODO: reuse payloadId to check if it is the same payload that is being sent and received, or if it is a new payload. This can be used to detect if a payload has been lost or if it is a duplicate.
         acks: Set(),
-        offers: Set(),
-        requests: Set(),
+        // offers: Set(),//only for interactive
+        // requests: Set(),//only for interactive
         messages: Set()
     }
 
     /// Provide the default per-peer node state containing no synchronisation data.
     ///
-    /// -@return NodeState the empty node-state value
+    /// - @returns NodeState the empty node-state value
     pure val EMPTY_NODE_STATE: NodeState = {
         offers: Set(),
         requests: Set(),
@@ -110,7 +110,7 @@ module batch {
     /// Provide the default record state with no message or classification.
     /// ! only for interactive !
     ///
-    /// -@return RecordState the empty record-state value
+    /// - @returns RecordState the empty record-state value
     pure val EMPTY_RECORD_STATE: RecordState = {
         messageId: "",
         recordType: None
@@ -118,7 +118,7 @@ module batch {
 
     /// Provide the default idle and unprocessed payload exchange state.
     ///
-    /// -@return PayloadExchangeState the empty exchange-state value
+    /// - @returns PayloadExchangeState the empty exchange-state value
     pure val EMPTY_PAYLOAD_EXCHANGE_STATE: PayloadExchangeState = {
         phase: Idle,
         messagesStored: false,
@@ -131,28 +131,28 @@ module batch {
     
     /// Store the messages persisted by each node.
     ///
-    /// -@return Node -> Set[Message] the messages indexed by their storing node
+    /// - @returns Node -> Set[Message] the messages indexed by their storing node
     var messageStore: Node -> Set[Message] //TODO: add a map of messageId to message to be able to retrieve the message by its ID.
     
     /// Track each sender's synchronisation knowledge for every receiver.
     /// (simulation of storing at node side what transport is expected for each node at the node side)
     ///
-    /// -@return Node -> (Node -> NodeState) the per-sender and per-receiver node states
+    /// - @returns Node -> (Node -> NodeState) the per-sender and per-receiver node states
     var nodeState: Node -> (Node -> NodeState)
 
     /// Store the current payload for every sender-receiver pair.
     ///
-    /// -@return Node -> (Node -> Payload) the payloads indexed by sender and receiver
+    /// - @returns Node -> (Node -> Payload) the payloads indexed by sender and receiver
     var payloadState: Node -> (Node -> Payload)
 
     /// Track the payload exchange lifecycle for every sender-receiver pair.
     ///
-    /// -@return Node -> (Node -> PayloadExchangeState) the exchange states indexed by sender and receiver
+    /// - @returns Node -> (Node -> PayloadExchangeState) the exchange states indexed by sender and receiver
     var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
 
     /// Payload-id generator for future send actions.
     /// TODO: add the payload generator
-    /// -@return int the next payload id for the next payload to be sent
+    /// - @returns int the next payload id for the next payload to be sent
     // var nextPayloadId: int
 
     // ------------------------------------------------------------------------------------
@@ -163,8 +163,8 @@ module batch {
 
     /// Build the initial per-peer node state from the messages assigned to each node.
     ///
-    /// -@param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
-    /// -@return Node -> (Node -> NodeState) the computed result
+    /// - @param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
+    /// - @returns Node -> (Node -> NodeState) the computed result
     pure def initNodeState(randomMessageIds: Node -> Set[MessageId]): Node -> (Node -> NodeState) = {
         NODES.mapBy(
             sender => NODES.mapBy(
@@ -178,7 +178,7 @@ module batch {
 
     /// Build an empty payload for every sender-receiver pair.
     ///
-    /// -@return Node -> (Node -> Payload) the computed result
+    /// - @returns Node -> (Node -> Payload) the computed result
     pure def initPayloadState(): Node -> (Node -> Payload) = {
         NODES.mapBy(
             sender => NODES.mapBy(
@@ -189,8 +189,8 @@ module batch {
 
     /// Populate each node's message store from its assigned message identifiers.
     ///
-    /// -@param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
-    /// -@return Node -> Set[Message] the computed result
+    /// - @param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
+    /// - @returns Node -> Set[Message] the computed result
     pure def initMessageStore(randomMessageIds: Node -> Set[MessageId]): Node -> Set[Message] = {
         NODES.mapBy(
             node => getMessages(randomMessageIds.get(node))
@@ -199,7 +199,7 @@ module batch {
 
     /// Initialise every sender-receiver exchange to the empty idle state.
     ///
-    /// -@return Node -> (Node -> PayloadExchangeState) the computed result
+    /// - @returns Node -> (Node -> PayloadExchangeState) the computed result
     pure def initPayloadExchangeState(): Node -> (Node -> PayloadExchangeState) = {
         NODES.mapBy(
             sender => NODES.mapBy(
@@ -210,7 +210,7 @@ module batch {
 
     /// Choose an initial set of message identifiers for every node.
     ///
-    /// -@return Node -> Set[MessageId] the computed result
+    /// - @returns Node -> Set[MessageId] the computed result
     pure def initRandomMessageIds(): Node -> Set[MessageId] = {
         NODES.mapBy(n => getRandomMessageIds)
     }
@@ -219,18 +219,18 @@ module batch {
 
     /// Check whether the sender and receiver are distinct peers, otherwise it doesn't make sense to send a payload.
     ///
-    /// -@param Node sender the node sending the payload
-    /// -@param Node receiver the node receiving the payload
-    /// -@return bool the computed result
+    /// - @param Node sender the node sending the payload
+    /// - @param Node receiver the node receiving the payload
+    /// - @returns bool the computed result
     pure def isPeerPair(sender: Node, receiver: Node): bool = {
         sender != receiver
     }
 
     /// Check whether a sender-receiver pair has messages available for synchronisation.
     ///
-    /// -@param Node sender the node whose messages are synchronized
-    /// -@param Node receiver the destination peer
-    /// -@return bool the computed result
+    /// - @param Node sender the node whose messages are synchronized
+    /// - @param Node receiver the destination peer
+    /// - @returns bool the computed result
     def hasSyncDelta(sender: Node, receiver: Node): bool = {
         and {
             getMessagesMessageStore(sender).size() > 0,   
@@ -240,9 +240,9 @@ module batch {
 
     /// Check whether pending messages may be added to the pair's payload.
     ///
-    /// -@param Node sender the node adding messages
-    /// -@param Node receiver the destination peer
-    /// -@return bool the computed result
+    /// - @param Node sender the node adding messages
+    /// - @param Node receiver the destination peer
+    /// - @returns bool the computed result
     def canAddMessages(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
@@ -253,9 +253,9 @@ module batch {
 
     /// Check whether the pair's populated message payload may be sent.
     ///
-    /// -@param Node sender the node sending the payload
-    /// -@param Node receiver the destination peer
-    /// -@return bool the computed result
+    /// - @param Node sender the node sending the payload
+    /// - @param Node receiver the destination peer
+    /// - @returns bool the computed result
     def canSendMessagesPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
@@ -269,9 +269,9 @@ module batch {
 
     /// Check whether the receiver may receive the sender's in-flight message payload.
     ///
-    /// -@param Node sender the node that sent the payload
-    /// -@param Node receiver the node receiving the payload
-    /// -@return bool the computed result
+    /// - @param Node sender the node that sent the payload
+    /// - @param Node receiver the node receiving the payload
+    /// - @returns bool the computed result
     def canReceiveMessagesPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
@@ -281,9 +281,9 @@ module batch {
 
     /// Check whether a received payload's messages may be stored by the receiver.
     ///
-    /// -@param Node sender the node that sent the payload
-    /// -@param Node receiver the node storing the messages
-    /// -@return bool the computed result
+    /// - @param Node sender the node that sent the payload
+    /// - @param Node receiver the node storing the messages
+    /// - @returns bool the computed result
     def canStoreReceivedMessages(sender: Node, receiver: Node): bool = {
         val state = getPayloadExchangeState(sender,receiver)
 
@@ -296,9 +296,9 @@ module batch {
 
     /// Check whether acknowledgements may be determined for a received payload.
     ///
-    /// -@param Node sender the node that sent the payload
-    /// -@param Node receiver the node determining acknowledgements
-    /// -@return bool the computed result
+    /// - @param Node sender the node that sent the payload
+    /// - @param Node receiver the node determining acknowledgements
+    /// - @returns bool the computed result
     def canDetermineAck(sender: Node, receiver: Node): bool = {
         val state = getPayloadExchangeState(sender,receiver)
 
@@ -311,9 +311,9 @@ module batch {
 
     /// Check whether the acknowledgement for a processed payload may be sent.
     ///
-    /// -@param Node sender the original message sender
-    /// -@param Node receiver the node sending the acknowledgement
-    /// -@return bool the computed result
+    /// - @param Node sender the original message sender
+    /// - @param Node receiver the node sending the acknowledgement
+    /// - @returns bool the computed result
     def canAckPayload(sender: Node, receiver: Node): bool = {
         val state = getPayloadExchangeState(sender,receiver)
 
@@ -327,9 +327,9 @@ module batch {
 
     /// Check whether the sender may receive the outstanding acknowledgement payload.
     ///
-    /// -@param Node sender the original message sender
-    /// -@param Node receiver the node returning the acknowledgement
-    /// -@return bool the computed result
+    /// - @param Node sender the original message sender
+    /// - @param Node receiver the node returning the acknowledgement
+    /// - @returns bool the computed result
     def canReceiveAckPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
@@ -340,9 +340,9 @@ module batch {
 
     /// Check whether the pair may enter or remain in the idle phase.
     ///
-    /// -@param Node sender the sending node
-    /// -@param Node receiver the receiving node
-    /// -@return bool the computed result
+    /// - @param Node sender the sending node
+    /// - @param Node receiver the receiving node
+    /// - @returns bool the computed result
     def canIdle(sender: Node, receiver: Node): bool = {
         val phase = getPayloadExchangeState(sender,receiver).phase
 
@@ -357,17 +357,17 @@ module batch {
 
     /// Return the messages currently stored by a node.
     ///
-    /// -@param Node sender the node whose message store is returned
-    /// -@return Set[Message] the computed result
+    /// - @param Node sender the node whose message store is returned
+    /// - @returns Set[Message] the computed result
     def getMessagesMessageStore(sender: Node): Set[Message] = {
         messageStore.get(sender)
     }
 
     /// Return the sender's synchronisation state for a receiver.
     ///
-    /// -@param Node sender the node maintaining the synchronisation state
-    /// -@param Node receiver the peer represented by that state
-    /// -@return NodeState the computed result
+    /// - @param Node sender the node maintaining the synchronisation state
+    /// - @param Node receiver the peer represented by that state
+    /// - @returns NodeState the computed result
     def getNodeState(sender: Node, receiver: Node): NodeState = {
         nodeState.get(sender).get(receiver)
     }
@@ -383,17 +383,19 @@ module batch {
 
     /// Return the exchange lifecycle state associated with a sender-receiver pair.
     ///
-    /// -@param Node sender the payload sender
-    /// -@param Node receiver the payload receiver
-    /// -@return PayloadExchangeState the computed result
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns PayloadExchangeState the computed result
     def getPayloadExchangeState(sender: Node, receiver: Node): PayloadExchangeState = {
         payloadExchangeState.get(sender).get(receiver)
     }
 
     /// Return the record state messages ids from the set of RecordStates
+    ///
     /// TODO: activate when in interactive mode
-    /// -@param Set[RecordState] recordStates the record states to analyse and extract message ids from
-    /// -@return Set[MessageId] the computed set of message ids
+    ///
+    /// - @param Set[RecordState] recordStates the record states to analyse and extract message ids from
+    /// - @returns Set[MessageId] the computed set of message ids
     // pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
     //     recordStates.map(rs => rs.messageId)
     // } 
@@ -403,12 +405,12 @@ module batch {
 
     /// Return the exchange-state map with one sender-receiver entry replaced.
     ///
-    /// -@param Node sender the sender entry to update
-    /// -@param Node receiver the receiver entry to update
-    /// -@param PayloadExchangePhase newPayloadExchangePhase the replacement exchange phase
-    /// -@param bool newMessagesStored whether received messages have been stored
-    /// -@param bool newAckDetermined whether acknowledgements have been determined
-    /// -@return Node -> (Node -> PayloadExchangeState) the computed result
+    /// - @param Node sender the sender entry to update
+    /// - @param Node receiver the receiver entry to update
+    /// - @param PayloadExchangePhase newPayloadExchangePhase the replacement exchange phase
+    /// - @param bool newMessagesStored whether received messages have been stored
+    /// - @param bool newAckDetermined whether acknowledgements have been determined
+    /// - @returns Node -> (Node -> PayloadExchangeState) the computed result
     def setPayloadExchangeState(
         sender: Node, 
         receiver: Node, 
@@ -437,7 +439,7 @@ module batch {
 
     /// Initialise all protocol state with nondeterministically selected node messages.
     ///
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action init() = {
         val randomMessageIds = initRandomMessageIds
         all {
@@ -454,7 +456,7 @@ module batch {
 
     /// Perform one enabled protocol transition for a nondeterministically selected peer pair.
     ///
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action step() = {
         nondet sender = NODES.oneOf()
         nondet receiver = NODES.filter(
@@ -479,9 +481,9 @@ module batch {
 
     /// Reset an eligible peer pair to the idle exchange state without changing stored data.
     ///
-    /// -@param Node sender the sending node
-    /// -@param Node receiver the receiving node
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the sending node
+    /// - @param Node receiver the receiving node
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action idle(sender, receiver) = all {
         // Guards,
         canIdle(sender, receiver),
@@ -501,9 +503,9 @@ module batch {
 
     /// Add the sender's pending messages to its payload for the receiver.
     ///
-    /// -@param Node sender the node adding pending messages
-    /// -@param Node receiver the destination peer
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the node adding pending messages
+    /// - @param Node receiver the destination peer
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action addMessages(sender, receiver) = all {
         // Guards
         canAddMessages(sender, receiver),
@@ -537,9 +539,9 @@ module batch {
 
     /// Mark the sender's populated message payload as sent to the receiver.
     ///
-    /// -@param Node sender the node sending the message payload
-    /// -@param Node receiver the destination peer
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the node sending the message payload
+    /// - @param Node receiver the destination peer
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action sendMessagesPayload(sender, receiver) = all {
         // Guards
         canSendMessagesPayload(sender, receiver),
@@ -561,9 +563,9 @@ module batch {
 
     /// Mark an in-flight message payload as received by the receiver.
     ///
-    /// -@param Node sender the node that sent the message payload
-    /// -@param Node receiver the node receiving it
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the node that sent the message payload
+    /// - @param Node receiver the node receiving it
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action receiveMessagesPayload(sender, receiver) = all {
         // Guards
         canReceiveMessagesPayload(sender, receiver),
@@ -585,9 +587,9 @@ module batch {
 
     /// Store received messages and update the receiver's knowledge of the sender.
     ///
-    /// -@param Node sender the node that sent the messages
-    /// -@param Node receiver the node storing them
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the node that sent the messages
+    /// - @param Node receiver the node storing them
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action storeReceivedMessages(sender, receiver) = all {
         // Guards
         canStoreReceivedMessages(sender, receiver),
@@ -627,9 +629,9 @@ module batch {
 
     /// Determine acknowledgement identifiers for all messages in a received payload.
     ///
-    /// -@param Node sender the original message sender
-    /// -@param Node receiver the node determining acknowledgements
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the original message sender
+    /// - @param Node receiver the node determining acknowledgements
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action determineAck(sender, receiver) = all {
         // Guards
         canDetermineAck(sender, receiver),
@@ -663,9 +665,9 @@ module batch {
 
     /// Mark a determined acknowledgement payload as sent.
     ///
-    /// -@param Node sender the original message sender
-    /// -@param Node receiver the node sending the acknowledgement
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the original message sender
+    /// - @param Node receiver the node sending the acknowledgement
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action sendAckPayload(sender, receiver) = all {
         // Guards
         canAckPayload(sender, receiver),
@@ -690,9 +692,9 @@ module batch {
     /// With retransmission, the sender can now check with the offers and the acks if everything 
     /// has been delivered or resend specific messages.
     ///
-    /// -@param Node sender the node receiving the acknowledgement
-    /// -@param Node receiver the node that produced it
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @param Node sender the node receiving the acknowledgement
+    /// - @param Node receiver the node that produced it
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action receiveAckPayload(sender, receiver) = all {
         // Guards
         canReceiveAckPayload(sender, receiver),
@@ -745,7 +747,7 @@ module batch {
 
     /// Initialise two nodes with distinct nonempty message sets that require synchronisation.
     ///
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action initWithMessagesToSyncTwoNodes() = {
         val aliceIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).chooseSome()
         val bobIds = MESSAGES.keys().powerset().filter(s =>
@@ -762,7 +764,7 @@ module batch {
 
     /// Initialise two nodes such that Alice already contains Bob's selected messages.
     ///
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action initWithoutMessagesToSyncTwoNodes() = {
         val bobIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).chooseSome()
         val aliceIds = bobIds.powerset().filter(s => s.size() > 0).chooseSome()
@@ -777,7 +779,7 @@ module batch {
 
     /// Receive an eligible message payload for some nondeterministically chosen peer pair.
     ///
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action someReceiveMessagesPayload() = {
         nondet sender = NODES.oneOf()
         nondet receiver = NODES.filter(n => n != sender).oneOf()
@@ -786,7 +788,7 @@ module batch {
 
     /// Determine acknowledgements for some nondeterministically chosen peer pair.
     ///
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action someDetermineAck() = {
         nondet sender = NODES.oneOf()
         nondet receiver = NODES.filter(n => n != sender).oneOf()
@@ -795,7 +797,7 @@ module batch {
 
     /// Receive an acknowledgement for some nondeterministically chosen peer pair.
     ///
-    /// -@return bool whether the action is enabled and its transition constraints hold
+    /// - @returns bool whether the action is enabled and its transition constraints hold
     action someReceiveAckPayload() = {
         nondet sender = NODES.oneOf()
         nondet receiver = NODES.filter(n => n != sender).oneOf()
@@ -808,39 +810,39 @@ module batch {
 
     /// Check whether a pair's node state equals the empty default state.
     ///
-    /// -@param Node sender the node maintaining the state
-    /// -@param Node receiver the peer represented by the state
-    /// -@return bool the computed result
+    /// - @param Node sender the node maintaining the state
+    /// - @param Node receiver the peer represented by the state
+    /// - @returns bool the computed result
     def isDefaultNodeState(sender: Node, receiver: Node): bool = {
         val nodeState = getNodeState(sender, receiver)
         and {
             nodeState.messages.size() == 0,
-            nodeState.offers.size() == 0,  //only for interactive
-            nodeState.requests.size() == 0, //only for interactive
+            // nodeState.offers.size() == 0,  //only for interactive
+            // nodeState.requests.size() == 0, //only for interactive
         }
     }
 
     /// Check whether a pair's payload equals the empty default payload.
     ///
-    /// -@param Node sender the payload sender
-    /// -@param Node receiver the payload receiver
-    /// -@return bool the computed result
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns bool the computed result
     def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
         val payload = getPayload(sender, receiver)
         and {
             payload.payloadId == 0,
             payload.acks.size() == 0,
-            payload.offers.size() == 0, //only for interactive
-            payload.requests.size() == 0, //only for interactive
+            // payload.offers.size() == 0, //only for interactive
+            // payload.requests.size() == 0, //only for interactive
             payload.messages.size() == 0,
         }
     }
 
     /// Check whether a pair's exchange state equals the empty default exchange state.
     ///
-    /// -@param Node sender the payload sender
-    /// -@param Node receiver the payload receiver
-    /// -@return bool the computed result
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns bool the computed result
     def isDefaultPayloadExchangeState(sender: Node, receiver: Node): bool = {
         val payloadExchangeState = getPayloadExchangeState(sender, receiver)
 
@@ -854,18 +856,18 @@ module batch {
 
     /// Return the identifiers of all messages in a pair's payload.
     ///
-    /// -@param Node sender the payload sender
-    /// -@param Node receiver the payload receiver
-    /// -@return Set[MessageId] the computed result
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns Set[MessageId] the computed result
     def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
         getSetMessageIds(getPayload(sender,receiver).messages)
     }
 
     /// Check whether a pair currently has a sent message payload awaiting receipt.
     ///
-    /// -@param Node sender the payload sender
-    /// -@param Node receiver the payload receiver
-    /// -@return bool the computed result
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns bool the computed result
     def hasInFlightPayload(sender: Node, receiver: Node): bool = {
         getPayloadExchangeState(sender, receiver).phase == MessagesSent
     }
@@ -876,13 +878,13 @@ module batch {
 
     /// Assert that the model contains exactly Alice and Bob.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val two_nodes_only = 
         NODES.size() == 2
 
     /// Assert that every node's synchronisation state for itself remains empty.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val self_nodeState_is_always_empty = 
         NODES.forall(
             n => isDefaultNodeState(n, n)
@@ -890,7 +892,7 @@ module batch {
 
     /// Assert that every node's payload addressed to itself remains empty.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val self_payloadState_is_always_empty = 
         NODES.forall(
             n => isDefaultPayloadState(n, n)
@@ -898,7 +900,7 @@ module batch {
 
     /// Assert that the unused reverse-direction payload remains empty during an exchange.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val reverse_payloadState_is_always_empty = 
         NODES.forall(
             sender => NODES.forall(
@@ -929,7 +931,7 @@ module batch {
     
     /// Assert that every node's exchange state with itself remains at its default.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val self_payloadExchangeState_is_always_empty = 
         NODES.forall(
             n => isDefaultPayloadExchangeState(n, n)
@@ -937,7 +939,7 @@ module batch {
 
     /// Assert that every payload message is pending or already known by the receiver.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val payload_messages_are_pending_or_known_by_receiver =
         NODES.forall(
             sender => NODES.forall(
@@ -956,7 +958,7 @@ module batch {
 
     /// Assert that every payload message exists in the sender's message store.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val payload_messages_belong_to_sender =
         NODES.forall(
             sender => NODES.forall(
@@ -970,7 +972,7 @@ module batch {
 
     /// Combine the payload-message ownership and receiver-knowledge safety properties.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val payload_message_invariant = 
         and {
             payload_messages_are_pending_or_known_by_receiver,
@@ -980,7 +982,7 @@ module batch {
 
     /// Assert that every message pending for a receiver belongs to the sender.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val pending_messages_belong_to_sender =
         NODES.forall(
             sender => NODES.forall(
@@ -994,7 +996,7 @@ module batch {
 
     /// Assert that acknowledgement identifiers refer to messages in the same payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val ack_ids_match_payload_messages =
         NODES.forall(
             sender => NODES.forall(
@@ -1006,7 +1008,7 @@ module batch {
 
     /// Assert that sent acknowledgement identifiers refer to messages stored by the receiver.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val sent_ack_ids_match_stored_messages  =
         NODES.forall(
             sender => NODES.forall(
@@ -1025,7 +1027,7 @@ module batch {
     
     /// Combine the acknowledgement soundness safety properties.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val sent_acks_are_sound = 
         and {
             sent_ack_ids_match_stored_messages,
@@ -1035,7 +1037,7 @@ module batch {
 
     /// Assert that a nonempty acknowledgement set implies a nonempty message payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val pending_acks_imply_nonempty_payload =
         NODES.forall(
             sender => NODES.forall(
@@ -1046,7 +1048,7 @@ module batch {
     
     /// Assert that a determined acknowledgement covers exactly the payload's messages.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val determined_ack_covers_payload =
         NODES.forall(
             sender => NODES.forall(
@@ -1062,7 +1064,7 @@ module batch {
 
     /// Assert that the idle phase has neither stored-message nor determined-ack flags set.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val when_idle_not_messageStored_and_not_ackDetermined =
         NODES.forall(
             sender => NODES.forall(
@@ -1080,7 +1082,7 @@ module batch {
 
     /// Assert that the MessagesAdded phase always has a nonempty message payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val when_MessagesAdded_payload_messages_non_empty =
         NODES.forall(
             sender => NODES.forall(
@@ -1095,7 +1097,7 @@ module batch {
 
     /// Assert that the MessagesSent phase always has a nonempty message payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val when_MessagesSent_payload_messages_non_empty =
         NODES.forall(
             sender => NODES.forall(
@@ -1110,7 +1112,7 @@ module batch {
 
     /// Assert that AckSent follows storage and acknowledgement determination with nonempty acknowledgements.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val when_AckSent_messagesStored_ackDetermined_acks_non_empty =
         NODES.forall(
             sender => NODES.forall(
@@ -1129,7 +1131,7 @@ module batch {
 
     /// Assert that acknowledgement receipt leaves the acknowledgement set empty.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val when_AckReceived_acks_empty = 
         NODES.forall(
             sender => NODES.forall(
@@ -1144,7 +1146,7 @@ module batch {
 
     /// Assert that acknowledgement determination occurs only in compatible exchange phases.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val when_ackDetermined = 
         NODES.forall(
             sender => NODES.forall(
@@ -1159,7 +1161,7 @@ module batch {
 
     /// Assert that received-message storage occurs only in compatible exchange phases.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val when_messagesStored = 
         NODES.forall(
             sender => NODES.forall(
@@ -1183,7 +1185,7 @@ module batch {
     ///     [] followed by action not of form [A]_v
     /// Therefore it can't be used
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     // temporal messageStores_are_monotonic = 
     //     always(
     //         NODES.forall(
@@ -1195,25 +1197,25 @@ module batch {
 
     /// Require weak fairness for receiving some sent message payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal fair_receive_messages_payload =
         someReceiveMessagesPayload.weakFair(Set(payloadExchangeState))
 
     /// Require weak fairness for determining some payload acknowledgement.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal fair_determine_ack =
         someDetermineAck.weakFair(Set(payloadState))
 
     /// Require weak fairness for receiving some acknowledgement payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal fair_receive_ack_payload =
         someReceiveAckPayload.weakFair(Set(nodeState))
 
     /// Assert that every in-flight payload is eventually received under receive fairness.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal in_flight_payload_is_eventually_received =
         fair_receive_messages_payload implies (
             NODES.forall(
@@ -1227,7 +1229,7 @@ module batch {
 
     /// Assert that every sent payload is eventually acknowledged under delivery fairness.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal pending_payload_is_eventually_acknowledged =
         (fair_receive_messages_payload and fair_determine_ack) implies (
             NODES.forall(
@@ -1244,7 +1246,7 @@ module batch {
 
     /// Assert that every pending acknowledgement is eventually cleared under receive fairness.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal pending_ack_is_eventually_cleared =
         fair_receive_ack_payload implies (
             NODES.forall(
@@ -1264,7 +1266,7 @@ module batch {
     ///     [] followed by action not of form [A]_v
     /// Therefore it can't be used
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     // temporal pending_message_id_removed_only_after_storage =
     //     NODES.forall(
     //         sender => NODES.forall(
@@ -1303,7 +1305,7 @@ module batch {
 
     /// Assert that acknowledged messages are eventually removed from pending and payload state.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal acknowledged_messages_are_eventually_removed =
         fair_receive_ack_payload implies (
             NODES.forall(
@@ -1334,7 +1336,7 @@ module batch {
 
     /// Assert that pending messages eventually reach the receiver under delivery fairness.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal pending_messages_are_eventually_delivered =
         delivery_fairness implies (
             NODES.forall(
@@ -1360,7 +1362,7 @@ module batch {
 
     /// Assert that pending messages eventually leave sender state under protocol fairness.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal pending_messages_are_eventually_cleared =
         protocol_fairness implies (
             NODES.forall(
@@ -1388,7 +1390,7 @@ module batch {
 
     /// Define fairness for the complete delivery, acknowledgement, and idle protocol cycle.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal protocol_fairness =
         delivery_fairness
         and acknowledgement_fairness
@@ -1403,7 +1405,7 @@ module batch {
 
     /// Define weak fairness for every message-delivery action and peer pair.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal delivery_fairness =
         NODES.forall(
             sender => NODES.forall(
@@ -1421,7 +1423,7 @@ module batch {
 
     /// Define weak fairness for every acknowledgement action and peer pair.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     temporal acknowledgement_fairness =
         NODES.forall(
             sender => NODES.forall(
@@ -1442,7 +1444,7 @@ module batch {
     /// This proposition produces error:
     ///     [] followed by action not of form [A]_v
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     // temporal reverse_payload_is_unchanged =
     //     always(
     //         NODES.forall(
@@ -1477,7 +1479,7 @@ module batch {
 
     /// Witness that a reachable state may contain messages pending for a peer.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val can_have_pending_messages =
         NODES.exists(
             sender => NODES.exists(
@@ -1491,7 +1493,7 @@ module batch {
 
     /// Witness that a reachable state may contain messages in a payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val can_have_payload_messages =
         NODES.exists(
             sender => NODES.exists(
@@ -1505,7 +1507,7 @@ module batch {
 
     /// Witness that a reachable state may contain an in-flight payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val can_have_in_flight_payload =
         NODES.exists(
             sender => NODES.exists(
@@ -1519,7 +1521,7 @@ module batch {
 
     /// Witness that a reachable state may contain pending acknowledgements.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val can_have_pending_acks =
         NODES.exists(
             sender => NODES.exists(
@@ -1533,7 +1535,7 @@ module batch {
 
     /// Witness that a reachable state may contain a delivered payload.
     ///
-    /// -@return bool whether the proposition holds
+    /// - @returns bool whether the proposition holds
     val can_have_delivered_payload =
         NODES.exists(
             sender => NODES.exists(
@@ -1552,7 +1554,7 @@ module batch {
 
     /// Test that a complete exchange synchronises Alice's messages to Bob.
     ///
-    /// -@return bool whether the test passes
+    /// - @returns bool whether the test passes
     run messageStoreSyncTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1577,14 +1579,14 @@ module batch {
     /// Unknown receiver knowledge permits redundant transmission, so Alice can still send
     /// messages to Bob when Bob already has all of them.
     ///
-    /// -@return bool whether the test passes
+    /// - @returns bool whether the test passes
     run addMessagesDoesNotFailWhenNoSyncDeltaTest =
         initWithoutMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
 
     /// Test that adding messages produces pending messages and a nonempty payload.
     ///
-    /// -@return bool whether the test passes
+    /// - @returns bool whether the test passes
     run payloadMessagesWitnessTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1597,7 +1599,7 @@ module batch {
 
     /// Test that sending a message payload produces an in-flight payload.
     ///
-    /// -@return bool whether the test passes
+    /// - @returns bool whether the test passes
     run inFlightPayloadWitnessTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1606,7 +1608,7 @@ module batch {
 
     /// Test that acknowledgement determination produces pending acknowledgements.
     ///
-    /// -@return bool whether the test passes
+    /// - @returns bool whether the test passes
     run pendingAckWitnessTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1622,7 +1624,7 @@ module batch {
 
     /// Test that storing received messages preserves every message already stored.
     ///
-    /// -@return bool whether the test passes
+    /// - @returns bool whether the test passes
     run storeReceivedMessagesPreservesExistingMessagesTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))

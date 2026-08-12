@@ -43,10 +43,12 @@ module tests_unit {
     run initNodeStateTest =
         initWithTestMessages
             .expect(
-                nodeState.get(ALICE).get(BOB).messages == Set(message1, message2) and
-                nodeState.get(BOB).get(ALICE).messages == Set(message2) and
-                nodeState.get(ALICE).get(ALICE) == EMPTY_NODE_STATE and
-                nodeState.get(BOB).get(BOB) == EMPTY_NODE_STATE
+                and {
+                    nodeState.get(ALICE).get(BOB).messages == Set(message1, message2),
+                    nodeState.get(BOB).get(ALICE).messages == Set(message2),
+                    nodeState.get(ALICE).get(ALICE) == EMPTY_NODE_STATE,
+                    nodeState.get(BOB).get(BOB) == EMPTY_NODE_STATE,
+                }
             )
 
     /// Test that every payload state is initially empty.
@@ -66,8 +68,10 @@ module tests_unit {
     run initMessageStoreTest =
         initWithTestMessages
             .expect(
-                messageStore.get(ALICE) == Set(message1, message2) and
-                messageStore.get(BOB) == Set(message2)
+                and {
+                    messageStore.get(ALICE) == Set(message1, message2),
+                    messageStore.get(BOB) == Set(message2),
+                }
             )
 
     /// Test that every payload exchange state is initially empty.
@@ -88,12 +92,14 @@ module tests_unit {
     run initRandomMessageIdsTest =
         initWithTestMessages
             .expect(
-                initRandomMessageIds.keys() == NODES and
-                NODES.forall(node =>
-                    initRandomMessageIds.get(node).forall(
-                        id => id.in(MESSAGES.keys())
-                    )
-                )
+                and {
+                    initRandomMessageIds.keys() == NODES,
+                    NODES.forall(node =>
+                        initRandomMessageIds.get(node).forall(
+                            id => id.in(MESSAGES.keys())
+                        )
+                    ),
+                }
             )
 
     // ------------------------------------------------------------------------------------
@@ -106,10 +112,12 @@ module tests_unit {
     run isPeerPairTest =
         initWithTestMessages
             .expect(
-                isPeerPair(ALICE, BOB) and
-                isPeerPair(BOB, ALICE) and
-                not(isPeerPair(ALICE, ALICE)) and
-                not(isPeerPair(BOB, BOB))
+                and {
+                    isPeerPair(ALICE, BOB),
+                    isPeerPair(BOB, ALICE),
+                    not(isPeerPair(ALICE, ALICE)),
+                    not(isPeerPair(BOB, BOB)),
+                }
             )
 
     /// Test protocol guards in the initial state.
@@ -118,16 +126,18 @@ module tests_unit {
     run initialGuardFunctionsTest =
         initWithTestMessages
             .expect(
-                hasSyncDelta(ALICE, BOB) and
-                canAddMessages(ALICE, BOB) and
-                canAddMessages(BOB, ALICE) and // In this case Alice already has already all the messages of Bob, but that does Bob not know and therefore can also add the messages
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                not(canAckPayload(ALICE, BOB)) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                canIdle(ALICE, BOB)
+                and {
+                    hasSyncDelta(ALICE, BOB),
+                    canAddMessages(ALICE, BOB),
+                    canAddMessages(BOB, ALICE), // In this case Alice already has already all the messages of Bob, but that does Bob not know and therefore can also add the messages
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    not(canAckPayload(ALICE, BOB)),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    canIdle(ALICE, BOB),
+                }
             )
 
     /// Test protocol guards after messages are added to a payload.
@@ -137,14 +147,16 @@ module tests_unit {
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                canSendMessagesPayload(ALICE, BOB) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                not(canAckPayload(ALICE, BOB)) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                not(canIdle(ALICE, BOB))
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    canSendMessagesPayload(ALICE, BOB),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    not(canAckPayload(ALICE, BOB)),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    not(canIdle(ALICE, BOB)),
+                }
             )
 
     /// Test protocol guards after a message payload is received.
@@ -156,14 +168,17 @@ module tests_unit {
             .then(sendMessagesPayload(ALICE, BOB))
             .then(receiveMessagesPayload(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                canStoreReceivedMessages(ALICE, BOB) and
-                canDetermineAck(ALICE, BOB) and
-                not(canAckPayload(ALICE, BOB)) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                not(canIdle(ALICE, BOB))
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    canStoreReceivedMessages(ALICE, BOB),
+                    canDetermineAck(ALICE, BOB),
+                    not(canAckPayload(ALICE, BOB)),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    not(canIdle(ALICE, BOB)),
+                }
+                
             )
 
     /// Test protocol guards after received messages are stored.
@@ -176,14 +191,17 @@ module tests_unit {
             .then(receiveMessagesPayload(ALICE, BOB))
             .then(storeReceivedMessages(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                canDetermineAck(ALICE, BOB) and
-                not(canAckPayload(ALICE, BOB)) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                not(canIdle(ALICE, BOB))
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    canDetermineAck(ALICE, BOB),
+                    not(canAckPayload(ALICE, BOB)),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    not(canIdle(ALICE, BOB)),
+                }
+                
             )
             
     /// Test acknowledgement-send guards when acknowledgement determination precedes storage.
@@ -197,14 +215,16 @@ module tests_unit {
             .then(determineAck(ALICE, BOB))
             .then(storeReceivedMessages(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                canAckPayload(ALICE, BOB) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                not(canIdle(ALICE, BOB))
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    canAckPayload(ALICE, BOB),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    not(canIdle(ALICE, BOB)),
+                }
             )
     
     /// Test acknowledgement-send guards when storage precedes acknowledgement determination.
@@ -218,14 +238,16 @@ module tests_unit {
             .then(storeReceivedMessages(ALICE, BOB))
             .then(determineAck(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                canAckPayload(ALICE, BOB) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                not(canIdle(ALICE, BOB))
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    canAckPayload(ALICE, BOB),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    not(canIdle(ALICE, BOB)),
+                }
             )
     
     /// Test acknowledgement-receive guards when acknowledgement determination precedes storage.
@@ -240,14 +262,16 @@ module tests_unit {
             .then(storeReceivedMessages(ALICE, BOB))
             .then(sendAckPayload(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                not(canAckPayload(ALICE, BOB)) and
-                canReceiveAckPayload(ALICE, BOB) and
-                not(canIdle(ALICE, BOB))
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    not(canAckPayload(ALICE, BOB)),
+                    canReceiveAckPayload(ALICE, BOB),
+                    not(canIdle(ALICE, BOB)),
+                }
             )
     
     /// Test acknowledgement-receive guards when storage precedes acknowledgement determination.
@@ -262,14 +286,16 @@ module tests_unit {
             .then(determineAck(ALICE, BOB))
             .then(sendAckPayload(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                not(canAckPayload(ALICE, BOB)) and
-                canReceiveAckPayload(ALICE, BOB) and
-                not(canIdle(ALICE, BOB))
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    not(canAckPayload(ALICE, BOB)),
+                    canReceiveAckPayload(ALICE, BOB),
+                    not(canIdle(ALICE, BOB)),
+                }
             )
     
     /// Test idle guards after completing the determination-before-storage path.
@@ -285,14 +311,16 @@ module tests_unit {
             .then(sendAckPayload(ALICE, BOB))
             .then(receiveAckPayload(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                not(canAckPayload(ALICE, BOB)) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                canIdle(ALICE, BOB)
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    not(canAckPayload(ALICE, BOB)),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    canIdle(ALICE, BOB),
+                }
             )
     
     /// Test idle guards after completing the storage-before-determination path.
@@ -308,14 +336,16 @@ module tests_unit {
             .then(sendAckPayload(ALICE, BOB))
             .then(receiveAckPayload(ALICE, BOB))
             .expect(
-                not(canAddMessages(ALICE, BOB)) and
-                not(canSendMessagesPayload(ALICE, BOB)) and
-                not(canReceiveMessagesPayload(ALICE, BOB)) and
-                not(canStoreReceivedMessages(ALICE, BOB)) and
-                not(canDetermineAck(ALICE, BOB)) and
-                not(canAckPayload(ALICE, BOB)) and
-                not(canReceiveAckPayload(ALICE, BOB)) and
-                canIdle(ALICE, BOB)
+                and {
+                    not(canAddMessages(ALICE, BOB)),
+                    not(canSendMessagesPayload(ALICE, BOB)),
+                    not(canReceiveMessagesPayload(ALICE, BOB)),
+                    not(canStoreReceivedMessages(ALICE, BOB)),
+                    not(canDetermineAck(ALICE, BOB)),
+                    not(canAckPayload(ALICE, BOB)),
+                    not(canReceiveAckPayload(ALICE, BOB)),
+                    canIdle(ALICE, BOB),
+                }
             )
 
     // ------------------------------------------------------------------------------------
@@ -330,9 +360,12 @@ module tests_unit {
             .expect(
                 val state = getNodeState(ALICE, BOB)
 
-                state.offers.size() == 0 and
-                state.requests.size() == 0 and
-                state.messages.size() == 2
+                and {
+                    // state.offers.size() == 0,
+                    // state.requests.size() == 0,
+                    state.messages.size() == 2,
+                }
+                
             )
     
     /// Test retrieval of an initially empty payload.
@@ -343,11 +376,13 @@ module tests_unit {
             .expect(
                 val payload = getPayload(ALICE, BOB)
 
-                payload.payloadId == 0 and
-                payload.acks.size() == 0 and
-                payload.offers.size() == 0 and
-                payload.requests.size() == 0 and
-                payload.messages.size() == 0
+                and {
+                    payload.payloadId == 0,
+                    payload.acks.size() == 0,
+                    // payload.offers.size() == 0,
+                    // payload.requests.size() == 0,
+                    payload.messages.size() == 0,
+                }
             )
 
     /// Test retrieval of an initial payload exchange state.
@@ -357,10 +392,12 @@ module tests_unit {
         initWithTestMessages
             .expect(
                 val state = getPayloadExchangeState(ALICE, BOB)
-
-                state.phase == Idle and
-                not(state.messagesStored) and
-                not(state.ackDetermined)
+                
+                and {
+                    state.phase == Idle,
+                    not(state.messagesStored),
+                    not(state.ackDetermined),
+                }
             )
 
     // ------------------------------------------------------------------------------------
@@ -381,9 +418,11 @@ module tests_unit {
                     currentPayloadExchangeState.messagesStored,
                     currentPayloadExchangeState.ackDetermined
                 )
-                    
-                newPayloadExchangeState.get(ALICE).get(BOB).phase == MessagesSent and
-                newPayloadExchangeState.get(BOB).get(ALICE).phase == Idle
+                
+                and  {
+                    newPayloadExchangeState.get(ALICE).get(BOB).phase == MessagesSent,
+                    newPayloadExchangeState.get(BOB).get(ALICE).phase == Idle,
+                }
             )
 
     /// Test updating one peer pair's messages-stored flag.
@@ -400,9 +439,11 @@ module tests_unit {
                     true,
                     currentPayloadExchangeState.ackDetermined
                 )
-                    
-                newPayloadExchangeState.get(ALICE).get(BOB).messagesStored and
-                not(newPayloadExchangeState.get(BOB).get(ALICE).messagesStored)
+
+                and {
+                    newPayloadExchangeState.get(ALICE).get(BOB).messagesStored,
+                    not(newPayloadExchangeState.get(BOB).get(ALICE).messagesStored),
+                }
             )
             
 
@@ -420,9 +461,11 @@ module tests_unit {
                     currentPayloadExchangeState.messagesStored,
                     true
                 )
-                    
-                newPayloadExchangeState.get(ALICE).get(BOB).ackDetermined and
-                not(newPayloadExchangeState.get(BOB).get(ALICE).ackDetermined)
+                
+                and {
+                    newPayloadExchangeState.get(ALICE).get(BOB).ackDetermined,
+                    not(newPayloadExchangeState.get(BOB).get(ALICE).ackDetermined),
+                }
             )
 
 
@@ -442,10 +485,12 @@ module tests_unit {
     run defaultNodeStateFunctionsTest =
         initWithTestMessages
             .expect(
-                isDefaultNodeState(ALICE, ALICE) and
-                isDefaultNodeState(BOB, BOB) and
-                not(isDefaultNodeState(ALICE, BOB)) and
-                not(isDefaultNodeState(BOB, ALICE))
+                and {
+                    isDefaultNodeState(ALICE, ALICE),
+                    isDefaultNodeState(BOB, BOB),
+                    not(isDefaultNodeState(ALICE, BOB)),
+                    not(isDefaultNodeState(BOB, ALICE))
+                }
             )
 
     /// Test recognition of default payload states.
@@ -454,8 +499,10 @@ module tests_unit {
     run defaultPayloadStateFunctionsTest =
         initWithTestMessages
             .expect(
-                isDefaultPayloadState(ALICE, ALICE) and
-                isDefaultPayloadState(ALICE, BOB)
+                and {
+                    isDefaultPayloadState(ALICE, ALICE),
+                    isDefaultPayloadState(ALICE, BOB)
+                }
             )
 
     /// Test recognition of default payload exchange states.
@@ -464,10 +511,12 @@ module tests_unit {
     run defaultPayloadExchangeStateFunctionsText = 
         initWithTestMessages
             .expect(
-                isDefaultPayloadExchangeState(ALICE, ALICE) and
-                isDefaultPayloadExchangeState(BOB, BOB) and
-                isDefaultPayloadExchangeState(ALICE, BOB) and
-                isDefaultPayloadExchangeState(BOB, ALICE)
+                and {
+                    isDefaultPayloadExchangeState(ALICE, ALICE),
+                    isDefaultPayloadExchangeState(BOB, BOB),
+                    isDefaultPayloadExchangeState(ALICE, BOB),
+                    isDefaultPayloadExchangeState(BOB, ALICE)
+                }
             )
 
     /// Test extraction of message identifiers from directional payloads.
@@ -477,9 +526,11 @@ module tests_unit {
         initWithTestMessages
             .then(addMessages(ALICE, BOB))
             .expect(
-                payloadMessageIds(ALICE, BOB)
-                    == Set(message1.messageId, message2.messageId) and
-                payloadMessageIds(BOB, ALICE) == Set()
+                and {
+                    payloadMessageIds(ALICE, BOB)
+                        == Set(message1.messageId, message2.messageId),
+                    payloadMessageIds(BOB, ALICE) == Set()
+                }
             )
 
     /// Test detection of an in-flight directional payload.
@@ -490,7 +541,9 @@ module tests_unit {
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .expect(
-                hasInFlightPayload(ALICE, BOB) and
-                not(hasInFlightPayload(BOB, ALICE))
+                and {
+                    hasInFlightPayload(ALICE, BOB),
+                    not(hasInFlightPayload(BOB, ALICE))
+                }
             )
 }

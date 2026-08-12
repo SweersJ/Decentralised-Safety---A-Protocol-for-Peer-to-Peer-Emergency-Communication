@@ -1073,6 +1073,36 @@ module batch {
             )
         )
 
+    /// NOT CONVERTABLE TO TLA+
+    /// This proposition produces error:
+    ///     [] followed by action not of form [A]_v
+    // temporal reverse_payload_is_unchanged =
+    //     always(
+    //         NODES.forall(
+    //             sender => NODES.forall(
+    //                 receiver =>
+    //                     isPeerPair(sender, receiver) implies (
+    //                         (
+    //                             next(
+    //                                 getPayloadExchangeState(sender, receiver)
+    //                             )
+    //                             != getPayloadExchangeState(sender, receiver)
+    //                             or
+    //                             next(
+    //                                 getPayload(sender, receiver)
+    //                             )
+    //                             != getPayload(sender, receiver)
+    //                         )
+    //                         implies
+    //                         next(
+    //                             getPayload(receiver, sender)
+    //                         )
+    //                         == getPayload(receiver, sender)
+    //                     )
+    //             )
+    //         )
+    //     )
+
     // -------------------------------------------------------------------------------------
     // WITNESS-STYLE PROPOSITIONS (NON-INVARIANTS)
     // -------------------------------------------------------------------------------------
@@ -1122,19 +1152,6 @@ module batch {
     // TESTS
     // ------------------------------------------------------------------------------------
 
-    run messagesSuccessfullyStoredTest =
-        initWithMessagesToSyncTwoNodes
-            .then(addMessages(ALICE, BOB))
-            .then(sendMessagesPayload(ALICE, BOB))
-            .then(receiveMessagesPayload(ALICE, BOB))
-            .then(storeReceivedMessages(ALICE, BOB))
-            .then(determineAck(ALICE, BOB))
-            .then(sendAckPayload(ALICE, BOB))
-            .then(receiveAckPayload(ALICE, BOB))
-            .expect(
-                messageStore.get(ALICE).forall(x => x.in(messageStore.get(BOB)))
-            )
-
     run messageStoreSyncTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1147,11 +1164,14 @@ module batch {
             .expect(
                 // After complete bidirectional message exchange, both nodes should have messages
                 // This verifies that the protocol correctly syncs messages when nodes start with different sets
-                messageStore.get(ALICE).size() > 0 and
-                messageStore.get(BOB).size() > 0
+                and {
+                    messageStore.get(ALICE).size() > 0,
+                    messageStore.get(BOB).size() > 0,
+                    messageStore.get(ALICE).forall(m => m.in(messageStore.get(BOB)))
+                }
             )
 
-    // This should have for the reason that the sender doesn't know which messages have been stored by the other nodes. That can only be determined after acks are received.
+    // Unknown receiver knowledge permits redundant transmission, thus this means that Bob can still send messages to Alice while Alice already has all of these messages
     run addMessagesDoesNotFailWhenNoSyncDeltaTest =
         initWithoutMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))

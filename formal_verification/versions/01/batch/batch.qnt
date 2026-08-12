@@ -3,6 +3,7 @@
 /// - @returns batch the protocol module
 module batch {
     import messages.* from "./../messages/messages"
+    import basicSpells.* from "./../../../spells/basicSpells"
     
     // ------------------------------------------------------------------------------------
     // TYPES
@@ -29,6 +30,7 @@ module batch {
     type PayloadId = int
     
     /// Represent the acknowledgements, records, and messages exchanged between peers.
+    ///
     /// TODO add payload type to indicate if it is a batch or interactive payload or can it be determined already from the payload itself
     ///
     /// - @returns Payload the complete batch payload
@@ -87,17 +89,6 @@ module batch {
     /// - @returns Set[Node] the modeled nodes
     pure val NODES: Set[Node] = Set(ALICE, BOB)
 
-    /// Provide the default payload containing no synchronisation data.
-    ///
-    /// - @returns Payload the empty payload value
-    pure val EMPTY_PAYLOAD: Payload = {
-        payloadId: 0, //TODO: reuse payloadId to check if it is the same payload that is being sent and received, or if it is a new payload. This can be used to detect if a payload has been lost or if it is a duplicate.
-        acks: Set(),
-        // offers: Set(),//only for interactive
-        // requests: Set(),//only for interactive
-        messages: Set()
-    }
-
     /// Provide the default per-peer node state containing no synchronisation data.
     ///
     /// - @returns NodeState the empty node-state value
@@ -142,8 +133,8 @@ module batch {
 
     /// Store the current payload for every sender-receiver pair.
     ///
-    /// - @returns Node -> (Node -> Payload) the payloads indexed by sender and receiver
-    var payloadState: Node -> (Node -> Payload)
+    /// - @returns Node -> (Node -> Option[Payload]) the payloads indexed by sender and receiver
+    var payloadState: Node -> (Node -> Option[Payload])
 
     /// Track the payload exchange lifecycle for every sender-receiver pair.
     ///
@@ -180,11 +171,11 @@ module batch {
 
     /// Build an empty payload for every sender-receiver pair.
     ///
-    /// - @returns Node -> (Node -> Payload) the computed result
-    pure def initPayloadState(): Node -> (Node -> Payload) = {
+    /// - @returns Node -> (Node -> Option[Payload]) the computed result
+    pure def initPayloadState(): Node -> (Node -> Option[Payload]) = {
         NODES.mapBy(
-            sender => NODES.mapBy(
-                receiver => EMPTY_PAYLOAD
+            _ => NODES.mapBy(
+                _ => None
             )
         )
     }
@@ -262,7 +253,7 @@ module batch {
         and {
             isPeerPair(sender, receiver),
             hasSyncDelta(sender, receiver),
-            getPayload(sender,receiver).messages.size() != 0,
+            getPayloadMessages(sender, receiver).size() != 0,
             getNodeState(sender,receiver).messages.size() != 0,
             getPayloadExchangeState(sender,receiver).phase == MessagesAdded,
         }
@@ -335,7 +326,7 @@ module batch {
     def canReceiveAckPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
-            getPayload(sender,receiver).acks.size() != 0,
+            getPayloadAcks(sender, receiver).size() != 0,
             getPayloadExchangeState(sender,receiver).phase == AckSent,
         }
     }
@@ -374,13 +365,37 @@ module batch {
         nodeState.get(sender).get(receiver)
     }
 
-    /// Return the payload state associated with a sender-receiver pair.
+    /// Return the optional payload associated with a sender-receiver pair.
     ///
     /// - @param Node sender the payload sender
     /// - @param Node receiver the payload receiver
-    /// - @returns Payload the computed result
-    def getPayload(sender: Node, receiver: Node): Payload = {
+    /// - @returns Option[Payload] the payload when one exists, otherwise None
+    def getPayload(sender: Node, receiver: Node): Option[Payload] = {
         payloadState.get(sender).get(receiver)
+    }
+
+    /// Return the messages in a pair's payload, or an empty set when no payload exists.
+    ///
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns Set[Message] the payload messages or an empty set
+    def getPayloadMessages(sender: Node, receiver: Node): Set[Message] = {
+        match getPayload(sender, receiver) {
+            | Some(payload) => payload.messages
+            | None => Set()
+        }
+    }
+
+    /// Return the acknowledgements in a pair's payload, or an empty set when no payload exists.
+    ///
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns Set[MessageId] the acknowledgement identifiers or an empty set
+    def getPayloadAcks(sender: Node, receiver: Node): Set[MessageId] = {
+        match getPayload(sender, receiver) {
+            | Some(payload) => payload.acks
+            | None => Set()
+        }
     }
 
     /// Return the exchange lifecycle state associated with a sender-receiver pair.
@@ -519,13 +534,21 @@ module batch {
             sender,
             senderPayload => senderPayload.setBy(
                 receiver,
-                receiverPayload => {
-                    ...receiverPayload,
-                    // Make sure if another payload is send the previous messages are not removed from the payload from sender to receiver
-                    messages: receiverPayload.messages.union(
-                        getNodeState(sender,receiver).messages
-                    )
-                }
+                receiverPayload =>
+                    match receiverPayload {
+                        | None => Some({
+                            payloadId: 0,
+                            acks: Set(),
+                            messages: getNodeState(sender, receiver).messages
+                        })
+                        | Some(payload) => Some({
+                            ...payload,
+                            // Keep any messages already present when extending an existing payload.
+                            messages: payload.messages.union(
+                                getNodeState(sender, receiver).messages
+                            )
+                        })
+                    }
             )
         ),
         payloadExchangeState' = 
@@ -601,7 +624,7 @@ module batch {
             receiver,
             // With the use of union no previous messages can be removed, thus proving monotonicity.
             receiverStore => receiverStore.union(
-                getPayload(sender,receiver).messages
+                getPayloadMessages(sender, receiver)
             )
         ),
         nodeState' = nodeState.setBy(
@@ -612,7 +635,7 @@ module batch {
                     ...senderState,
                     messages: excludeMessagesById(
                         senderState.messages,
-                        getSetMessageIds(getPayload(sender, receiver).messages)
+                        getSetMessageIds(getPayloadMessages(sender, receiver))
                     )
                 }
             )
@@ -646,11 +669,15 @@ module batch {
             senderPayload => senderPayload.setBy(
                 receiver,
                 // Reuse the sender payload to prevent conflicting payload states.
-                receiverState => {
-                    ...receiverState,
-                    // Acknowledge all messages received from the sender regardless of whether they were already in the message store or not. This is because the sender may have sent messages that the receiver already has, and the receiver needs to acknowledge those messages to inform the sender that it has received them.
-                    acks: getSetMessageIds(receiverState.messages)
-                }
+                receiverPayload =>
+                    match receiverPayload {
+                        | Some(payload) => Some({
+                            ...payload,
+                            // Acknowledge every message received from the sender.
+                            acks: getSetMessageIds(payload.messages)
+                        })
+                        | None => None
+                    }
             )
         ),
         payloadExchangeState' = 
@@ -704,7 +731,7 @@ module batch {
         // Next state updates
         messageStore' = messageStore,
         nodeState' = 
-            val ackIds = getPayload(sender,receiver).acks
+            val ackIds = getPayloadAcks(sender, receiver)
 
             nodeState.setBy(
                 sender,
@@ -718,18 +745,28 @@ module batch {
                 )
             ),
         payloadState' = 
-            val ackIds = getPayload(sender,receiver).acks
+            val ackIds = getPayloadAcks(sender, receiver)
             
             payloadState.setBy(
                 sender,
                 senderPayload => senderPayload.setBy(
                     receiver,
-                    // Cleanup of the acks in the payload state for the sender to receiver, as they have been acknowledged by the receiver. This is done to avoid resending the same messages again.
-                    receiverPayload => {
-                        ...receiverPayload,
-                        acks: Set(),  // TODO: the payload acks are in the reverse direction //TODO: check if all messages have been acknowledged and if so, clear the payload state for the sender to receiver to avoid resending the same messages again.
-                        messages: excludeMessagesById(receiverPayload.messages, ackIds)
-                    }
+                    // Remove acknowledged messages and represent a fully consumed payload as absent.
+                    receiverPayload =>
+                        match receiverPayload {
+                            | Some(payload) =>
+                                val remainingMessages = excludeMessagesById(payload.messages, ackIds)
+                                if (remainingMessages.size() == 0) {
+                                    None
+                                } else {
+                                    Some({
+                                        ...payload,
+                                        acks: Set(),
+                                        messages: remainingMessages
+                                    })
+                                }
+                            | None => None
+                        }
                 )
             ),
         payloadExchangeState' = 
@@ -824,20 +861,13 @@ module batch {
         }
     }
 
-    /// Check whether a pair's payload equals the empty default payload.
+    /// Check whether a sender-receiver pair has no payload.
     ///
     /// - @param Node sender the payload sender
     /// - @param Node receiver the payload receiver
-    /// - @returns bool the computed result
+    /// - @returns bool whether the payload is absent
     def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
-        val payload = getPayload(sender, receiver)
-        and {
-            payload.payloadId == 0,
-            payload.acks.size() == 0,
-            // payload.offers.size() == 0, //only for interactive
-            // payload.requests.size() == 0, //only for interactive
-            payload.messages.size() == 0,
-        }
+        getPayload(sender, receiver) == None
     }
 
     /// Check whether a pair's exchange state equals the empty default exchange state.
@@ -862,7 +892,7 @@ module batch {
     /// - @param Node receiver the payload receiver
     /// - @returns Set[MessageId] the computed result
     def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
-        getSetMessageIds(getPayload(sender,receiver).messages)
+        getSetMessageIds(getPayloadMessages(sender, receiver))
     }
 
     /// Check whether a pair currently has a sent message payload awaiting receipt.
@@ -922,7 +952,7 @@ module batch {
                             )
                         )
                         or
-                        // During sync activity, at least one direction must differ from EMPTY_PAYLOAD.
+                        // During sync activity, at least one direction must contain a payload.
                         (
                             not(isDefaultPayloadState(sender, receiver)) or
                             not(isDefaultPayloadState(receiver, sender))
@@ -947,7 +977,7 @@ module batch {
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies
-                    getPayload(sender, receiver).messages.forall(
+                    getPayloadMessages(sender, receiver).forall(
                         m =>
                             // Still scheduled for this receiver
                             m.in(getNodeState(sender, receiver).messages)
@@ -966,7 +996,7 @@ module batch {
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies
-                    getPayload(sender, receiver).messages.forall(
+                    getPayloadMessages(sender, receiver).forall(
                         m => m.in(getMessagesMessageStore(sender))
                     )
             )
@@ -1002,7 +1032,7 @@ module batch {
     val ack_ids_match_payload_messages =
         NODES.forall(
             sender => NODES.forall(
-                receiver => getPayload(sender,receiver).acks.forall(
+                receiver => getPayloadAcks(sender, receiver).forall(
                     id => id.in(payloadMessageIds(sender, receiver))
                 )
             )
@@ -1018,7 +1048,7 @@ module batch {
                     isPeerPair(sender, receiver) implies (
                         getPayloadExchangeState(sender, receiver).phase == AckSent 
                         implies
-                        getPayload(sender, receiver).acks.forall(
+                        getPayloadAcks(sender, receiver).forall(
                             id => id.in(
                                 getSetMessageIds(messageStore.get(receiver))
                             )
@@ -1043,8 +1073,8 @@ module batch {
     val pending_acks_imply_nonempty_payload =
         NODES.forall(
             sender => NODES.forall(
-                receiver => getPayload(sender,receiver).acks.size() > 0
-                    implies getPayload(sender,receiver).messages.size() > 0
+                receiver => getPayloadAcks(sender, receiver).size() > 0
+                    implies getPayloadMessages(sender, receiver).size() > 0
             )
         )
     
@@ -1058,7 +1088,7 @@ module batch {
                     isPeerPair(sender, receiver) implies (
                         getPayloadExchangeState(sender, receiver).ackDetermined
                         implies
-                        getPayload(sender, receiver).acks
+                        getPayloadAcks(sender, receiver)
                             == payloadMessageIds(sender, receiver)
                     )
             )
@@ -1092,7 +1122,7 @@ module batch {
                     isPeerPair(sender, receiver) implies (
                         getPayloadExchangeState(sender, receiver).phase == MessagesAdded
                         implies
-                        getPayload(sender, receiver).messages.size() > 0
+                        getPayloadMessages(sender, receiver).size() > 0
                     )
             )
         )
@@ -1107,7 +1137,7 @@ module batch {
                     isPeerPair(sender, receiver) implies (
                         getPayloadExchangeState(sender, receiver).phase == MessagesSent
                         implies
-                        getPayload(sender, receiver).messages.size() > 0
+                        getPayloadMessages(sender, receiver).size() > 0
                     )
             )
         )
@@ -1125,7 +1155,7 @@ module batch {
                         and {
                             getPayloadExchangeState(sender, receiver).messagesStored,
                             getPayloadExchangeState(sender, receiver).ackDetermined,
-                            getPayload(sender, receiver).acks.size() > 0
+                            getPayloadAcks(sender, receiver).size() > 0
                         }
                     )
             )
@@ -1141,7 +1171,7 @@ module batch {
                     isPeerPair(sender, receiver) implies (
                         getPayloadExchangeState(sender, receiver).phase == AckReceived
                         implies
-                        getPayload(sender, receiver).acks.size() == 0
+                        getPayloadAcks(sender, receiver).size() == 0
                     )
             )
         )
@@ -1238,10 +1268,10 @@ module batch {
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
                         and {
-                            getPayload(sender,receiver).messages.size() > 0,
+                            getPayloadMessages(sender, receiver).size() > 0,
                             getPayloadExchangeState(sender,receiver).phase == MessagesSent,
                         }
-                        leadsTo getPayload(sender,receiver).acks.size() > 0
+                        leadsTo getPayloadAcks(sender, receiver).size() > 0
                 )
             )
         )
@@ -1254,8 +1284,8 @@ module batch {
             NODES.forall(
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
-                        getPayload(sender,receiver).acks.size() > 0
-                        leadsTo getPayload(sender,receiver).acks.size() == 0
+                        getPayloadAcks(sender, receiver).size() > 0
+                        leadsTo getPayloadAcks(sender, receiver).size() == 0
                 )
             )
         )
@@ -1316,7 +1346,7 @@ module batch {
                         isPeerPair(sender, receiver) implies
                         MESSAGES.keys().forall(
                             id =>
-                                id.in(getPayload(sender, receiver).acks)
+                                id.in(getPayloadAcks(sender, receiver))
                                 leadsTo (
                                     not(
                                         id.in(
@@ -1502,7 +1532,7 @@ module batch {
                 receiver => 
                     and {
                         isPeerPair(sender, receiver),
-                        getPayload(sender,receiver).messages.size() > 0,
+                        getPayloadMessages(sender, receiver).size() > 0,
                     }
             )
         )
@@ -1530,7 +1560,7 @@ module batch {
                 receiver => 
                     and {
                         isPeerPair(sender, receiver),
-                        getPayload(sender,receiver).acks.size() > 0,
+                        getPayloadAcks(sender, receiver).size() > 0,
                     }
             )
         )

@@ -4,6 +4,7 @@
 module tests_unit {
     import batch.* from "batch"
     import messages.* from "./../messages/messages"
+    import basicSpells.* from "./../../../spells/basicSpells"
 
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES
@@ -58,7 +59,7 @@ module tests_unit {
         initWithTestMessages
             .expect(
                 NODES.forall(sender => NODES.forall(receiver =>
-                    payloadState.get(sender).get(receiver) == EMPTY_PAYLOAD
+                    payloadState.get(sender).get(receiver) == None
                 ))
             )
 
@@ -368,22 +369,12 @@ module tests_unit {
                 
             )
     
-    /// Test retrieval of an initially empty payload.
+    /// Test that an initial sender-receiver pair has no payload.
     ///
     /// - @returns bool whether the test passes
     run getPayloadTest =
         initWithTestMessages
-            .expect(
-                val payload = getPayload(ALICE, BOB)
-
-                and {
-                    payload.payloadId == 0,
-                    payload.acks.size() == 0,
-                    // payload.offers.size() == 0,
-                    // payload.requests.size() == 0,
-                    payload.messages.size() == 0,
-                }
-            )
+            .expect(getPayload(ALICE, BOB) == None)
 
     /// Test retrieval of an initial payload exchange state.
     ///

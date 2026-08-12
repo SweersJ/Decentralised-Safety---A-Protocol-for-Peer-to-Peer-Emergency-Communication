@@ -1,0 +1,6640 @@
+{
+  "#meta": {
+    "format": "ITF",
+    "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+    "source": "batch.qnt",
+    "status": "ok",
+    "command": "quint run batch.qnt --invariant when_messagesStored --out-itf output/safety/when_messagesStored/20260812_022324.itf.json",
+    "seed": "6328506722665990138",
+    "description": "Created by Quint on Wed Aug 12 2026 02:23:50 GMT+0200 (Central European Summer Time)",
+    "timestamp": 1786494230624
+  },
+  "vars": [
+    "messageStore",
+    "nodeState",
+    "payloadExchangeState",
+    "payloadState"
+  ],
+  "states": [
+    {
+      "#meta": {
+        "index": 0
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 1
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesAdded",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 2
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 3
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        },
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 4
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 5
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": [
+                        "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                      ]
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 6
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesAdded",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": [
+                        "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                      ]
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 7
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "AckSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesAdded",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": [
+                        "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                      ]
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 8
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "AckSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": [
+                        "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                      ]
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 9
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "AckReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 10
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 11
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 12
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 13
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 14
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 15
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 16
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": [
+                        "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
+                      ]
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 17
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "MessagesReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": [
+                        "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
+                      ]
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 18
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "AckSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": [
+                        "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1"
+                      ]
+                    },
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Request: flashlight batteries",
+                          "groupId": "group-bravo",
+                          "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 19
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": true,
+                    "messagesStored": true,
+                    "phase": {
+                      "tag": "AckReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 20
+      },
+      "messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                },
+                {
+                  "body": "Request: flashlight batteries",
+                  "groupId": "group-bravo",
+                  "messageId": "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "acks": {
+                      "#set": []
+                    },
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "payloadId": {
+                      "#bigint": "0"
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -73,6 +73,33 @@
       "patterns": [
         {
           "name": "comment.block.documentation.quint",
+          "match": "^(\\s*///\\s*)(-@param)(\\s+)((?:\\([^\\r\\n]+?\\)|[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\r\\n]*?\\])?)(?:\\s*->\\s*(?:\\([^\\r\\n]+?\\)|[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\r\\n]*?\\])?))*)(\\s+)([A-Za-z_][A-Za-z0-9_]*)(?:\\s+.*)?$",
+          "captures": {
+            "2": {
+              "name": "keyword.other.documentation.quint"
+            },
+            "4": {
+              "name": "support.type.quint"
+            },
+            "6": {
+              "name": "variable.parameter.documentation.quint"
+            }
+          }
+        },
+        {
+          "name": "comment.block.documentation.quint",
+          "match": "^(\\s*///\\s*)(-@return)(\\s+)((?:\\([^\\r\\n]+?\\)|[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\r\\n]*?\\])?)(?:\\s*->\\s*(?:\\([^\\r\\n]+?\\)|[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\r\\n]*?\\])?))*)(?:\\s+.*)?$",
+          "captures": {
+            "2": {
+              "name": "keyword.other.documentation.quint"
+            },
+            "4": {
+              "name": "support.type.quint"
+            }
+          }
+        },
+        {
+          "name": "comment.block.documentation.quint",
           "match": "///.*$"
         }
       ]

@@ -756,6 +756,97 @@ module batch {
             )
         )
 
+    val when_idle_not_messageStored_and_not_ackDetermined =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver => 
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).phase == Idle
+                        implies
+                        and {
+                            not(getPayloadExchangeState(sender, receiver).messagesStored),
+                            not(getPayloadExchangeState(sender, receiver).ackDetermined)
+                        }
+                    )
+            )
+        )
+
+    val when_MessagesAdded_payload_messages_non_empty =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).phase == MessagesAdded
+                        implies
+                        getPayload(sender, receiver).messages.size() > 0
+                    )
+            )
+        )
+
+    val when_MessagesSent_payload_messages_non_empty =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).phase == MessagesSent
+                        implies
+                        getPayload(sender, receiver).messages.size() > 0
+                    )
+            )
+        )
+
+    val when_AckSent_messagesStored_ackDetermined_acks_non_empty =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).phase == AckSent
+                        implies
+                        and {
+                            getPayloadExchangeState(sender, receiver).messagesStored,
+                            getPayloadExchangeState(sender, receiver).ackDetermined,
+                            getPayload(sender, receiver).acks.size() > 0
+                        }
+                    )
+            )
+        )
+
+    val when_AckReceived_acks_empty = 
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).phase == AckReceived
+                        implies
+                        getPayload(sender, receiver).acks.size() == 0
+                    )
+            )
+        )
+
+    val when_ackDetermined = 
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).ackDetermined
+                        implies
+                        getPayloadExchangeState(sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
+                    )
+            )
+        )
+
+    val when_messagesStored = 
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(sender, receiver).messagesStored
+                        implies
+                        getPayloadExchangeState(sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
+                    )
+            )
+        )
+
     // -------------------------------------------------------------------------------------
     // LIVENESS PROPOSITIONS
     // -------------------------------------------------------------------------------------

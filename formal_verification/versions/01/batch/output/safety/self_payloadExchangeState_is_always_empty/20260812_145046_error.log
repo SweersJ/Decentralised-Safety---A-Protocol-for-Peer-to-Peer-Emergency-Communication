@@ -1,0 +1,12 @@
+
+ Error [QNT000]: Couldn't unify rec and sum
+Trying to unify { messageId: MessageId, groupId: str, timestamp: int, body: str } and (Some({ messageId: MessageId, groupId: str, timestamp: int, body: str }) | None)
+Trying to unify (Node) => Set[(Some({ messageId: MessageId, groupId: str, timestamp: int, body: str }) | None)] and (Node) => Set[Message]
+
+
+  at .../DecSaf/formal_verification/versions/01/batch/batch.qnt:344:9
+  344:     def getMessagesMessageStore(sender: Node): Set[Message] = {
+               ^^^^^^^^^^^^^^^^^^^^^^^
+
+error: typechecking failed
+[FAIL]  exit 1

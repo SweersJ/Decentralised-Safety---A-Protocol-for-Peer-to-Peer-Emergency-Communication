@@ -1,3 +1,6 @@
+/// Model the two-node batch message synchronisation and acknowledgement protocol.
+///
+/// -@return batch the protocol module
 module batch {
     import messages.* from "./../messages/messages"
     
@@ -20,13 +23,14 @@ module batch {
         recordType: RecordType
     }
 
-    /// Identify a protocol payload.
+    /// Identify a protocol payload with an id encoded as integer instead of UUID.
     ///
     /// -@return PayloadId the integer payload identifier
     type PayloadId = int
     
     //TODO: add payload type to indicate if it is a batch or interactive payload or can it be determined already from the payload itself
     /// Represent the acknowledgements, records, and messages exchanged between peers.
+    /// TODO add payload type to indicate if it is a batch or interactive payload or can it be determined already from the payload itself
     ///
     /// -@return Payload the complete batch payload
     type Payload = {
@@ -147,8 +151,9 @@ module batch {
     /// -@return Node -> (Node -> PayloadExchangeState) the exchange states indexed by sender and receiver
     var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
 
-    // TODO: add the payload generator
-    // Payload-id generator for future send actions.
+    /// Payload-id generator for future send actions.
+    /// TODO: add the payload generator
+    /// -@return int the next payload id for the next payload to be sent
     // var nextPayloadId: int
 
     // ------------------------------------------------------------------------------------
@@ -156,6 +161,7 @@ module batch {
     // ------------------------------------------------------------------------------------
 
     // > INIT FUNCTIONS
+
     /// Build the initial per-peer node state from the messages assigned to each node.
     ///
     /// -@param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
@@ -211,8 +217,8 @@ module batch {
     }
 
     // > GUARD FUNCTIONS
-    // Sender and receiver must be different nodes, otherwise it doesn't make sense to send a payload to itself.
-    /// Check whether the sender and receiver are distinct peers.
+
+    /// Check whether the sender and receiver are distinct peers, otherwise it doesn't make sense to send a payload.
     ///
     /// -@param Node sender the node sending the payload
     /// -@param Node receiver the node receiving the payload
@@ -221,7 +227,6 @@ module batch {
         sender != receiver
     }
 
-    // check if the sender has messages to send to the receiver, otherwise it doesn't make sense to add messages to the payload with no messages.
     /// Check whether a sender-receiver pair has messages available for synchronisation.
     ///
     /// -@param Node sender the node whose messages are synchronized
@@ -366,11 +371,14 @@ module batch {
         payloadExchangeState.get(sender).get(receiver)
     }
 
-    /* TODO: activate when in interactive mode
-    pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
-        recordStates.map(rs => rs.messageId)
-    } 
-    */
+    /// Return the record state messages ids from the set of RecordStates
+    /// TODO: activate when in interactive mode
+    /// -@param Set[RecordState] recordStates the record states to analyse and extract message ids from
+    /// -@return Set[MessageId] the computed set of message ids
+    // pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
+    //     recordStates.map(rs => rs.messageId)
+    // } 
+    
 
     // > SETTER FUNCTIONS
 
@@ -472,7 +480,6 @@ module batch {
         ),
     }
 
-    // Batch flow 1: Sender adds messages to its payload.
     /// Add the sender's pending messages to its payload for the receiver.
     ///
     /// -@param Node sender the node adding pending messages
@@ -483,8 +490,6 @@ module batch {
         canAddMessages(sender, receiver),
         
         // Next state updates
-        /* TODO: [added] add check to ensure that the messages added to the payload are not already 
-        in the payload and [not added] that they are not already acknowledged by the receiver. */
         messageStore' = messageStore,
         nodeState' = nodeState,
         payloadState' = payloadState.setBy(
@@ -511,9 +516,6 @@ module batch {
             ),
     }
 
-    // Batch flow 2: Sender sends its payload to the receiver. Functionally, this action does 
-    // not change the state of the sender or receiver, but it is used to model the sending of 
-    // the payload in the system.
     /// Mark the sender's populated message payload as sent to the receiver.
     ///
     /// -@param Node sender the node sending the message payload
@@ -604,10 +606,6 @@ module batch {
             ),
     }
 
-    // Batch flow 3: Receiver acknowledges the payload received from the sender. The receiver
-    // checks the messages in the payload and acknowledges only those messages that it has not 
-    // already received. The receiver updates its message store with the new messages and 
-    // updates the payload state to reflect the acknowledged messages.
     /// Determine acknowledgement identifiers for all messages in a received payload.
     ///
     /// -@param Node sender the original message sender
@@ -669,11 +667,10 @@ module batch {
             ),
     }
 
-    // Batch flow 5: Receiver receives the acknowledgment payload from the sender. The receiver
-    // updates its payload state to reflect the acknowledged messages and clears the acknowledgments.
-    // With retransmission, the sender can now check with the offers and the acks if everything has
-    // been delivered or resend specific messages.
+
     /// Receive acknowledgements and remove acknowledged messages from pending state and payload.
+    /// With retransmission, the sender can now check with the offers and the acks if everything 
+    /// has been delivered or resend specific messages.
     ///
     /// -@param Node sender the node receiving the acknowledgement
     /// -@param Node receiver the node that produced it
@@ -728,7 +725,6 @@ module batch {
     // HELPER VERIFICATION ACTIONS
     // ------------------------------------------------------------------------------------
 
-    // Init action for tests that require an actual sync from Alice to Bob.
     /// Initialise two nodes with distinct nonempty message sets that require synchronisation.
     ///
     /// -@return bool whether the action is enabled and its transition constraints hold
@@ -746,7 +742,6 @@ module batch {
         }
     }
 
-    // Init action for tests that require no sync delta from Alice to Bob.
     /// Initialise two nodes such that Alice already contains Bob's selected messages.
     ///
     /// -@return bool whether the action is enabled and its transition constraints hold
@@ -1151,10 +1146,14 @@ module batch {
     // LIVENESS PROPOSITIONS
     // -------------------------------------------------------------------------------------
 
+    /// Ensure each node's message store never loses previously stored messages.
+    ///
     /// NOT CONVERTABLE TO TLA+
     /// This proposition produces error:
     ///     [] followed by action not of form [A]_v
     /// Therefore it can't be used
+    ///
+    /// -@return bool whether the proposition holds
     // temporal messageStores_are_monotonic = 
     //     always(
     //         NODES.forall(
@@ -1225,11 +1224,15 @@ module batch {
             )
         )
 
+    /// Ensure a pending message ID is removed only after the receiver stores the message.
+    ///
     /// Not liveness, but temporal safety property
     /// NOT CONVERTABLE TO TLA+
     /// This proposition produces error:
     ///     [] followed by action not of form [A]_v
     /// Therefore it can't be used
+    ///
+    /// -@return bool whether the proposition holds
     // temporal pending_message_id_removed_only_after_storage =
     //     NODES.forall(
     //         sender => NODES.forall(
@@ -1409,9 +1412,13 @@ module batch {
             )
         )
 
+    /// Ensure changes to one exchange direction leave the reverse payload unchanged.
+    ///
     /// NOT CONVERTABLE TO TLA+
     /// This proposition produces error:
     ///     [] followed by action not of form [A]_v
+    ///
+    /// -@return bool whether the proposition holds
     // temporal reverse_payload_is_unchanged =
     //     always(
     //         NODES.forall(
@@ -1503,6 +1510,9 @@ module batch {
     // TESTS
     // ------------------------------------------------------------------------------------
 
+    /// Test that a complete exchange synchronises Alice's messages to Bob.
+    ///
+    /// -@return bool whether the test passes
     run messageStoreSyncTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1522,11 +1532,19 @@ module batch {
                 }
             )
 
-    // Unknown receiver knowledge permits redundant transmission, thus this means that Bob can still send messages to Alice while Alice already has all of these messages
+    /// Test that adding messages remains enabled when no synchronisation delta exists.
+    ///
+    /// Unknown receiver knowledge permits redundant transmission, so Alice can still send
+    /// messages to Bob when Bob already has all of them.
+    ///
+    /// -@return bool whether the test passes
     run addMessagesDoesNotFailWhenNoSyncDeltaTest =
         initWithoutMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
 
+    /// Test that adding messages produces pending messages and a nonempty payload.
+    ///
+    /// -@return bool whether the test passes
     run payloadMessagesWitnessTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1534,12 +1552,18 @@ module batch {
                 can_have_pending_messages and can_have_payload_messages
             )
 
+    /// Test that sending a message payload produces an in-flight payload.
+    ///
+    /// -@return bool whether the test passes
     run inFlightPayloadWitnessTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .expect(can_have_in_flight_payload)
 
+    /// Test that acknowledgement determination produces pending acknowledgements.
+    ///
+    /// -@return bool whether the test passes
     run pendingAckWitnessTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))
@@ -1550,6 +1574,9 @@ module batch {
                 can_have_pending_acks and can_have_delivered_payload
             )
 
+    /// Test that storing received messages preserves every message already stored.
+    ///
+    /// -@return bool whether the test passes
     run storeReceivedMessagesPreservesExistingMessagesTest =
         initWithMessagesToSyncTwoNodes
             .then(addMessages(ALICE, BOB))

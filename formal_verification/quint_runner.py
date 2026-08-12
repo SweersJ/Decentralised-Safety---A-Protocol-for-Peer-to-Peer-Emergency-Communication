@@ -668,9 +668,25 @@ class QuintRunner(tk.Tk):
             names = self._groups.get(cat, [])
             if not names:
                 continue
-            section = ttk.LabelFrame(self._inner, text=label, padding=6)
+            section = ttk.LabelFrame(self._inner, padding=6)
             section.pack(fill="x", padx=4, pady=4)
             self._checks[cat] = {}
+
+            header = ttk.Frame(section)
+            ttk.Label(header, text=label).pack(side="left")
+            ttk.Button(
+                header,
+                text="Select all",
+                width=9,
+                command=lambda c=cat: self._set_category(c, True),
+            ).pack(side="left", padx=(6, 2))
+            ttk.Button(
+                header,
+                text="Deselect all",
+                width=11,
+                command=lambda c=cat: self._set_category(c, False),
+            ).pack(side="left")
+            section.configure(labelwidget=header)
             for name in names:
                 hist_status, hist_dt, hist_file = self._last_result_for(cat, name)
                 if (cat, name) not in self._status:
@@ -687,7 +703,7 @@ class QuintRunner(tk.Tk):
 
                 # status + datetime on the left for column alignment
                 lbl = tk.Label(row, text=icon, font=("Consolas", 9), anchor="w",
-                               width=4, foreground=color)
+                               width=9, foreground=color)
                 lbl.pack(side="left", padx=(0, 2))
                 self._status_labels[(cat, name)] = lbl
 
@@ -723,6 +739,10 @@ class QuintRunner(tk.Tk):
         for cat_vars in self._checks.values():
             for var in cat_vars.values():
                 var.set(value)
+
+    def _set_category(self, cat: str, value: bool) -> None:
+        for var in self._checks.get(cat, {}).values():
+            var.set(value)
 
     def _update_status_label(self, cat: str, name: str, status: str,
                               file_path: Path | None = None) -> None:

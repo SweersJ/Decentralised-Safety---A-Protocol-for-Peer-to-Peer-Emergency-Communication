@@ -9,11 +9,11 @@ module batch {
     // TYPES
     // ------------------------------------------------------------------------------------
 
-    /// Classify a synchronisation record as an offer, request, or absent record.
+    /// Classify a synchronisation record as an offer or request.
     /// ! only for interactive !
     ///
     /// - @returns RecordType the record classification
-    // type RecordType = Offer | Request | None
+    // type RecordType = Offer | Request
     
     /// Associate a message identifier with its synchronisation record classification.
     /// ! only for interactive !
@@ -97,15 +97,6 @@ module batch {
         // requests: Set(), //only for interactive
         messages: Set()
     }
-
-    /// Provide the default record state with no message or classification.
-    /// ! only for interactive !
-    ///
-    /// - @returns RecordState the empty record-state value
-    // pure val EMPTY_RECORD_STATE: RecordState = {
-    //     messageId: "",
-    //     recordType: None
-    // }
 
     /// Provide the default idle and unprocessed payload exchange state.
     ///
@@ -414,8 +405,8 @@ module batch {
     /// - @param Set[RecordState] recordStates the record states to analyse and extract message ids from
     /// - @returns Set[MessageId] the computed set of message ids
     // pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
-    //     recordStates.map(rs => rs.messageId)
-    // } 
+    //     recordStates.map(recordState => recordState.messageId)
+    // }
     
 
     // > SETTER FUNCTIONS

@@ -1,3 +1,10 @@
+---
+config:
+  layout: elk
+  elk:
+    nodePlacementStrategy: BRANDES_KOEPF
+    cycleBreakingStrategy: INTERACTIVE
+---
 stateDiagram-v2
     [*] --> Init
     Init --> Idle

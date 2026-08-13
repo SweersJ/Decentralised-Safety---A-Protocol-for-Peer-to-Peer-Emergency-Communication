@@ -11,7 +11,7 @@ sequenceDiagram
 
     Note over Alice, Bob: batch data sync
 
-    Note over MessageStore_Alice, MessageStore_Bob: Initial state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1]<br/>NodeState_A->B = {messages:[M1,M2,M3], offers:[], requests:[]}<br/>NodeState_B->A = {messages:[M1], offers:[], requests:[]}
+    Note over Alice, Bob: wrap: Initial state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1]<br/>NodeState_A->B = <br/>{messages:[M1,M2,M3], offers:[], requests:[]}<br/>NodeState_B->A = <br/>{messages:[M1], offers:[], requests:[]}
 
     Alice->>PayloadState_Alice: create payload with messages {messages:[M1,M2,M3], acks:[]}
     activate PayloadState_Alice
@@ -28,7 +28,7 @@ sequenceDiagram
         Bob->>MessageStore_Bob: store missing messages M2 and M3 from payload
         Note right of Bob: Bob already has M1,<br/>so only new messages are added to MessageStore_Bob.
         
-        Bob->>NodeState_Bob: remove messages from Bob's NodeState to Alice that Alice already have send in their payload {messages:[], offers:[], requests:[]}
+        Bob->>NodeState_Bob: wrap: remove messages from Bob's NodeState to Alice that Alice already have send in their payload {messages:[], offers:[], requests:[]}
     and determination acknowledgements
         Bob->>PayloadState_Bob: add ACKs for received messages to payload
         PayloadState_Bob-->>Bob: return payload with ACKs
@@ -39,4 +39,4 @@ sequenceDiagram
 
     Alice->>NodeState_Alice: remove acknowledged messages from NodeState for Alice to Bob
     Note left of Alice: ACKs for M1, M2, M3 received.<br/>NodeState_A->B becomes {messages:[], offers:[], requests:[]}.
-    Note over MessageStore_Alice, MessageStore_Bob: Final state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1, M2, M3]<br/>NodeState_A->B = {messages:[], offers:[], requests:[]}<br/>NodeState_B->A = {messages:[], offers:[], requests:[]}
+    Note over Alice, Bob: wrap: Final state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1, M2, M3]<br/>NodeState_A->B = {messages:[], offers:[], requests:[]}<br/>NodeState_B->A = {messages:[], offers:[], requests:[]}

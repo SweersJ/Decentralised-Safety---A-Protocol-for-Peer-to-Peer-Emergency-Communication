@@ -22,11 +22,11 @@ sequenceDiagram
     Bob->>PayloadState_Bob: create payload with received payload
     PayloadState_Bob-->>Bob: return payload with received messages
     activate PayloadState_Bob
-    par a
+    par message storing
         Bob->>MessageStore_Bob: store missing messages from payload
         %% maybe separate
-        Bob->>NodeState_Bob: remove messages from NodeState for Alice that they already have send in their payload
-    and b
+        Bob->>NodeState_Bob: wrap: remove messages from NodeState for Alice that they already have send in their payload
+    and determination acknowledgements
         Bob->>PayloadState_Bob: add ACKs for received messages to payload
         PayloadState_Bob-->>Bob: return payload with ACKs
     end

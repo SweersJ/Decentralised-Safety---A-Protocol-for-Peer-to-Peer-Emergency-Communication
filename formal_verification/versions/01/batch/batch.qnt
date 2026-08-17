@@ -751,8 +751,8 @@ import message_id.* from "./../types/message_id"
         val nodeState = getNodeState(sender, receiver)
         and {
             nodeState.messages.size() == 0,
-            // nodeState.offers.size() == 0,  //only for interactive
-            // nodeState.requests.size() == 0, //only for interactive
+            nodeState.offers.size() == 0,  //only for interactive
+            nodeState.requests.size() == 0, //only for interactive
         }
     }
 

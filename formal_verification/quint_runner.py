@@ -17,6 +17,7 @@ import tempfile
 import threading
 from datetime import datetime
 from pathlib import Path
+from typing import Callable
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
@@ -55,6 +56,12 @@ _DECL_RE = re.compile(
     re.MULTILINE,
 )
 
+# Quint file imports use a relative source after `from`, for example:
+# `import helpers.* from "./helpers"`. The extension is conventionally omitted.
+_IMPORT_SOURCE_RE = re.compile(
+    r"^[ \t]*(?:import|export)\b.*?\bfrom\s+[''\"]([^''\"]+)[''\"]",
+    re.MULTILINE | re.DOTALL,
+)
 # val names starting with `can_` are witnesses; all other vals are safety invariants.
 _WITNESS_RE = re.compile(r"^can_")
 
@@ -94,22 +101,51 @@ _CATEGORIES: dict[str, dict] = {
 }
 
 
+def _imported_qnt_paths(path: Path, text: str) -> list[Path]:
+    """Return existing local Quint files imported directly by *path*."""
+    imported: list[Path] = []
+    for match in _IMPORT_SOURCE_RE.finditer(text):
+        source = Path(match.group(1))
+        candidate = source if source.is_absolute() else path.parent / source
+        if candidate.suffix == "":
+            candidate = candidate.with_suffix(".qnt")
+        candidate = candidate.resolve()
+        if candidate.is_file():
+            imported.append(candidate)
+    return imported
+
+
 def parse_qnt(path: Path) -> dict[str, list[str]]:
-    text = path.read_text(encoding="utf-8")
+    """Collect runnable declarations from a file and all its transitive imports."""
     seen: set[str] = set()
+    visited: set[Path] = set()
     groups: dict[str, list[str]] = {k: [] for k in _CATEGORIES}
-    for m in _DECL_RE.finditer(text):
-        kind, name = (m.group(1), m.group(2)) if m.group(1) else (m.group(3), m.group(4))
-        if name in seen:
-            continue
-        seen.add(name)
-        if kind == "run":
-            groups["tests"].append(name)
-        elif kind == "temporal":
-            groups["liveness"].append(name)
-        else:  # val
-            target = "witness" if _WITNESS_RE.match(name) else "safety"
-            groups[target].append(name)
+
+    def visit(current: Path) -> None:
+        current = current.resolve()
+        if current in visited:
+            return
+        visited.add(current)
+        text = current.read_text(encoding="utf-8")
+
+        # Keep declarations in selected-file-first, import-discovery order.
+        for m in _DECL_RE.finditer(text):
+            kind, name = (m.group(1), m.group(2)) if m.group(1) else (m.group(3), m.group(4))
+            if name in seen:
+                continue
+            seen.add(name)
+            if kind == "run":
+                groups["tests"].append(name)
+            elif kind == "temporal":
+                groups["liveness"].append(name)
+            else:  # val
+                target = "witness" if _WITNESS_RE.match(name) else "safety"
+                groups[target].append(name)
+
+        for imported_path in _imported_qnt_paths(current, text):
+            visit(imported_path)
+
+    visit(path)
     return groups
 
 
@@ -384,6 +420,7 @@ class QuintRunner(tk.Tk):
         self._date_labels: dict[tuple[str, str], tk.Label] = {}
         self._last_files: dict[tuple[str, str], Path | None] = {}
         self._log_queue: queue.Queue[tuple[str, str | None]] = queue.Queue()
+        self._ui_queue: queue.Queue[Callable[[], None]] = queue.Queue()
         self._running = False
         self._file_viewer: tk.Toplevel | None = None
         self._compiled_file_viewer: tk.Toplevel | None = None
@@ -809,7 +846,7 @@ class QuintRunner(tk.Tk):
         for cat, eff_cat, name in tasks:
             self._run_one(cat, eff_cat, name, opts)
         self._enqueue("\n[OK]  All done.\n", "ok")
-        self.after(0, lambda: self._set_running(False))
+        self._enqueue_ui(lambda: self._set_running(False))
 
     _FOLDER: dict[str, str] = {
         "tests": "tests", "safety_run": "safety", "safety_verify": "safety",
@@ -850,8 +887,8 @@ class QuintRunner(tk.Tk):
             except Exception:
                 pass
         for name in names:
-            self.after(0, lambda n=name, s=status, f=result_file:
-                       self._update_status_label("safety", n, s, f))
+            self._enqueue_ui(lambda n=name, s=status, f=result_file:
+                             self._update_status_label("safety", n, s, f))
 
     def _run_one(self, cat: str, effective_cat: str, name: str, opts: dict) -> None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -891,7 +928,7 @@ class QuintRunner(tk.Tk):
             result_file = log_file
         else:
             result_file = itf_file
-        self.after(0, lambda s=status, f=result_file: self._update_status_label(cat, name, s, f))
+        self._enqueue_ui(lambda s=status, f=result_file: self._update_status_label(cat, name, s, f))
 
     def _exec(self, cmd: list[str], log_file: Path | None) -> tuple[int, str]:
         env = None
@@ -943,11 +980,20 @@ class QuintRunner(tk.Tk):
     def _enqueue(self, text: str, tag: str | None = None) -> None:
         self._log_queue.put((text, tag))
 
+    def _enqueue_ui(self, callback: Callable[[], None]) -> None:
+        """Schedule a GUI callback for execution by Tk's main thread."""
+        self._ui_queue.put(callback)
+
     def _poll_log(self) -> None:
         while True:
             try:
                 text, tag = self._log_queue.get_nowait()
                 self._log(text, tag)
+            except queue.Empty:
+                break
+        while True:
+            try:
+                self._ui_queue.get_nowait()()
             except queue.Empty:
                 break
         self.after(40, self._poll_log)
@@ -1172,7 +1218,7 @@ class QuintRunner(tk.Tk):
                 self._enqueue(f"[ERROR]  Could not read compiled file: {exc}\n", "err")
                 return
             self._enqueue(f"[OK]  Compiled -> {tla_path.name}\n", "ok")
-            self.after(0, lambda: self._open_viewer_window(
+            self._enqueue_ui(lambda: self._open_viewer_window(
                 tla_path,
                 f"View compiled: {tla_path.name}",
                 _TLA_TAG_COLORS,

@@ -46,66 +46,6 @@ import message_id.* from "./../types/message_id"
         RANDOM_MESSAGE_IDS = TEST_MESSAGE_IDS
     ).* from "batch"
 
-    // -------------------------------------------------------------------------------------
-    // HELPER VERIFICATION FUNCTIONS
-    // -------------------------------------------------------------------------------------
-
-    /// Check whether a pair's node state equals the empty default state.
-    ///
-    /// - @param Node sender the node maintaining the state
-    /// - @param Node receiver the peer represented by the state
-    /// - @returns bool the computed result
-    def isDefaultNodeState(sender: Node, receiver: Node): bool = {
-        val nodeState = getNodeState(sender, receiver)
-        and {
-            nodeState.messages.size() == 0,
-            // nodeState.offers.size() == 0,  //only for interactive
-            // nodeState.requests.size() == 0, //only for interactive
-        }
-    }
-
-    /// Check whether a sender-receiver pair has no payload.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool whether the payload is absent
-    def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
-        getPayload(sender, receiver) == None
-    }
-
-    /// Check whether a pair's exchange state equals the empty default exchange state.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool the computed result
-    def isDefaultPayloadExchangeState(sender: Node, receiver: Node): bool = {
-        val payloadExchangeState = getPayloadExchangeState(sender, receiver)
-
-        and {
-            payloadExchangeState.phase == Idle,
-            not(payloadExchangeState.messagesStored),
-            not(payloadExchangeState.ackDetermined),
-        }
-    }
-
-    /// Return the identifiers of all messages in a pair's payload.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Set[MessageId] the computed result
-    def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
-        getSetMessageIds(getPayloadMessages(sender, receiver))
-    }
-
-    /// Check whether a pair currently has a sent message payload awaiting receipt.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool the computed result
-    def hasInFlightPayload(sender: Node, receiver: Node): bool = {
-        getPayloadExchangeState(sender, receiver).phase == MessagesSent
-    }
-
     // ------------------------------------------------------------------------------------
     // INIT ACTIONS
     // ------------------------------------------------------------------------------------

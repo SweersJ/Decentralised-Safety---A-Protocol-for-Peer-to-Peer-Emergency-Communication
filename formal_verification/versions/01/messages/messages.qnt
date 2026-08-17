@@ -2,27 +2,9 @@
 ///
 /// - @returns messages the shared message module
 module messages {
+import message_id.* from "./../types/message_id"
+    import message.* from "./../types/message"
     import basicSpells.* from "./../../../spells/basicSpells"
-    // ------------------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------------------
-
-    /// Identify a message by its content-derived string identifier.
-    ///
-    /// - @returns MessageId the message identifier
-    type MessageId = str
-
-    /// Represent a message and its group, timestamp, and body content.
-    ///
-    /// - @returns Message the complete message record
-    type Message = {
-        messageId: MessageId, // SHA256 hash of the message content => HASH("MESSAGE_ID", group_id, timestamp, body);
-        groupId: str,
-        timestamp: int,
-        body: str
-    }
-
-
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES
     // ------------------------------------------------------------------------------------

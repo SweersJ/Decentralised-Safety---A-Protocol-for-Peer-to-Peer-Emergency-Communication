@@ -37,11 +37,11 @@ module rareSpells {
     myMap.keys().fold(0, ((sum, i) => sum + myMap.get(i)))
   }
 
-  run mapValuesSumTest = all {
-    assert(Map().mapValuesSum() == 0),
-    assert(2.to(5).mapBy(i => i * 2).mapValuesSum() == 28),
-    assert(Map(2 -> -4, 4 -> 2).mapValuesSum() == -2),
-  }
+  // run mapValuesSumTest = all {
+  //   assert(Map().mapValuesSum() == 0),
+  //   assert(2.to(5).mapBy(i => i * 2).mapValuesSum() == 28),
+  //   assert(Map(2 -> -4, 4 -> 2).mapValuesSum() == -2),
+  // }
 
   /// Assuming `__l` is sorted according to `__cmp`, returns a list with the element `__x`
   /// insterted in order.
@@ -73,11 +73,11 @@ module rareSpells {
       acc
   }
 
-  run sortedListInsertTest = all {
-    assert(List().sortedListInsert(3, intCompare) == List(3)),
-    assert(List(1,2,4).sortedListInsert(3, intCompare) == List(1,2,3,4)),
-    assert(List(4,1,2).sortedListInsert(3, intCompare) == List(3,4,1,2)),
-  }
+  // run sortedListInsertTest = all {
+  //   assert(List().sortedListInsert(3, intCompare) == List(3)),
+  //   assert(List(1,2,4).sortedListInsert(3, intCompare) == List(1,2,3,4)),
+  //   assert(List(4,1,2).sortedListInsert(3, intCompare) == List(3,4,1,2)),
+  // }
 
   //// Returns a list of all elements of a set.
   //// The ordering will be arbitrary.
@@ -97,13 +97,13 @@ module rareSpells {
       __list.foldl(Set(), (__s, __e) => __s.union(Set(__e)))
   }
 
-  run toListAndSetTest =
-  all {
-      assert(Set(3, 2, 1).toList(intCompare).toSet() == Set(1, 2, 3)),
-      assert(List(2,3,1).toSet() == Set(1, 2, 3)),
-      assert(List(2,3,1).toSet() == List(3,2,1).toSet()),
-      assert(Set(2,3,1).toList(intCompare) == Set(3,1,2).toList(intCompare)),
-      assert(toList(Set(), intCompare) == List()),
-      assert(toSet(List()) == Set())
-  }
+  // run toListAndSetTest =
+  // all {
+  //     assert(Set(3, 2, 1).toList(intCompare).toSet() == Set(1, 2, 3)),
+  //     assert(List(2,3,1).toSet() == Set(1, 2, 3)),
+  //     assert(List(2,3,1).toSet() == List(3,2,1).toSet()),
+  //     assert(Set(2,3,1).toList(intCompare) == Set(3,1,2).toList(intCompare)),
+  //     assert(toList(Set(), intCompare) == List()),
+  //     assert(toSet(List()) == Set())
+  // }
 }

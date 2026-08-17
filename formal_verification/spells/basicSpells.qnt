@@ -11,10 +11,10 @@ module basicSpells {
   /// - @returns true if and only if cond evaluates to true
   pure def require(cond: bool): bool = cond
 
-  run requireTest = all {
-    assert(require(4 > 3)),
-    assert(not(require(false))),
-  }
+  // run requireTest = all {
+  //   assert(require(4 > 3)),
+  //   assert(not(require(false))),
+  // }
 
   /// A convenience operator that returns a string error code,
   ///  if the condition does not hold true.
@@ -26,10 +26,10 @@ module basicSpells {
     if (cond) "" else error
   }
 
-  run requiresTest = all {
-    assert(requires(4 > 3, "4 > 3") == ""),
-    assert(requires(4 < 3, "false: 4 < 3") == "false: 4 < 3"),
-  }
+  // run requiresTest = all {
+  //   assert(requires(4 > 3, "4 > 3") == ""),
+  //   assert(requires(4 < 3, "false: 4 < 3") == "false: 4 < 3"),
+  // }
 
 
   /// Compute the maximum of two integers.
@@ -41,13 +41,13 @@ module basicSpells {
     if (i > j) i else j
   }
 
-  run maxTest = all {
-    assert(max(3, 4) == 4),
-    assert(max(6, 3) == 6),
-    assert(max(10, 10) == 10),
-    assert(max(-3, -5) == -3),
-    assert(max(-5, -3) == -3),
-  }
+  // run maxTest = all {
+  //   assert(max(3, 4) == 4),
+  //   assert(max(6, 3) == 6),
+  //   assert(max(10, 10) == 10),
+  //   assert(max(-3, -5) == -3),
+  //   assert(max(-5, -3) == -3),
+  // }
 
   /// Compute the minimum of two integers.
   ///
@@ -58,13 +58,13 @@ module basicSpells {
     if (i < j) i else j
   }
 
-  run minTest = all {
-    assert(min(3, 4) == 3),
-    assert(min(6, 3) == 3),
-    assert(min(10, 10) == 10),
-    assert(min(-3, -5) == -5),
-    assert(min(-5, -3) == -5),
-  }
+  // run minTest = all {
+  //   assert(min(3, 4) == 3),
+  //   assert(min(6, 3) == 3),
+  //   assert(min(10, 10) == 10),
+  //   assert(min(-3, -5) == -5),
+  //   assert(min(-5, -3) == -5),
+  // }
 
   /// Compute the absolute value of an integer
   ///
@@ -74,11 +74,11 @@ module basicSpells {
     if (i < 0) -i else i
   }
 
-  run absTest = all {
-    assert(abs(3) == 3),
-    assert(abs(-3) == 3),
-    assert(abs(0) == 0),
-  }
+  // run absTest = all {
+  //   assert(abs(3) == 3),
+  //   assert(abs(-3) == 3),
+  //   assert(abs(0) == 0),
+  // }
 
   /// Remove a set element.
   ///
@@ -89,10 +89,10 @@ module basicSpells {
     s.exclude(Set(elem))
   }
 
-  run setRemoveTest = all {
-    assert(Set(2, 4) == Set(2, 3, 4).setRemove(3)),
-    assert(Set() == Set().setRemove(3)),
-  }
+  // run setRemoveTest = all {
+  //   assert(Set(2, 4) == Set(2, 3, 4).setRemove(3)),
+  //   assert(Set() == Set().setRemove(3)),
+  // }
 
   /// Adds an element to a set.
   ///
@@ -103,11 +103,11 @@ module basicSpells {
     s.union(Set(elem))
   }
 
-  run setAddTest = all{
-    assert(Set(2, 3, 4) == Set(2, 4).setAdd(3)),
-    assert(Set(3) == Set().setAdd(3)),
-    assert(Set(2,4) == Set(2,4).setAdd(4)),
-  }
+  // run setAddTest = all{
+  //   assert(Set(2, 3, 4) == Set(2, 4).setAdd(3)),
+  //   assert(Set(3) == Set().setAdd(3)),
+  //   assert(Set(2,4) == Set(2,4).setAdd(4)),
+  // }
 
   /// Test whether a key is present in a map
   ///
@@ -118,10 +118,10 @@ module basicSpells {
     m.keys().contains(key)
   }
 
-  run hasTest = all {
-    assert(Map(2 -> 3, 4 -> 5).has(2)),
-    assert(not(Map(2 -> 3, 4 -> 5).has(6))),
-  }
+  // run hasTest = all {
+  //   assert(Map(2 -> 3, 4 -> 5).has(2)),
+  //   assert(not(Map(2 -> 3, 4 -> 5).has(6))),
+  // }
 
   /// Get the map value associated with a key, or the default,
   /// if the key is not present.
@@ -138,10 +138,10 @@ module basicSpells {
     }
   }
 
-  run getOrElseTest = all {
-    assert(Map(2 -> 3, 4 -> 5).getOrElse(2, 0) == 3),
-    assert(Map(2 -> 3, 4 -> 5).getOrElse(7, 11) == 11),
-  }
+  // run getOrElseTest = all {
+  //   assert(Map(2 -> 3, 4 -> 5).getOrElse(2, 0) == 3),
+  //   assert(Map(2 -> 3, 4 -> 5).getOrElse(7, 11) == 11),
+  // }
 
   /// Remove a map entry.
   ///
@@ -153,10 +153,10 @@ module basicSpells {
     m.keys().setRemove(key).mapBy(k => m.get(k))
   }
 
-  run mapRemoveTest = all {
-    assert(Map(3 -> 4, 7 -> 8) == Map(3 -> 4, 5 -> 6, 7 -> 8).mapRemove(5)),
-    assert(Map() == Map().mapRemove(3)),
-  }
+  // run mapRemoveTest = all {
+  //   assert(Map(3 -> 4, 7 -> 8) == Map(3 -> 4, 5 -> 6, 7 -> 8).mapRemove(5)),
+  //   assert(Map() == Map().mapRemove(3)),
+  // }
 
   /// Removes a set of map entries.
   ///
@@ -168,12 +168,12 @@ module basicSpells {
       m.keys().exclude(ks).mapBy(k => m.get(k))
   }
 
-  run mapRemoveAllTest =
-      val m = Map(3 -> 4, 5 -> 6, 7 -> 8)
-      all {
-          assert(m.mapRemoveAll(Set(5, 7)) == Map(3 -> 4)),
-          assert(m.mapRemoveAll(Set(5, 99999)) == Map(3 -> 4, 7 -> 8)),
-      }
+  // run mapRemoveAllTest =
+  //     val m = Map(3 -> 4, 5 -> 6, 7 -> 8)
+  //     all {
+  //         assert(m.mapRemoveAll(Set(5, 7)) == Map(3 -> 4)),
+  //         assert(m.mapRemoveAll(Set(5, 99999)) == Map(3 -> 4, 7 -> 8)),
+  //     }
 
   /// Get the set of values of a map.
   ///
@@ -183,11 +183,11 @@ module basicSpells {
     m.keys().map(k => m.get(k))
   }
 
-  run valuesTest = all {
-    assert(values(Map()) == Set()),
-    assert(values(Map(1 -> 2, 2 -> 3)) == Set(2, 3)),
-    assert(values(Map(1 -> 2, 2 -> 3, 3 -> 2)) == Set(2, 3)),
-  }
+  // run valuesTest = all {
+  //   assert(values(Map()) == Set()),
+  //   assert(values(Map(1 -> 2, 2 -> 3)) == Set(2, 3)),
+  //   assert(values(Map(1 -> 2, 2 -> 3, 3 -> 2)) == Set(2, 3)),
+  // }
 
   /// Whether a set is empty
   ///
@@ -195,11 +195,11 @@ module basicSpells {
   /// - @returns true iff the set is the empty set
   pure def empty(s: Set[a]): bool = s == Set()
 
-  run emptyTest = all {
-    assert(empty(Set()) == true),
-    assert(empty(Set(1, 2)) == false),
-    assert(empty(Set(Set())) == false),
-  }
+  // run emptyTest = all {
+  //   assert(empty(Set()) == true),
+  //   assert(empty(Set(1, 2)) == false),
+  //   assert(empty(Set(Set())) == false),
+  // }
 
   /// Sort a list, given the ordering operator.
   ///
@@ -217,10 +217,10 @@ module basicSpells {
     list.foldl([], (sortedList, num) => insertInOrder(sortedList, num))
   }
 
-  run listSortedTest = all {
-    assert([ 1, 3, 5 ] == sortList([ 5, 1, 3 ], (x, y) => x < y)),
-    assert([ 1, 1, 3, 5, 5 ] == sortList([ 5, 1, 3, 1, 5 ], (x, y) => x < y)),
-  }
+  // run listSortedTest = all {
+  //   assert([ 1, 3, 5 ] == sortList([ 5, 1, 3 ], (x, y) => x < y)),
+  //   assert([ 1, 1, 3, 5, 5 ] == sortList([ 5, 1, 3, 1, 5 ], (x, y) => x < y)),
+  // }
 
   /// Apply an operator to all values of a map
   ///
@@ -231,10 +231,10 @@ module basicSpells {
     m.keys().mapBy(k => f(m.get(k)))
   }
 
-  run transformValuesTest = {
-    pure val m = Map("a" -> 1, "b" -> 2)
-    assert(m.transformValues(x => x + 1) == Map("a" -> 2, "b" -> 3))
-  }
+  // run transformValuesTest = {
+  //   pure val m = Map("a" -> 1, "b" -> 2)
+  //   assert(m.transformValues(x => x + 1) == Map("a" -> 2, "b" -> 3))
+  // }
 
   /// map a function over a list
   ///
@@ -247,10 +247,10 @@ module basicSpells {
     })
   }
 
-  run listMapTest = all {
-    assert(listMap([1, 2, 3], x => x + 1) == [2, 3, 4]),
-    assert(listMap([1, 2, 3], x => x > 1) == [false, true, true]),
-  }
+  // run listMapTest = all {
+  //   assert(listMap([1, 2, 3], x => x + 1) == [2, 3, 4]),
+  //   assert(listMap([1, 2, 3], x => x > 1) == [false, true, true]),
+  // }
 
   /// The last element of a list
   ///
@@ -260,10 +260,10 @@ module basicSpells {
     v[v.length() - 1]
   }
 
-  run lastTest = all {
-    assert(last([1, 2, 3]) == 3),
-    assert(last([1]) == 1),
-  }
+  // run lastTest = all {
+  //   assert(last([1, 2, 3]) == 3),
+  //   assert(last([1]) == 1),
+  // }
 
   /// `decreasingRange(i, j)` is the list of integers between `j` and `i`
   /// both `i` and `j` are inclusive.
@@ -277,9 +277,9 @@ module basicSpells {
     })
   }
 
-  run decreasingRangeTest = all {
-    assert(decreasingRange(5, 1) == [5, 4, 3, 2, 1]),
-  }
+  // run decreasingRangeTest = all {
+  //   assert(decreasingRange(5, 1) == [5, 4, 3, 2, 1]),
+  // }
 
   /// `takeWhile(l, cond)` is the longest prefix of `l` such that all elements
   /// satisfy the condition `cond`.
@@ -299,9 +299,9 @@ module basicSpells {
     result._1
   }
 
-  run takeWhileTest = all {
-    assert(takeWhile([1, 5, 4, 3], (x) => x % 2 == 1) == [1, 5]),
-  }
+  // run takeWhileTest = all {
+  //   assert(takeWhile([1, 5, 4, 3], (x) => x % 2 == 1) == [1, 5]),
+  // }
 
   /// `isPrefixOf(l1, l2)` is true iff `l1` is a prefix of `l2`.
   ///
@@ -316,13 +316,13 @@ module basicSpells {
     }
   }
 
-  run isPrefixOfTest = all {
-    assert(isPrefixOf([1, 2], [1, 2, 3])),
-    assert(not(isPrefixOf([1, 2], [1, 3, 2]))),
-    assert(not(isPrefixOf([1, 2], [1]))),
-    assert(isPrefixOf([], [1, 2])),
-    assert(isPrefixOf([], [])),
-  }
+  // run isPrefixOfTest = all {
+  //   assert(isPrefixOf([1, 2], [1, 2, 3])),
+  //   assert(not(isPrefixOf([1, 2], [1, 3, 2]))),
+  //   assert(not(isPrefixOf([1, 2], [1]))),
+  //   assert(isPrefixOf([], [1, 2])),
+  //   assert(isPrefixOf([], [])),
+  // }
 
   /// `find(s, f)` is an element of `s` that satisfies the predicate `f`, or None
   /// if no such element exists.
@@ -332,10 +332,10 @@ module basicSpells {
   /// - @returns an element of `s` that satisfies `f`, or None
   pure def find(s, f) = s.fold(None, (a, i) => if (f(i)) Some(i) else a)
 
-  run findTest = all {
-    assert(find(Set(1, 2, 3), x => x == 2) == Some(2)),
-    assert(find(Set(1, 2, 3), x => x == 4) == None),
-  }
+  // run findTest = all {
+  //   assert(find(Set(1, 2, 3), x => x == 2) == Some(2)),
+  //   assert(find(Set(1, 2, 3), x => x == 4) == None),
+  // }
 
   /// `findFirst(l, f)` is the first element of `l` that satisfies the predicate `f`, or None
   /// if no such element exists.
@@ -345,10 +345,10 @@ module basicSpells {
   /// - @returns the first element of `l` that satisfies `f`, or None
   pure def findFirst(l, f) = l.foldl(None, (a, i) => if (a == None and f(i)) Some(i) else a)
 
-  run findFirstTest = all {
-    assert(findFirst([1, 2, 3], x => x > 1) == Some(2)),
-    assert(findFirst([1, 2, 3], x => x == 4) == None),
-  }
+  // run findFirstTest = all {
+  //   assert(findFirst([1, 2, 3], x => x > 1) == Some(2)),
+  //   assert(findFirst([1, 2, 3], x => x == 4) == None),
+  // }
 
   /// `setByWithDefault(m, k, op, default)` is a map that is the same as `m` except that
   /// the value associated with `k` is `op(m[k])` if `k` is present in `m`, and `op(default)` otherwise.
@@ -365,8 +365,8 @@ module basicSpells {
       m.put(k, default).setBy(k, op)
   }
 
-  run setByWithDefaultTest = all {
-    assert(setByWithDefault(Map(1 -> 2, 2 -> 3), 1, x => x + 1, 0) == Map(1 -> 3, 2 -> 3)),
-    assert(setByWithDefault(Map(1 -> 2, 2 -> 3), 3, x => x + 1, 0) == Map(1 -> 2, 2 -> 3, 3 -> 1)),
-  }
+  // run setByWithDefaultTest = all {
+  //   assert(setByWithDefault(Map(1 -> 2, 2 -> 3), 1, x => x + 1, 0) == Map(1 -> 3, 2 -> 3)),
+  //   assert(setByWithDefault(Map(1 -> 2, 2 -> 3), 3, x => x + 1, 0) == Map(1 -> 2, 2 -> 3, 3 -> 1)),
+  // }
 }

@@ -112,6 +112,62 @@ python quint_runner.py versions/01/batch/batch.qnt --config batch_config.json
 
 On Windows, formal verification (`quint verify`) is automatically routed through `verify.cmd` which manages the Apalache server lifecycle.
 
+## mermaid_runner.py - interactive Mermaid image generator GUI
+
+`mermaid_runner.py` finds Mermaid source files throughout the repository and exports selected diagrams with [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli). It recognises `.mmd` and `.mermaid` files and groups them by relative folder.
+
+### Requirements
+
+- Python 3.10 or higher
+- tkinter (on Linux/WSL: `sudo apt install python3-tk`)
+- Mermaid CLI:
+
+  ```bash
+  npm install -g @mermaid-js/mermaid-cli
+  ```
+
+### Output configuration
+
+Set `MERMAID_OUTPUT_ROOT` in `formal_verification/.env`:
+
+```dotenv
+# Empty: write into the Mermaid source folder
+MERMAID_OUTPUT_ROOT=
+
+# Relative paths start at the formal_verification folder
+# MERMAID_OUTPUT_ROOT=exports
+```
+
+Absolute output paths are also supported. When an output root is configured, the source hierarchy is retained but the `diagrams` folder itself is omitted. For example:
+
+```text
+Input:  versions/01/batch/diagrams/sequence/example.mermaid
+Output: <output-root>/versions/01/batch/sequence/example_20260817-143025.svg
+```
+
+With an empty value, the same timestamped filename is written beside `example.mermaid`. The GUI displays this setting in the editable **Output root** field. Changes take effect immediately for exports; click **Save to .env** to persist the value for later runs.
+
+### Usage
+
+Run from `formal_verification`:
+
+```bash
+python mermaid_runner.py                 # Scan the repository root
+python mermaid_runner.py versions/01     # Scan a specific folder
+```
+
+1. Select a search folder and click **Scan**. Edit or browse the **Output root** field as needed. `.git`, `.venv`, `node_modules`, and `__pycache__` are ignored.
+2. Select the `.mmd` or `.mermaid` files. They are grouped under relative folder names, and each entry shows its resulting path from `<output-root>` using the `YYYYMMDD-HHMMSS` timestamp placeholder. The preview updates when the output root or format changes.
+3. Choose `svg` or `png`, a theme (`default`, `forest`, `dark`, or `neutral`), and a background such as `transparent`, `red`, or `#F0F0F0`. The background field is editable.
+4. Click **Export selected**. Names use `<filename>_YYYYMMDD-HHMMSS.<extension>` and are written according to `MERMAID_OUTPUT_ROOT`.
+
+Equivalent Mermaid CLI commands:
+
+```bash
+mmdc -i input.mmd -o output.svg
+mmdc -i input.mmd -o output.png -t dark -b transparent
+```
+
 # Examples
 
 Some examples of of quint code of communication protocols can be found down below:

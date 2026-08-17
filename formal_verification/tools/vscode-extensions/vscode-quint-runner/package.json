@@ -1,0 +1,40 @@
+{
+  "name": "quint-runner-codelens",
+  "displayName": "Quint Runner CodeLens",
+  "description": "Adds a Run with Quint Runner action above Quint modules.",
+  "version": "0.1.0",
+  "publisher": "decsaf-local",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:quint"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "quintRunner.runFile",
+        "title": "Run with Quint Runner"
+      }
+    ],
+    "configuration": {
+      "title": "Quint Runner",
+      "properties": {
+        "quintRunner.pythonCommand": {
+          "type": "string",
+          "default": "python",
+          "description": "Python executable used to launch quint_runner.py."
+        },
+        "quintRunner.runnerPath": {
+          "type": "string",
+          "default": "formal_verification/quint_runner.py",
+          "description": "Workspace-relative or absolute path to quint_runner.py."
+        }
+      }
+    }
+  }
+}

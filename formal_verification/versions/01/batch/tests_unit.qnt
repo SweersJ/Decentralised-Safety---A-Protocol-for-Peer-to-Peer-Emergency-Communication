@@ -2,7 +2,14 @@
 ///
 /// - @returns tests_unit the batch protocol unit-test module
 module tests_unit {
-    import batch.* from "batch"
+import message_id.* from "./../types/message_id"
+    import message.* from "./../types/message"
+    import payload_id.* from "./../types/payload_id"
+    import payload.* from "./../types/payload"
+    import node_state.* from "./../types/node_state"
+    import node.* from "./../types/node"
+    import payload_exchange_phase.* from "./../types/payload_exchange_phase"
+    import payload_exchange_state.* from "./../types/payload_exchange_state"
     import messages.* from "./../messages/messages"
     import basicSpells.* from "./../../../spells/basicSpells"
 
@@ -10,6 +17,20 @@ module tests_unit {
     // CONSTANT VALUES
     // ------------------------------------------------------------------------------------
 
+    /// Identify Alice in the unit-test protocol instance.
+    ///
+    /// - @returns Node Alice's node identifier
+    pure val ALICE: Node = "Alice"
+
+    /// Identify Bob in the unit-test protocol instance.
+    ///
+    /// - @returns Node Bob's node identifier
+    pure val BOB: Node = "Bob"
+
+    /// Select both participants for the unit-test protocol instance.
+    ///
+    /// - @returns Set[Node] the unit-test protocol participants
+    pure val TEST_NODES: Set[Node] = Set(ALICE, BOB)
     /// Associate each node with deterministic message identifiers for unit tests.
     ///
     /// Fixed input keeps the helper-function tests deterministic.
@@ -19,7 +40,72 @@ module tests_unit {
         ALICE -> Set(message1.messageId, message2.messageId),
         BOB -> Set(message2.messageId)
     )
-    
+
+    import batch(
+        NODES = TEST_NODES,
+        RANDOM_MESSAGE_IDS = TEST_MESSAGE_IDS
+    ).* from "batch"
+
+    // -------------------------------------------------------------------------------------
+    // HELPER VERIFICATION FUNCTIONS
+    // -------------------------------------------------------------------------------------
+
+    /// Check whether a pair's node state equals the empty default state.
+    ///
+    /// - @param Node sender the node maintaining the state
+    /// - @param Node receiver the peer represented by the state
+    /// - @returns bool the computed result
+    def isDefaultNodeState(sender: Node, receiver: Node): bool = {
+        val nodeState = getNodeState(sender, receiver)
+        and {
+            nodeState.messages.size() == 0,
+            // nodeState.offers.size() == 0,  //only for interactive
+            // nodeState.requests.size() == 0, //only for interactive
+        }
+    }
+
+    /// Check whether a sender-receiver pair has no payload.
+    ///
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns bool whether the payload is absent
+    def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
+        getPayload(sender, receiver) == None
+    }
+
+    /// Check whether a pair's exchange state equals the empty default exchange state.
+    ///
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns bool the computed result
+    def isDefaultPayloadExchangeState(sender: Node, receiver: Node): bool = {
+        val payloadExchangeState = getPayloadExchangeState(sender, receiver)
+
+        and {
+            payloadExchangeState.phase == Idle,
+            not(payloadExchangeState.messagesStored),
+            not(payloadExchangeState.ackDetermined),
+        }
+    }
+
+    /// Return the identifiers of all messages in a pair's payload.
+    ///
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns Set[MessageId] the computed result
+    def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
+        getSetMessageIds(getPayloadMessages(sender, receiver))
+    }
+
+    /// Check whether a pair currently has a sent message payload awaiting receipt.
+    ///
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns bool the computed result
+    def hasInFlightPayload(sender: Node, receiver: Node): bool = {
+        getPayloadExchangeState(sender, receiver).phase == MessagesSent
+    }
+
     // ------------------------------------------------------------------------------------
     // INIT ACTIONS
     // ------------------------------------------------------------------------------------
@@ -87,16 +173,16 @@ module tests_unit {
                 ))
             )
 
-    /// Test that random initial identifiers cover each node and reference known messages.
+    /// Test that injected initial identifiers cover each node and reference known messages.
     ///
     /// - @returns bool whether the test passes
-    run initRandomMessageIdsTest =
+    run configuredMessageIdsTest =
         initWithTestMessages
             .expect(
                 and {
-                    initRandomMessageIds.keys() == NODES,
+                    RANDOM_MESSAGE_IDS.keys() == NODES,
                     NODES.forall(node =>
-                        initRandomMessageIds.get(node).forall(
+                        RANDOM_MESSAGE_IDS.get(node).forall(
                             id => id.in(MESSAGES.keys())
                         )
                     ),
@@ -179,7 +265,7 @@ module tests_unit {
                     not(canReceiveAckPayload(ALICE, BOB)),
                     not(canIdle(ALICE, BOB)),
                 }
-                
+
             )
 
     /// Test protocol guards after received messages are stored.
@@ -202,9 +288,9 @@ module tests_unit {
                     not(canReceiveAckPayload(ALICE, BOB)),
                     not(canIdle(ALICE, BOB)),
                 }
-                
+
             )
-            
+
     /// Test acknowledgement-send guards when acknowledgement determination precedes storage.
     ///
     /// - @returns bool whether the test passes
@@ -227,7 +313,7 @@ module tests_unit {
                     not(canIdle(ALICE, BOB)),
                 }
             )
-    
+
     /// Test acknowledgement-send guards when storage precedes acknowledgement determination.
     ///
     /// - @returns bool whether the test passes
@@ -250,7 +336,7 @@ module tests_unit {
                     not(canIdle(ALICE, BOB)),
                 }
             )
-    
+
     /// Test acknowledgement-receive guards when acknowledgement determination precedes storage.
     ///
     /// - @returns bool whether the test passes
@@ -274,7 +360,7 @@ module tests_unit {
                     not(canIdle(ALICE, BOB)),
                 }
             )
-    
+
     /// Test acknowledgement-receive guards when storage precedes acknowledgement determination.
     ///
     /// - @returns bool whether the test passes
@@ -298,7 +384,7 @@ module tests_unit {
                     not(canIdle(ALICE, BOB)),
                 }
             )
-    
+
     /// Test idle guards after completing the determination-before-storage path.
     ///
     /// - @returns bool whether the test passes
@@ -323,7 +409,7 @@ module tests_unit {
                     canIdle(ALICE, BOB),
                 }
             )
-    
+
     /// Test idle guards after completing the storage-before-determination path.
     ///
     /// - @returns bool whether the test passes
@@ -366,9 +452,9 @@ module tests_unit {
                     // state.requests.size() == 0,
                     state.messages.size() == 2,
                 }
-                
+
             )
-    
+
     /// Test that an initial sender-receiver pair has no payload.
     ///
     /// - @returns bool whether the test passes
@@ -383,7 +469,7 @@ module tests_unit {
         initWithTestMessages
             .expect(
                 val state = getPayloadExchangeState(ALICE, BOB)
-                
+
                 and {
                     state.phase == Idle,
                     not(state.messagesStored),
@@ -403,13 +489,13 @@ module tests_unit {
             .expect(
                 val currentPayloadExchangeState = payloadExchangeState.get(ALICE).get(BOB)
                 val newPayloadExchangeState = setPayloadExchangeState(
-                    ALICE, 
-                    BOB, 
+                    ALICE,
+                    BOB,
                     MessagesSent,
                     currentPayloadExchangeState.messagesStored,
                     currentPayloadExchangeState.ackDetermined
                 )
-                
+
                 and  {
                     newPayloadExchangeState.get(ALICE).get(BOB).phase == MessagesSent,
                     newPayloadExchangeState.get(BOB).get(ALICE).phase == Idle,
@@ -424,8 +510,8 @@ module tests_unit {
             .expect(
                 val currentPayloadExchangeState = payloadExchangeState.get(ALICE).get(BOB)
                 val newPayloadExchangeState = setPayloadExchangeState(
-                    ALICE, 
-                    BOB, 
+                    ALICE,
+                    BOB,
                     MessagesSent,
                     true,
                     currentPayloadExchangeState.ackDetermined
@@ -436,7 +522,7 @@ module tests_unit {
                     not(newPayloadExchangeState.get(BOB).get(ALICE).messagesStored),
                 }
             )
-            
+
 
     /// Test updating one peer pair's acknowledgement-determined flag.
     ///
@@ -446,13 +532,13 @@ module tests_unit {
             .expect(
                 val currentPayloadExchangeState = payloadExchangeState.get(ALICE).get(BOB)
                 val newPayloadExchangeState = setPayloadExchangeState(
-                    ALICE, 
-                    BOB, 
+                    ALICE,
+                    BOB,
                     MessagesSent,
                     currentPayloadExchangeState.messagesStored,
                     true
                 )
-                
+
                 and {
                     newPayloadExchangeState.get(ALICE).get(BOB).ackDetermined,
                     not(newPayloadExchangeState.get(BOB).get(ALICE).ackDetermined),
@@ -465,7 +551,7 @@ module tests_unit {
     // ------------------------------------------------------------------------------------
 
     // Insert general function tests
-         
+
     // ------------------------------------------------------------------------------------
     // TESTS - HELPER VERIFICATION FUNCTIONS
     // ------------------------------------------------------------------------------------
@@ -499,7 +585,7 @@ module tests_unit {
     /// Test recognition of default payload exchange states.
     ///
     /// - @returns bool whether the test passes
-    run defaultPayloadExchangeStateFunctionsText = 
+    run defaultPayloadExchangeStateFunctionsText =
         initWithTestMessages
             .expect(
                 and {

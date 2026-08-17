@@ -2,16 +2,10 @@
 ///
 /// - @returns tests_unit the message unit-test module
 module tests_unit {
+import message_id.* from "./../types/message_id"
+    import message.* from "./../types/message"
+    import node.* from "./../types/node"
     import messages.* from "./messages"
-
-    // ------------------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------------------
-
-    /// Identify a test participant by name.
-    ///
-    /// - @returns Node the test participant identifier
-    type Node = str
 
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES

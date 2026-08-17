@@ -2,6 +2,8 @@
 
 This version is a fix made for filtering over powersets. This was needed for the init action in the version 01 of batch. The version has been compiled on basis of the apalache version [0.59.0](https://github.com/apalache-mc/apalache/releases/tag/v0.59.0). The zip file `apalache.zip` will be generated with `make dist` in `target/universal`. Note this apalache project can only be compiled under an non-windows OS as, folders have been named aux which is a reserved name in Windows systems.
 
+//TODO: not needed anymore as the filtering over powerset has been removed
+
 # How to use
 
 ## Windows

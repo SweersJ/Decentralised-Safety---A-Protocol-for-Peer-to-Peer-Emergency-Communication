@@ -158,7 +158,7 @@ python mermaid_runner.py versions/01     # Scan a specific folder
 
 1. Select a search folder and click **Scan**. Edit or browse the **Output root** field as needed. `.git`, `.venv`, `node_modules`, and `__pycache__` are ignored.
 2. Select the `.mmd` or `.mermaid` files. They are grouped under relative folder names, and each entry shows its resulting path from `<output-root>` using the `YYYYMMDD-HHMMSS` timestamp placeholder. The preview updates when the output root or format changes.
-3. Choose `svg` or `png`, a theme (`default`, `forest`, `dark`, or `neutral`), and a background such as `transparent`, `red`, or `#F0F0F0`. The background field is editable.
+3. Choose `svg` or `png`, a theme (`default`, `forest`, `dark`, or `neutral`), and a background such as `transparent`, `red`, or `#F0F0F0`. The background field is editable. Enable **Exclude notes** to omit inline notes and `note ... end note` blocks without changing the source files. These exports use `<filename>_no-notes_YYYYMMDD-HHMMSS.<extension>`.
 4. Click **Export selected**. Names use `<filename>_YYYYMMDD-HHMMSS.<extension>` and are written according to `MERMAID_OUTPUT_ROOT`.
 
 Equivalent Mermaid CLI commands:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Find Mermaid diagrams and export selected files with Mermaid CLI."""
 from __future__ import annotations
-import argparse, os, queue, shutil, subprocess, threading
+import argparse, os, queue, re, shutil, subprocess, tempfile, threading
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -13,6 +13,9 @@ DEFAULT_ROOT = SCRIPT_DIR.parent
 SUFFIXES = {".mmd", ".mermaid"}
 IGNORED_DIRS = {".git", ".venv", "node_modules", "__pycache__"}
 THEMES = ("neutral", "default", "forest", "dark")
+NOTE_START_RE = re.compile(r"^\s*note\b", re.IGNORECASE)
+NOTE_END_RE = re.compile(r"^\s*end\s+note\s*$", re.IGNORECASE)
+NOTE_BLOCK_START_RE = re.compile(r"^\s*note\s+(?:left|right)\s+of\b", re.IGNORECASE)
 ENV_FILE = SCRIPT_DIR / ".env"
 OUTPUT_ROOT_KEY = "MERMAID_OUTPUT_ROOT"
 
@@ -57,7 +60,7 @@ def resolve_output_root(value: str) -> Path | None:
     return (root if root.is_absolute() else SCRIPT_DIR / root).resolve()
 
 def output_path(source: Path, output_root: Path | None, output_format: str,
-                timestamp: str, scan_root: Path = DEFAULT_ROOT) -> Path:
+                timestamp: str, scan_root: Path = DEFAULT_ROOT, name_postfix: str = "") -> Path:
     """Return the timestamped output path, omitting a `diagrams` path level."""
     if output_root is None:
         folder = source.parent
@@ -71,8 +74,23 @@ def output_path(source: Path, output_root: Path | None, output_format: str,
             index = [part.lower() for part in parts].index("diagrams")
             parts.pop(index)
         folder = output_root.joinpath(*parts)
-    return folder / f"{source.stem}_{timestamp}.{output_format}"
+    return folder / f"{source.stem}{name_postfix}_{timestamp}.{output_format}"
 
+
+def remove_mermaid_notes(source: str) -> str:
+    """Remove inline notes and `note ... end note` blocks."""
+    output: list[str] = []
+    in_note = False
+    for line in source.splitlines(keepends=True):
+        if in_note:
+            if NOTE_END_RE.match(line):
+                in_note = False
+            continue
+        if NOTE_START_RE.match(line):
+            in_note = ":" not in line and bool(NOTE_BLOCK_START_RE.match(line))
+            continue
+        output.append(line)
+    return "".join(output)
 
 def find_mermaid_files(root: Path) -> list[Path]:
     """Return Mermaid files below root in stable relative-path order."""
@@ -97,6 +115,7 @@ class MermaidRunner(tk.Tk):
         self.format_var = tk.StringVar(value="svg")
         self.theme_var = tk.StringVar(value="neutral")
         self.background_var = tk.StringVar(value="transparent")
+        self.exclude_notes_var = tk.BooleanVar(value=False)
         self.status_var = tk.StringVar(value="Ready")
         self.file_vars: dict[Path, tk.BooleanVar] = {}
         self.file_labels: dict[Path, tk.StringVar] = {}
@@ -106,6 +125,7 @@ class MermaidRunner(tk.Tk):
         self._build_ui()
         self.output_root_var.trace_add("write", self._refresh_output_previews)
         self.format_var.trace_add("write", self._refresh_output_previews)
+        self.exclude_notes_var.trace_add("write", self._refresh_output_previews)
         self.scan()
         self.after(50, self._poll_messages)
 
@@ -135,6 +155,8 @@ class MermaidRunner(tk.Tk):
         ttk.Label(options, text="Background:").pack(side="left", padx=(12, 4))
         ttk.Combobox(options, textvariable=self.background_var,
                      values=("transparent", "black", "white"), width=13).pack(side="left")
+        ttk.Checkbutton(options, text="Exclude notes",
+                        variable=self.exclude_notes_var).pack(side="left", padx=(12, 0))
         area = ttk.Frame(outer)
         area.pack(fill="both", expand=True)
         self.canvas = tk.Canvas(area, highlightthickness=0)
@@ -176,8 +198,9 @@ class MermaidRunner(tk.Tk):
         """Show where a source will be written using a timestamp placeholder."""
         output_root = resolve_output_root(self.output_root_var.get())
         scan_root = Path(self.root_var.get()).expanduser()
+        postfix = "_no-notes" if self.exclude_notes_var.get() else ""
         output = output_path(source, output_root, self.format_var.get(),
-                             "YYYYMMDD-HHMMSS", scan_root)
+                             "YYYYMMDD-HHMMSS", scan_root, postfix)
         if output_root is None:
             preview = Path(".") / output.name
         else:
@@ -233,19 +256,31 @@ class MermaidRunner(tk.Tk):
         output_root = resolve_output_root(self.output_root_var.get())
         threading.Thread(target=self._export_worker,
                          args=(selected, self.format_var.get(), self.theme_var.get(),
-                               background, timestamp, Path(self.root_var.get()).expanduser(), output_root),
+                               background, timestamp, Path(self.root_var.get()).expanduser(), output_root, self.exclude_notes_var.get()),
                          daemon=True).start()
 
     def _export_worker(self, selected: list[Path], output_format: str, theme: str,
-                       background: str, timestamp: str, scan_root: Path, output_root: Path | None) -> None:
+                       background: str, timestamp: str, scan_root: Path, output_root: Path | None, exclude_notes: bool) -> None:
         failures = []
         for index, source in enumerate(selected, 1):
-            output = output_path(source, output_root, output_format, timestamp, scan_root)
+            postfix = "_no-notes" if exclude_notes else ""
+            output = output_path(source, output_root, output_format, timestamp, scan_root, postfix)
             output.parent.mkdir(parents=True, exist_ok=True)
-            command = build_command(source, output, theme, background)
+            temporary = None
+            render_source = source
+            if exclude_notes:
+                temporary = tempfile.TemporaryDirectory(prefix="mermaid-no-notes-")
+                render_source = Path(temporary.name) / source.name
+                render_source.write_text(
+                    remove_mermaid_notes(source.read_text(encoding="utf-8")),
+                    encoding="utf-8",
+                )
+            command = build_command(render_source, output, theme, background)
             if os.name == "nt":
                 command = ["cmd", "/d", "/c", *command]
             result = subprocess.run(command, capture_output=True, text=True)
+            if temporary:
+                temporary.cleanup()
             if result.returncode:
                 failures.append(f"{source}: {(result.stderr or result.stdout).strip() or 'mmdc failed'}")
             self.messages.put(("progress", f"Exporting {index}/{len(selected)}..."))

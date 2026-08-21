@@ -2,21 +2,21 @@
 ///
 /// - @returns unit_fixture the shared batch unit-test fixture module
 module unit_fixture {
-    import message_id.* from "./../../../#global/types/message_id"
-    import message.* from "./../../../#global/types/message"
-    import payload_id.* from "./../../../#global/types/payload_id"
-    import payload.* from "./../../../#global/types/payload"
-    import node_state.* from "./../../../#global/types/node_state"
-    import node.* from "./../../../#global/types/node"
-    import payload_exchange_phase.* from "./../../../#global/types/payload_exchange_phase"
-    import payload_exchange_state.* from "./../../../#global/types/payload_exchange_state"
-    import messages.* from "./../../../#global/messages/messages"
-    import empty_node_state.* from "./../../../#global/constant-values/empty_node_state"
-    import empty_payload_exchange_state.* from "./../../../#global/constant-values/empty_payload_exchange_state"
-    import guard_helpers.* from "./../../../#global/helper-functions/guards"
-    import getter_helpers.* from "./../../../#global/helper-functions/getters"
-    import state_query_helpers.* from "./../../../#global/helper-functions/state_queries"
-    import basicSpells.* from "./../../../../../spells/basicSpells"
+    import message_id.* from "./../../../types/message_id"
+    import message.* from "./../../../types/message"
+    import payload_id.* from "./../../../types/payload_id"
+    import payload.* from "./../../../types/payload"
+    import node_state.* from "./../../../types/node_state"
+    import node.* from "./../../../types/node"
+    import payload_exchange_phase.* from "./../../../types/payload_exchange_phase"
+    import payload_exchange_state.* from "./../../../types/payload_exchange_state"
+    import messages.* from "./../../../messages/messages"
+    import empty_node_state.* from "./../../../constant-values/empty_node_state"
+    import empty_payload_exchange_state.* from "./../../../constant-values/empty_payload_exchange_state"
+    import guard_helpers.* from "./../../../helper-functions/guards"
+    import getter_helpers.* from "./../../../helper-functions/getters"
+    import state_query_helpers.* from "./../../../helper-functions/state_queries"
+    import basicSpells.* from "./../../../../../../spells/basicSpells"
     export message_id.*
     export message.*
     export payload_id.*

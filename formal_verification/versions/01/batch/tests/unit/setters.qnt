@@ -2,7 +2,7 @@
 ///
 /// - @returns setters_tests the focused unit-test module
 module setters_tests {
-    import unit_fixture.* from "fixture"
+    import unit_fixture.* from "./../../../#global/helper-functions/tests/unit/fixture"
 
     import batch(
         NODES = TEST_NODES,

@@ -2,7 +2,7 @@
 ///
 /// - @returns guards_tests the focused unit-test module
 module guards_tests {
-    import unit_fixture.* from "fixture"
+    import unit_fixture.* from "./../../../#global/helper-functions/tests/unit/fixture"
 
     import batch(
         NODES = TEST_NODES,
@@ -20,16 +20,6 @@ module guards_tests {
     // TESTS - GUARD FUNCTIONS
     // ------------------------------------------------------------------------------------
 
-    /// Test that only distinct nodes form peer pairs.
-    ///
-    /// - @returns bool whether the test passes
-    run isPeerPairTest =
-        and {
-            isPeerPair(ALICE, BOB),
-            isPeerPair(BOB, ALICE),
-            not(isPeerPair(ALICE, ALICE)),
-            not(isPeerPair(BOB, BOB)),
-        }
     /// Test protocol guards in the initial state.
     ///
     /// - @returns bool whether the test passes

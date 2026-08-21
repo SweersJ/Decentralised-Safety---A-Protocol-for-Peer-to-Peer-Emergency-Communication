@@ -1,11 +1,15 @@
-/// Test the shared message fixtures and helper functions.
+/// Provide the shared deterministic message unit-test fixture.
 ///
-/// - @returns tests_unit the message unit-test module
-module tests_unit {
-import message_id.* from "./../types/message_id"
-    import message.* from "./../types/message"
-    import node.* from "./../types/node"
-    import messages.* from "./messages"
+/// - @returns tests_fixture the shared message unit-test fixture module
+module tests_fixture {
+    import message_id.* from "./../../../types/message_id"
+    import message.* from "./../../../types/message"
+    import node.* from "./../../../types/node"
+    import messages.* from "./../../messages"
+    export message_id.*
+    export message.*
+    export node.*
+    export messages.*
 
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES
@@ -66,74 +70,4 @@ import message_id.* from "./../types/message_id"
         Set(message2.messageId, message3.messageId, message4.messageId, message5.messageId), // {2, 3, 4, 5}
         Set(message1.messageId, message2.messageId, message3.messageId, message4.messageId, message5.messageId) // {1, 2, 3, 4, 5}
     )
-
-    // ------------------------------------------------------------------------------------
-    // TESTS - GETTER FUNCTIONS
-    // ------------------------------------------------------------------------------------
-
-    /// Test retrieval of a predefined message by identifier.
-    ///
-    /// - @returns bool whether the test passes
-    run getMessageTest = all {
-        assert(getMessage(message1.messageId) == message1)
-    }
-
-    /// Test that an unknown identifier returns the empty fallback message.
-    ///
-    /// - @returns bool whether the test passes
-    run getMessageUnknownTest = all {
-        assert(getMessage("unknown") == EMPTY_MESSAGE)
-    }
-
-    /// Test retrieval of multiple predefined messages by identifier.
-    ///
-    /// - @returns bool whether the test passes
-    run getMessagesTest = all {
-        assert(getMessages(TEST_MESSAGE_IDS.get(ALICE)) == Set(message1, message2))
-    }
-    
-    /// Test that an empty identifier set produces an empty message set.
-    ///
-    /// - @returns bool whether the test passes
-    run getMessagesEmptyTest = all {
-        assert(getMessages(Set()) == Set())
-    }
-    
-    /// Test enumeration of every subset of predefined message identifiers.
-    ///
-    /// - @returns bool whether the test passes
-    run getMessageIdsPowersetTest = all {
-        assert(getMessageIdsPowerset == MESSAGE_IDS_POWERSET)
-    }
-    
-    /// Test that a chosen identifier set belongs to the expected powerset.
-    ///
-    /// - @returns bool whether the test passes
-    run getRandomMessageIdsTest = all {
-        assert(getRandomMessageIds.in(MESSAGE_IDS_POWERSET))
-    }
-    
-    /// Test extraction of identifiers from a set of messages.
-    ///
-    /// - @returns bool whether the test passes
-    run getSetMessageIdsTest = all {
-        assert(getSetMessageIds(getMessages(TEST_MESSAGE_IDS.get(ALICE))) == TEST_MESSAGE_IDS.get(ALICE))
-    }
-
-    // ------------------------------------------------------------------------------------
-    // TESTS - GENERAL FUNCTIONS
-    // ------------------------------------------------------------------------------------
-
-    /// Test exclusion of messages whose identifiers occur in a supplied set.
-    ///
-    /// - @returns bool whether the test passes
-    run excludeMessagesByIdTest = all {
-        assert(
-            excludeMessagesById(
-                getMessages(TEST_MESSAGE_IDS.get(ALICE)),
-                TEST_MESSAGE_IDS.get(BOB)
-            ) == Set(message1)
-        )
-    }
-         
 }

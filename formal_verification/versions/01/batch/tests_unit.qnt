@@ -2,15 +2,20 @@
 ///
 /// - @returns tests_unit the batch protocol unit-test module
 module tests_unit {
-import message_id.* from "./../types/message_id"
-    import message.* from "./../types/message"
-    import payload_id.* from "./../types/payload_id"
-    import payload.* from "./../types/payload"
-    import node_state.* from "./../types/node_state"
-    import node.* from "./../types/node"
-    import payload_exchange_phase.* from "./../types/payload_exchange_phase"
-    import payload_exchange_state.* from "./../types/payload_exchange_state"
-    import messages.* from "./../messages/messages"
+    import message_id.* from "./../#global/types/message_id"
+    import message.* from "./../#global/types/message"
+    import payload_id.* from "./../#global/types/payload_id"
+    import payload.* from "./../#global/types/payload"
+    import node_state.* from "./../#global/types/node_state"
+    import node.* from "./../#global/types/node"
+    import payload_exchange_phase.* from "./../#global/types/payload_exchange_phase"
+    import payload_exchange_state.* from "./../#global/types/payload_exchange_state"
+    import messages.* from "./../#global/messages/messages"
+    import empty_node_state.* from "./../#global/constant-values/empty_node_state"
+    import empty_payload_exchange_state.* from "./../#global/constant-values/empty_payload_exchange_state"
+    import guard_helpers.* from "./../#global/helper-functions/guards"
+    import getter_helpers.* from "./../#global/helper-functions/getters"
+    import state_query_helpers.* from "./../#global/helper-functions/state_queries"
     import basicSpells.* from "./../../../spells/basicSpells"
 
     // ------------------------------------------------------------------------------------
@@ -53,12 +58,8 @@ import message_id.* from "./../types/message_id"
     /// Initialise every protocol state variable with deterministic test messages.
     ///
     /// - @returns bool whether the action is enabled and its transition constraints hold
-    action initWithTestMessages() = all {
-        nodeState' = initNodeState(TEST_MESSAGE_IDS),
-        payloadState' = initPayloadState,
-        messageStore' = initMessageStore(TEST_MESSAGE_IDS),
-        payloadExchangeState' = initPayloadExchangeState,
-    }
+    action initWithTestMessages() =
+        initWithMessageIds(TEST_MESSAGE_IDS)
 
     // ------------------------------------------------------------------------------------
     // TESTS - INIT FUNCTIONS
@@ -71,10 +72,10 @@ import message_id.* from "./../types/message_id"
         initWithTestMessages
             .expect(
                 and {
-                    nodeState.get(ALICE).get(BOB).messages == Set(message1, message2),
-                    nodeState.get(BOB).get(ALICE).messages == Set(message2),
-                    nodeState.get(ALICE).get(ALICE) == EMPTY_NODE_STATE,
-                    nodeState.get(BOB).get(BOB) == EMPTY_NODE_STATE,
+                    getNodeState(nodeState, ALICE, BOB).messages == Set(message1, message2),
+                    getNodeState(nodeState, BOB, ALICE).messages == Set(message2),
+                    getNodeState(nodeState, ALICE, ALICE) == EMPTY_NODE_STATE,
+                    getNodeState(nodeState, BOB, BOB) == EMPTY_NODE_STATE,
                 }
             )
 
@@ -85,7 +86,7 @@ import message_id.* from "./../types/message_id"
         initWithTestMessages
             .expect(
                 NODES.forall(sender => NODES.forall(receiver =>
-                    payloadState.get(sender).get(receiver) == None
+                    getPayload(payloadState, sender, receiver) == None
                 ))
             )
 
@@ -96,8 +97,8 @@ import message_id.* from "./../types/message_id"
         initWithTestMessages
             .expect(
                 and {
-                    messageStore.get(ALICE) == Set(message1, message2),
-                    messageStore.get(BOB) == Set(message2),
+                    getMessagesMessageStore(messageStore, ALICE) == Set(message1, message2),
+                    getMessagesMessageStore(messageStore, BOB) == Set(message2),
                 }
             )
 
@@ -108,7 +109,7 @@ import message_id.* from "./../types/message_id"
         initWithTestMessages
             .expect(
                 NODES.forall(sender => NODES.forall(receiver =>
-                    payloadExchangeState.get(sender).get(receiver)
+                    getPayloadExchangeState(payloadExchangeState, sender, receiver)
                         == EMPTY_PAYLOAD_EXCHANGE_STATE
                 ))
             )
@@ -385,7 +386,7 @@ import message_id.* from "./../types/message_id"
     run getNodeStateTest =
         initWithTestMessages
             .expect(
-                val state = getNodeState(ALICE, BOB)
+                val state = getNodeState(nodeState, ALICE, BOB)
 
                 and {
                     // state.offers.size() == 0,
@@ -400,7 +401,7 @@ import message_id.* from "./../types/message_id"
     /// - @returns bool whether the test passes
     run getPayloadTest =
         initWithTestMessages
-            .expect(getPayload(ALICE, BOB) == None)
+            .expect(getPayload(payloadState, ALICE, BOB) == None)
 
     /// Test retrieval of an initial payload exchange state.
     ///
@@ -408,7 +409,7 @@ import message_id.* from "./../types/message_id"
     run getPayloadExchangeStateTest =
         initWithTestMessages
             .expect(
-                val state = getPayloadExchangeState(ALICE, BOB)
+                val state = getPayloadExchangeState(payloadExchangeState, ALICE, BOB)
 
                 and {
                     state.phase == Idle,
@@ -427,7 +428,7 @@ import message_id.* from "./../types/message_id"
     run setPayloadExchangeStateTest =
         initWithTestMessages
             .expect(
-                val currentPayloadExchangeState = payloadExchangeState.get(ALICE).get(BOB)
+                val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, ALICE, BOB)
                 val newPayloadExchangeState = setPayloadExchangeState(
                     ALICE,
                     BOB,
@@ -448,7 +449,7 @@ import message_id.* from "./../types/message_id"
     run setPayloadExchangeStateMessagesStoredTest =
         initWithTestMessages
             .expect(
-                val currentPayloadExchangeState = payloadExchangeState.get(ALICE).get(BOB)
+                val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, ALICE, BOB)
                 val newPayloadExchangeState = setPayloadExchangeState(
                     ALICE,
                     BOB,
@@ -470,7 +471,7 @@ import message_id.* from "./../types/message_id"
     run setPayloadExchangeStateAckDeterminedTest =
         initWithTestMessages
             .expect(
-                val currentPayloadExchangeState = payloadExchangeState.get(ALICE).get(BOB)
+                val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, ALICE, BOB)
                 val newPayloadExchangeState = setPayloadExchangeState(
                     ALICE,
                     BOB,
@@ -503,10 +504,10 @@ import message_id.* from "./../types/message_id"
         initWithTestMessages
             .expect(
                 and {
-                    isDefaultNodeState(ALICE, ALICE),
-                    isDefaultNodeState(BOB, BOB),
-                    not(isDefaultNodeState(ALICE, BOB)),
-                    not(isDefaultNodeState(BOB, ALICE))
+                    isDefaultNodeState(getNodeState(nodeState, ALICE, ALICE)),
+                    isDefaultNodeState(getNodeState(nodeState, BOB, BOB)),
+                    not(isDefaultNodeState(getNodeState(nodeState, ALICE, BOB))),
+                    not(isDefaultNodeState(getNodeState(nodeState, BOB, ALICE)))
                 }
             )
 
@@ -517,8 +518,8 @@ import message_id.* from "./../types/message_id"
         initWithTestMessages
             .expect(
                 and {
-                    isDefaultPayloadState(ALICE, ALICE),
-                    isDefaultPayloadState(ALICE, BOB)
+                    isDefaultPayloadState(getPayload(payloadState, ALICE, ALICE)),
+                    isDefaultPayloadState(getPayload(payloadState, ALICE, BOB))
                 }
             )
 
@@ -529,10 +530,10 @@ import message_id.* from "./../types/message_id"
         initWithTestMessages
             .expect(
                 and {
-                    isDefaultPayloadExchangeState(ALICE, ALICE),
-                    isDefaultPayloadExchangeState(BOB, BOB),
-                    isDefaultPayloadExchangeState(ALICE, BOB),
-                    isDefaultPayloadExchangeState(BOB, ALICE)
+                    isDefaultPayloadExchangeState(getPayloadExchangeState(payloadExchangeState, ALICE, ALICE)),
+                    isDefaultPayloadExchangeState(getPayloadExchangeState(payloadExchangeState, BOB, BOB)),
+                    isDefaultPayloadExchangeState(getPayloadExchangeState(payloadExchangeState, ALICE, BOB)),
+                    isDefaultPayloadExchangeState(getPayloadExchangeState(payloadExchangeState, BOB, ALICE))
                 }
             )
 
@@ -544,9 +545,9 @@ import message_id.* from "./../types/message_id"
             .then(addMessages(ALICE, BOB))
             .expect(
                 and {
-                    payloadMessageIds(ALICE, BOB)
+                    payloadMessageIds(getPayload(payloadState, ALICE, BOB))
                         == Set(message1.messageId, message2.messageId),
-                    payloadMessageIds(BOB, ALICE) == Set()
+                    payloadMessageIds(getPayload(payloadState, BOB, ALICE)) == Set()
                 }
             )
 
@@ -559,8 +560,8 @@ import message_id.* from "./../types/message_id"
             .then(sendMessagesPayload(ALICE, BOB))
             .expect(
                 and {
-                    hasInFlightPayload(ALICE, BOB),
-                    not(hasInFlightPayload(BOB, ALICE))
+                    hasInFlightMessagesPayload(getPayloadExchangeState(payloadExchangeState, ALICE, BOB)),
+                    not(hasInFlightMessagesPayload(getPayloadExchangeState(payloadExchangeState, BOB, ALICE)))
                 }
             )
 }

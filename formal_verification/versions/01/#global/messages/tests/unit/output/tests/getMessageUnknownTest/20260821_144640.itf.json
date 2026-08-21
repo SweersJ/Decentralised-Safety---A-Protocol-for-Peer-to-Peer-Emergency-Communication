@@ -1,0 +1,20 @@
+{
+  "#meta": {
+    "format": "ITF",
+    "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+    "source": "getters.qnt",
+    "status": "ok",
+    "command": "quint test getters.qnt --match getMessageUnknownTest --out-itf output\\tests\\getMessageUnknownTest\\20260821_144640.itf.json",
+    "seed": "13205090370988441499",
+    "description": "Created by Quint on Fri Aug 21 2026 14:46:41 GMT+0200 (Midden-Europese zomertijd)",
+    "timestamp": 1787316401829
+  },
+  "vars": [],
+  "states": [
+    {
+      "#meta": {
+        "index": 0
+      }
+    }
+  ]
+}

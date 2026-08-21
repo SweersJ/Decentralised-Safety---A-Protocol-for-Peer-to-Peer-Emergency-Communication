@@ -2,7 +2,7 @@
 ///
 /// - @returns tests_unit_helpers the focused unit-test module
 module tests_unit_helpers {
-    import tests_fixture.* from "tests_fixture"
+    import tests_fixture.* from "fixture"
 
     // ------------------------------------------------------------------------------------
     // TESTS - GENERAL FUNCTIONS

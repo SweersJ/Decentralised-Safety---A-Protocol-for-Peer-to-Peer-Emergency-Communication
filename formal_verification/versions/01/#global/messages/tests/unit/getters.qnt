@@ -2,7 +2,7 @@
 ///
 /// - @returns tests_unit_getters the focused unit-test module
 module tests_unit_getters {
-    import tests_fixture.* from "tests_fixture"
+    import tests_fixture.* from "fixture"
 
     // ------------------------------------------------------------------------------------
     // TESTS - GETTER FUNCTIONS

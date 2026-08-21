@@ -1,214 +1,59 @@
 /// Model the two-node interactive message synchronisation and acknowledgement protocol.
 ///
+/// - @param Set[Node] NODES the protocol participants included in the model
+/// - @param Node -> Set[MessageId] RANDOM_MESSAGE_IDS the initial message identifiers assigned to each node
 /// - @returns interactive the protocol module
 module interactive {
-    import messages.* from "./../messages/messages"
+    // > General
     import basicSpells.* from "./../../../spells/basicSpells"
+    // > Types
+    import message_id.* from "./../#global/types/message_id"
+    import message.* from "./../#global/types/message"
+    import payload_id.* from "./../#global/types/payload_id"
+    import payload.* from "./../#global/types/payload"
+    import node_state.* from "./../#global/types/node_state"
+    import node.* from "./../#global/types/node"
+    import payload_exchange_phase.* from "./../#global/types/payload_exchange_phase"
+    import payload_exchange_state.* from "./../#global/types/payload_exchange_state"
+    import record_state.* from "./../#global/types/record_state"
+    // > Messages
+    import messages.* from "./../#global/messages/messages"
+    // > Helper functions
+    import init_helpers(INIT_NODES = NODES).* from "./../#global/helper-functions/init"
+    import guard_helpers.* from "./../#global/helper-functions/guards"
+    import getter_helpers.* from "./../#global/helper-functions/getters"
+    import state_query_helpers.* from "./../#global/helper-functions/state_queries"
+    // > Safety propositions
+    import self_nodeState_is_always_empty_safety.* from "./../#global/safety/self_nodeState_is_always_empty"
+    import self_payloadState_is_always_empty_safety.* from "./../#global/safety/self_payloadState_is_always_empty"
+    import reverse_payloadState_is_always_empty_safety.* from "./../#global/safety/reverse_payloadState_is_always_empty"
+    import self_payloadExchangeState_is_always_empty_safety.* from "./../#global/safety/self_payloadExchangeState_is_always_empty"
+    // > State variables
+    import message_store.* from "./../#global/state-variables/message_store"
+    import node_state_variable.* from "./../#global/state-variables/node_state"
+    import payload_state.* from "./../#global/state-variables/payload_state"
+    import payload_exchange_state_variable.* from "./../#global/state-variables/payload_exchange_state"
+    // import next_payload_id.* from "./../#global/state-variables/next_payload_id" // only for retransmission
     
     // ------------------------------------------------------------------------------------
-    // TYPES
+    // CONSTANT VARIABLES
     // ------------------------------------------------------------------------------------
 
-    /// Classify a synchronisation record as an offer or request.
-    /// ! only for interactive !
-    ///
-    /// - @returns RecordType the record classification
-    type RecordType = OfferRecord | RequestRecord | MessageRecord | AckRecord
-    
-    /// Associate a message identifier with its synchronisation record classification.
-    /// ! only for interactive !
-    ///
-    /// - @returns RecordState the synchronisation record state
-    type RecordState = { //TODO: add count and epoch in next version
-        messageId: MessageId, // Not used as map key, but as a value to be able to track the message ID in the record state.
-        recordType: RecordType // Redundant information as the record state is already stored in a specific field for only that type
-    }
-
-    /// Identify a protocol payload with an id encoded as integer instead of UUID.
-    ///
-    /// - @returns PayloadId the integer payload identifier
-    type PayloadId = int
-    
-    /// Represent the acknowledgements, records, and messages exchanged between peers.
-    ///
-    /// TODO add payload type to indicate if it is a batch or interactive payload or can it be determined already from the payload itself
-    ///
-    /// - @returns Payload the complete batch payload
-    type Payload = {
-        payloadId: PayloadId,
-        acks: Set[MessageId],
-        offers: Set[RecordState], //only for interactive  TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
-        requests: Set[RecordState], //only for interactive  TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
-        messages: Set[Message]
-    }
-
-    /// Represent a node's synchronisation knowledge for one peer.
-    ///
-    /// - @returns NodeState the per-peer synchronisation state
-    type NodeState = {
-        offers: Set[RecordState], //only for interactive TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
-        requests: Set[RecordState], //only for interactive TODO: add map of messageId to recordState to be able to retrieve the record state by its ID.
-        messages: Set[Message]
-    }
-
-    /// Identify a protocol participant by name.
-    ///
-    /// - @returns Node the string node identifier
-    type Node = str
-
-    /// Track the lifecycle phase and processing flags of a payload exchange.
-    ///
-    /// - @returns PayloadExchangeState the payload exchange lifecycle state
-    type PayloadExchangeState = {
-        phase: PayloadExchangePhase,
-        messagesStored: bool,
-        ackDetermined: bool
-    }
-
-    /// Enumerate the phases of the batch payload exchange lifecycle.
-    ///
-    /// - @returns PayloadExchangePhase the current exchange phase
-    type PayloadExchangePhase = Idle | OffersAdded | OffersSent | OffersReceived | RequestAdded | RequestSent | RequestReceived | MessagesAdded | MessagesSent | MessagesReceived | AckSent | AckReceived
-
-    // ------------------------------------------------------------------------------------
-    // CONSTANT VALUES
-    // ------------------------------------------------------------------------------------
-
-    /// Identify the Alice protocol participant.
-    ///
-    /// - @returns Node Alice's node identifier
-    pure val ALICE: Node = "Alice"
-
-    /// Identify the Bob protocol participant.
-    ///
-    /// - @returns Node Bob's node identifier
-    pure val BOB: Node = "Bob"
-
-    /// Collect all protocol participants in the model.
+    /// Provide all protocol participants configured by an importing module.
     ///
     /// - @returns Set[Node] the modeled nodes
-    pure val NODES: Set[Node] = Set(ALICE, BOB)
+    const NODES: Set[Node]
 
-    /// Provide the default per-peer node state containing no synchronisation data.
+    /// Provide the initial message identifiers configured for every protocol participant.
     ///
-    /// - @returns NodeState the empty node-state value
-    pure val EMPTY_NODE_STATE: NodeState = {
-        offers: Set(), //only for interactive
-        requests: Set(), //only for interactive
-        messages: Set()
-    }
-
-    /// Provide the default idle and unprocessed payload exchange state.
-    ///
-    /// - @returns PayloadExchangeState the empty exchange-state value
-    pure val EMPTY_PAYLOAD_EXCHANGE_STATE: PayloadExchangeState = {
-        phase: Idle,
-        messagesStored: false,
-        ackDetermined: false
-    }
-
-    // ------------------------------------------------------------------------------------
-    // STATE VARIABLES
-    // ------------------------------------------------------------------------------------
-    
-    /// Store the messages persisted by each node.
-    ///
-    /// - @returns Node -> Set[Message] the messages indexed by their storing node
-    var messageStore: Node -> Set[Message] //TODO: add a map of messageId to message to be able to retrieve the message by its ID.
-    
-    /// Track each sender's synchronisation knowledge for every receiver.
-    /// (simulation of storing at node side what transport is expected for each node at the node side)
-    ///
-    /// - @returns Node -> (Node -> NodeState) the per-sender and per-receiver node states
-    var nodeState: Node -> (Node -> NodeState)
-
-    /// Store the current payload for every sender-receiver pair.
-    ///
-    /// - @returns Node -> (Node -> Option[Payload]) the payloads indexed by sender and receiver
-    var payloadState: Node -> (Node -> Option[Payload])
-
-    /// Track the payload exchange lifecycle for every sender-receiver pair.
-    ///
-    /// - @returns Node -> (Node -> PayloadExchangeState) the exchange states indexed by sender and receiver
-    var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
-
-    /// Payload-id generator for future send actions.
-    ///
-    /// TODO: add the payload generator
-    ///
-    /// - @returns int the next payload id for the next payload to be sent
-    // var nextPayloadId: int
+    /// - @returns Node -> Set[MessageId] the initial message identifiers indexed by node
+    const RANDOM_MESSAGE_IDS: Node -> Set[MessageId]
 
     // ------------------------------------------------------------------------------------
     // HELPER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
-    // > INIT FUNCTIONS
-
-    /// Build the initial per-peer node state from the messages assigned to each node.
-    ///
-    /// - @param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
-    /// - @returns Node -> (Node -> NodeState) the computed result
-    pure def initNodeState(randomMessageIds: Node -> Set[MessageId]): Node -> (Node -> NodeState) = {
-        NODES.mapBy(
-            sender => NODES.mapBy(
-                receiver => {
-                    ...EMPTY_NODE_STATE,
-                    messages: if (sender != receiver) getMessages(randomMessageIds.get(sender)) else EMPTY_NODE_STATE.messages
-                }
-            )
-        )
-    }
-
-    /// Build an empty payload for every sender-receiver pair.
-    ///
-    /// - @returns Node -> (Node -> Option[Payload]) the computed result
-    pure def initPayloadState(): Node -> (Node -> Option[Payload]) = {
-        NODES.mapBy(
-            _ => NODES.mapBy(
-                _ => None
-            )
-        )
-    }
-
-    /// Populate each node's message store from its assigned message identifiers.
-    ///
-    /// - @param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
-    /// - @returns Node -> Set[Message] the computed result
-    pure def initMessageStore(randomMessageIds: Node -> Set[MessageId]): Node -> Set[Message] = {
-        NODES.mapBy(
-            node => getMessages(randomMessageIds.get(node))
-        )
-    }
-
-    /// Initialise every sender-receiver exchange to the empty idle state.
-    ///
-    /// - @returns Node -> (Node -> PayloadExchangeState) the computed result
-    pure def initPayloadExchangeState(): Node -> (Node -> PayloadExchangeState) = {
-        NODES.mapBy(
-            sender => NODES.mapBy(
-                receiver => EMPTY_PAYLOAD_EXCHANGE_STATE
-            )
-        )
-    }
-
-    /// Choose an initial set of message identifiers for every node.
-    ///
-    /// - @returns Node -> Set[MessageId] the computed result
-    pure def initRandomMessageIds(): Node -> Set[MessageId] = {
-        NODES.mapBy(n => getRandomMessageIds)
-    }
-
     // > GUARD FUNCTIONS
-
-    /// Check whether the sender and receiver are distinct peers, otherwise it doesn't make sense to send a payload.
-    ///
-    /// - @param Node sender the node sending the payload
-    /// - @param Node receiver the node receiving the payload
-    /// - @returns bool the computed result
-    pure def isPeerPair(sender: Node, receiver: Node): bool = {
-        sender != receiver
-    }
 
     /// Check whether a sender-receiver pair has messages available for synchronisation.
     ///
@@ -217,8 +62,8 @@ module interactive {
     /// - @returns bool the computed result
     def hasSyncDelta(sender: Node, receiver: Node): bool = {
         and {
-            getMessagesMessageStore(sender).size() > 0,   
-            getNodeState(sender,receiver).messages.size() > 0,
+            getMessagesMessageStore(messageStore, sender).size() > 0,
+            getNodeState(nodeState, sender,receiver).messages.size() > 0,
         }
     }
 
@@ -231,7 +76,7 @@ module interactive {
         and {
             isPeerPair(sender, receiver),
             hasSyncDelta(sender, receiver),
-            getPayloadExchangeState(sender,receiver).phase == Idle,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == Idle,
         }
     }
 
@@ -244,9 +89,9 @@ module interactive {
         and {
             isPeerPair(sender, receiver),
             hasSyncDelta(sender, receiver),
-            getPayloadMessages(sender, receiver).size() != 0,
-            getNodeState(sender,receiver).messages.size() != 0,
-            getPayloadExchangeState(sender,receiver).phase == MessagesAdded,
+            getPayloadMessages(payloadState, sender, receiver).size() != 0,
+            getNodeState(nodeState, sender,receiver).messages.size() != 0,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == MessagesAdded,
         }
         
     }
@@ -259,7 +104,7 @@ module interactive {
     def canReceiveMessagesPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
-            getPayloadExchangeState(sender,receiver).phase == MessagesSent,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == MessagesSent,
         }
     }
 
@@ -269,7 +114,7 @@ module interactive {
     /// - @param Node receiver the node storing the messages
     /// - @returns bool the computed result
     def canStoreReceivedMessages(sender: Node, receiver: Node): bool = {
-        val state = getPayloadExchangeState(sender,receiver)
+        val state = getPayloadExchangeState(payloadExchangeState, sender,receiver)
 
         and {
             isPeerPair(sender, receiver),
@@ -284,7 +129,7 @@ module interactive {
     /// - @param Node receiver the node determining acknowledgements
     /// - @returns bool the computed result
     def canDetermineAck(sender: Node, receiver: Node): bool = {
-        val state = getPayloadExchangeState(sender,receiver)
+        val state = getPayloadExchangeState(payloadExchangeState, sender,receiver)
 
         and {
             isPeerPair(sender, receiver),
@@ -299,7 +144,7 @@ module interactive {
     /// - @param Node receiver the node sending the acknowledgement
     /// - @returns bool the computed result
     def canAckPayload(sender: Node, receiver: Node): bool = {
-        val state = getPayloadExchangeState(sender,receiver)
+        val state = getPayloadExchangeState(payloadExchangeState, sender,receiver)
 
         and {
             isPeerPair(sender, receiver),
@@ -317,8 +162,8 @@ module interactive {
     def canReceiveAckPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
-            getPayloadAcks(sender, receiver).size() != 0,
-            getPayloadExchangeState(sender,receiver).phase == AckSent,
+            getPayloadAcks(payloadState, sender, receiver).size() != 0,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == AckSent,
         }
     }
 
@@ -328,7 +173,7 @@ module interactive {
     /// - @param Node receiver the receiving node
     /// - @returns bool the computed result
     def canIdle(sender: Node, receiver: Node): bool = {
-        val phase = getPayloadExchangeState(sender,receiver).phase
+        val phase = getPayloadExchangeState(payloadExchangeState, sender,receiver).phase
 
         and {
             isPeerPair(sender, receiver),
@@ -337,77 +182,6 @@ module interactive {
         
     }
 
-    // > GETTER FUNCTIONS
-
-    /// Return the messages currently stored by a node.
-    ///
-    /// - @param Node sender the node whose message store is returned
-    /// - @returns Set[Message] the computed result
-    def getMessagesMessageStore(sender: Node): Set[Message] = {
-        messageStore.get(sender)
-    }
-
-    /// Return the sender's synchronisation state for a receiver.
-    ///
-    /// - @param Node sender the node maintaining the synchronisation state
-    /// - @param Node receiver the peer represented by that state
-    /// - @returns NodeState the computed result
-    def getNodeState(sender: Node, receiver: Node): NodeState = {
-        nodeState.get(sender).get(receiver)
-    }
-
-    /// Return the optional payload associated with a sender-receiver pair.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Option[Payload] the payload when one exists, otherwise None
-    def getPayload(sender: Node, receiver: Node): Option[Payload] = {
-        payloadState.get(sender).get(receiver)
-    }
-
-    /// Return the messages in a pair's payload, or an empty set when no payload exists.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Set[Message] the payload messages or an empty set
-    def getPayloadMessages(sender: Node, receiver: Node): Set[Message] = {
-        match getPayload(sender, receiver) {
-            | Some(payload) => payload.messages
-            | None => Set()
-        }
-    }
-
-    /// Return the acknowledgements in a pair's payload, or an empty set when no payload exists.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Set[MessageId] the acknowledgement identifiers or an empty set
-    def getPayloadAcks(sender: Node, receiver: Node): Set[MessageId] = {
-        match getPayload(sender, receiver) {
-            | Some(payload) => payload.acks
-            | None => Set()
-        }
-    }
-
-    /// Return the exchange lifecycle state associated with a sender-receiver pair.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns PayloadExchangeState the computed result
-    def getPayloadExchangeState(sender: Node, receiver: Node): PayloadExchangeState = {
-        payloadExchangeState.get(sender).get(receiver)
-    }
-
-    /// Return the record state messages ids from the set of RecordStates
-    ///
-    /// TODO: activate when in interactive mode
-    ///
-    /// - @param Set[RecordState] recordStates the record states to analyse and extract message ids from
-    /// - @returns Set[MessageId] the computed set of message ids
-    pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
-        recordStates.map(recordState => recordState.messageId)
-    }
-    
 
     // > SETTER FUNCTIONS
 
@@ -445,17 +219,25 @@ module interactive {
     // INIT ACTIONS
     // ------------------------------------------------------------------------------------
 
-    /// Initialise all protocol state with nondeterministically selected node messages.
+    /// Initialise all protocol state with the configured node messages.
     ///
     /// - @returns bool whether the action is enabled and its transition constraints hold
-    action init() = {
-        val randomMessageIds = initRandomMessageIds
-        all {
-            nodeState' = initNodeState(randomMessageIds),
-            payloadState' = initPayloadState,
-            messageStore' = initMessageStore(randomMessageIds),
-            payloadExchangeState' = initPayloadExchangeState
-        }
+    action init() = all {
+        nodeState' = initNodeState(RANDOM_MESSAGE_IDS),
+        payloadState' = initPayloadState,
+        messageStore' = initMessageStore(RANDOM_MESSAGE_IDS),
+        payloadExchangeState' = initPayloadExchangeState
+    }
+
+    /// Initialise all protocol state with the supplied node messages.
+    ///
+    /// - @param Node -> Set[MessageId] messageIds the initial message identifiers indexed by node
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action initWithMessageIds(messageIds) = all {
+        nodeState' = initNodeState(messageIds),
+        payloadState' = initPayloadState,
+        messageStore' = initMessageStore(messageIds),
+        payloadExchangeState' = initPayloadExchangeState
     }
 
     // ------------------------------------------------------------------------------------
@@ -532,20 +314,20 @@ module interactive {
                             acks: Set(),
                             offers: Set(),
                             requests: Set(),
-                            messages: getNodeState(sender, receiver).messages
+                            messages: getNodeState(nodeState, sender, receiver).messages
                         })
                         | Some(payload) => Some({
                             ...payload,
                             // Keep any messages already present when extending an existing payload.
                             messages: payload.messages.union(
-                                getNodeState(sender, receiver).messages
+                                getNodeState(nodeState, sender, receiver).messages
                             )
                         })
                     }
             )
         ),
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(sender, receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender, receiver)
             setPayloadExchangeState(
                 sender, 
                 receiver, 
@@ -569,7 +351,7 @@ module interactive {
         nodeState' = nodeState,
         payloadState' = payloadState,
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender, 
                 receiver, 
@@ -593,7 +375,7 @@ module interactive {
         nodeState' = nodeState,
         payloadState' = payloadState,
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender, 
                 receiver, 
@@ -617,7 +399,7 @@ module interactive {
             receiver,
             // With the use of union no previous messages can be removed, thus proving monotonicity.
             receiverStore => receiverStore.union(
-                getPayloadMessages(sender, receiver)
+                getPayloadMessages(payloadState, sender, receiver)
             )
         ),
         nodeState' = nodeState.setBy(
@@ -628,14 +410,14 @@ module interactive {
                     ...senderState,
                     messages: excludeMessagesById(
                         senderState.messages,
-                        getSetMessageIds(getPayloadMessages(sender, receiver))
+                        getSetMessageIds(getPayloadMessages(payloadState, sender, receiver))
                     )
                 }
             )
         ),
         payloadState' = payloadState,
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender,
                 receiver,
@@ -674,7 +456,7 @@ module interactive {
             )
         ),
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
         
             setPayloadExchangeState(
                 sender, 
@@ -699,7 +481,7 @@ module interactive {
         nodeState' = nodeState,
         payloadState' = payloadState,
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender, 
                 receiver, 
@@ -724,7 +506,7 @@ module interactive {
         // Next state updates
         messageStore' = messageStore,
         nodeState' = 
-            val ackIds = getPayloadAcks(sender, receiver)
+            val ackIds = getPayloadAcks(payloadState, sender, receiver)
 
             nodeState.setBy(
                 sender,
@@ -738,7 +520,7 @@ module interactive {
                 )
             ),
         payloadState' = 
-            val ackIds = getPayloadAcks(sender, receiver)
+            val ackIds = getPayloadAcks(payloadState, sender, receiver)
             
             payloadState.setBy(
                 sender,
@@ -763,7 +545,7 @@ module interactive {
                 )
             ),
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender, 
                 receiver, 
@@ -776,38 +558,6 @@ module interactive {
     // ------------------------------------------------------------------------------------
     // HELPER VERIFICATION ACTIONS
     // ------------------------------------------------------------------------------------
-
-    /// Initialise two nodes with distinct nonempty message sets that require synchronisation.
-    ///
-    /// - @returns bool whether the action is enabled and its transition constraints hold
-    action initWithMessagesToSyncTwoNodes() = {
-        val aliceIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).chooseSome()
-        val bobIds = MESSAGES.keys().powerset().filter(s =>
-            aliceIds.exists(id => not(id.in(s)))
-        ).chooseSome()
-        val randomMessageIds = Map(ALICE -> aliceIds, BOB -> bobIds)
-        all {
-            nodeState' = initNodeState(randomMessageIds),
-            payloadState' = initPayloadState,
-            messageStore' = initMessageStore(randomMessageIds),
-            payloadExchangeState' = initPayloadExchangeState,
-        }
-    }
-
-    /// Initialise two nodes such that Alice already contains Bob's selected messages.
-    ///
-    /// - @returns bool whether the action is enabled and its transition constraints hold
-    action initWithoutMessagesToSyncTwoNodes() = {
-        val bobIds = MESSAGES.keys().powerset().filter(s => s.size() > 0).chooseSome()
-        val aliceIds = bobIds.powerset().filter(s => s.size() > 0).chooseSome()
-        val randomMessageIds = Map(ALICE -> aliceIds, BOB -> bobIds)
-        all {
-            nodeState' = initNodeState(randomMessageIds),
-            payloadState' = initPayloadState,
-            messageStore' = initMessageStore(randomMessageIds),
-            payloadExchangeState' = initPayloadExchangeState,
-        }
-    }
 
     /// Receive an eligible message payload for some nondeterministically chosen peer pair.
     ///
@@ -837,367 +587,276 @@ module interactive {
     }
 
     // -------------------------------------------------------------------------------------
-    // HELPER VERIFICATION FUNCTIONS
-    // -------------------------------------------------------------------------------------
-
-    /// Check whether a pair's node state equals the empty default state.
-    ///
-    /// - @param Node sender the node maintaining the state
-    /// - @param Node receiver the peer represented by the state
-    /// - @returns bool the computed result
-    def isDefaultNodeState(sender: Node, receiver: Node): bool = {
-        val nodeState = getNodeState(sender, receiver)
-        and {
-            nodeState.messages.size() == 0,
-            nodeState.offers.size() == 0,  //only for interactive
-            nodeState.requests.size() == 0, //only for interactive
-        }
-    }
-
-    /// Check whether a sender-receiver pair has no payload.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool whether the payload is absent
-    def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
-        getPayload(sender, receiver) == None
-    }
-
-    /// Check whether a pair's exchange state equals the empty default exchange state.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool the computed result
-    def isDefaultPayloadExchangeState(sender: Node, receiver: Node): bool = {
-        val payloadExchangeState = getPayloadExchangeState(sender, receiver)
-
-        and {
-            payloadExchangeState.phase == Idle,
-            not(payloadExchangeState.messagesStored),
-            not(payloadExchangeState.ackDetermined),
-        }
-        
-    }
-
-    /// Return the identifiers of all messages in a pair's payload.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Set[MessageId] the computed result
-    def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
-        getSetMessageIds(getPayloadMessages(sender, receiver))
-    }
-
-    /// Check whether a pair currently has a sent message payload awaiting receipt.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool the computed result
-    def hasInFlightPayload(sender: Node, receiver: Node): bool = {
-        getPayloadExchangeState(sender, receiver).phase == MessagesSent
-    }
-
-    // -------------------------------------------------------------------------------------
     // SAFETY PROPOSITIONS
     // -------------------------------------------------------------------------------------
-
-    /// Assert that the model contains exactly Alice and Bob.
-    ///
-    /// - @returns bool whether the proposition holds
-    val two_nodes_only = 
-        NODES.size() == 2
 
     /// Assert that every node's synchronisation state for itself remains empty.
     ///
     /// - @returns bool whether the proposition holds
-    // val self_nodeState_is_always_empty = 
-    //     NODES.forall(
-    //         n => isDefaultNodeState(n, n)
-    //     )
+    val self_nodeState_is_always_empty =
+        self_nodeState_is_always_empty_predicate(NODES, nodeState)
 
     /// Assert that every node's payload addressed to itself remains empty.
     ///
     /// - @returns bool whether the proposition holds
-    // val self_payloadState_is_always_empty = 
-    //     NODES.forall(
-    //         n => isDefaultPayloadState(n, n)
-    //     )
+    val self_payloadState_is_always_empty =
+        self_payloadState_is_always_empty_predicate(NODES, payloadState)
 
     /// Assert that the unused reverse-direction payload remains empty during an exchange.
     ///
     /// - @returns bool whether the proposition holds
-    // val reverse_payloadState_is_always_empty = 
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies
-    //                 (
-    //                     // Allow both directions to be empty only when both directions are idle.
-    //                     (
-    //                         (
-    //                             getPayloadExchangeState(sender, receiver).phase == Idle or
-    //                             getPayloadExchangeState(sender, receiver).phase == AckReceived
-    //                         ) 
-    //                         and
-    //                         (
-    //                             getPayloadExchangeState(receiver, sender).phase == Idle or
-    //                             getPayloadExchangeState(receiver, sender).phase == AckReceived
-    //                         )
-    //                     )
-    //                     or
-    //                     // During sync activity, at least one direction must contain a payload.
-    //                     (
-    //                         not(isDefaultPayloadState(sender, receiver)) or
-    //                         not(isDefaultPayloadState(receiver, sender))
-    //                     )
-    //                 )
-    //         )
-    //     )
+    val reverse_payloadState_is_always_empty =
+        reverse_payloadState_is_always_empty_predicate(
+            NODES,
+            payloadState,
+            payloadExchangeState
+        )
     
     /// Assert that every node's exchange state with itself remains at its default.
     ///
     /// - @returns bool whether the proposition holds
-    // val self_payloadExchangeState_is_always_empty = 
-    //     NODES.forall(
-    //         n => isDefaultPayloadExchangeState(n, n)
-    //     )
+    val self_payloadExchangeState_is_always_empty =
+        self_payloadExchangeState_is_always_empty_predicate(
+            NODES,
+            payloadExchangeState
+        )
 
     /// Assert that every payload message is pending or already known by the receiver.
     ///
     /// - @returns bool whether the proposition holds
-    // val payload_messages_are_pending_or_known_by_receiver =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies
-    //                 getPayloadMessages(sender, receiver).forall(
-    //                     m =>
-    //                         // Still scheduled for this receiver
-    //                         m.in(getNodeState(sender, receiver).messages)
-    //                         or 
-    //                         // No longer scheduled because the receiver already has it
-    //                         m.in(getMessagesMessageStore(receiver))
-    //                 )
-    //         )
-    //     )
+    val payload_messages_are_pending_or_known_by_receiver =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies
+                    getPayloadMessages(payloadState, sender, receiver).forall(
+                        m =>
+                            // Still scheduled for this receiver
+                            m.in(getNodeState(nodeState, sender, receiver).messages)
+                            or 
+                            // No longer scheduled because the receiver already has it
+                            m.in(getMessagesMessageStore(messageStore, receiver))
+                    )
+            )
+        )
 
     /// Assert that every payload message exists in the sender's message store.
     ///
     /// - @returns bool whether the proposition holds
-    // val payload_messages_belong_to_sender =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies
-    //                 getPayloadMessages(sender, receiver).forall(
-    //                     m => m.in(getMessagesMessageStore(sender))
-    //                 )
-    //         )
-    //     )
+    val payload_messages_belong_to_sender =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies
+                    getPayloadMessages(payloadState, sender, receiver).forall(
+                        m => m.in(getMessagesMessageStore(messageStore, sender))
+                    )
+            )
+        )
 
     /// Combine the payload-message ownership and receiver-knowledge safety properties.
     ///
     /// - @returns bool whether the proposition holds
-    // val payload_message_invariant = 
-    //     and {
-    //         payload_messages_are_pending_or_known_by_receiver,
-    //         payload_messages_belong_to_sender,
-    //         pending_messages_belong_to_sender,
-    //     }
+    val payload_message_invariant = 
+        and {
+            payload_messages_are_pending_or_known_by_receiver,
+            payload_messages_belong_to_sender,
+            pending_messages_belong_to_sender,
+        }
 
     /// Assert that every message pending for a receiver belongs to the sender.
     ///
     /// - @returns bool whether the proposition holds
-    // val pending_messages_belong_to_sender =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies
-    //                 getNodeState(sender, receiver).messages.forall(
-    //                     m => m.in(getMessagesMessageStore(sender))
-    //                 )
-    //         )
-    //     )
+    val pending_messages_belong_to_sender =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies
+                    getNodeState(nodeState, sender, receiver).messages.forall(
+                        m => m.in(getMessagesMessageStore(messageStore, sender))
+                    )
+            )
+        )
 
     /// Assert that acknowledgement identifiers refer to messages in the same payload.
     ///
     /// - @returns bool whether the proposition holds
-    // val ack_ids_match_payload_messages =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver => getPayloadAcks(sender, receiver).forall(
-    //                 id => id.in(payloadMessageIds(sender, receiver))
-    //             )
-    //         )
-    //     )
+    val ack_ids_match_payload_messages =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver => getPayloadAcks(payloadState, sender, receiver).forall(
+                    id => id.in(payloadMessageIds(getPayload(payloadState, sender, receiver)))
+                )
+            )
+        )
 
     /// Assert that sent acknowledgement identifiers refer to messages stored by the receiver.
     ///
     /// - @returns bool whether the proposition holds
-    // val sent_ack_ids_match_stored_messages  =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).phase == AckSent 
-    //                     implies
-    //                     getPayloadAcks(sender, receiver).forall(
-    //                         id => id.in(
-    //                             getSetMessageIds(messageStore.get(receiver))
-    //                         )
-    //                     )
-    //                 )
-    //         )
-    //     )
+    val sent_ack_ids_match_stored_messages  =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == AckSent
+                        implies
+                        getPayloadAcks(payloadState, sender, receiver).forall(
+                            id => id.in(
+                                getSetMessageIds(messageStore.get(receiver))
+                            )
+                        )
+                    )
+            )
+        )
     
     /// Combine the acknowledgement soundness safety properties.
     ///
     /// - @returns bool whether the proposition holds
-    // val sent_acks_are_sound = 
-    //     and {
-    //         sent_ack_ids_match_stored_messages,
-    //         ack_ids_match_payload_messages,
-    //         pending_acks_imply_nonempty_payload,
-    //     }
+    val sent_acks_are_sound = 
+        and {
+            sent_ack_ids_match_stored_messages,
+            ack_ids_match_payload_messages,
+            pending_acks_imply_nonempty_payload,
+        }
 
     /// Assert that a nonempty acknowledgement set implies a nonempty message payload.
     ///
     /// - @returns bool whether the proposition holds
-    // val pending_acks_imply_nonempty_payload =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver => getPayloadAcks(sender, receiver).size() > 0
-    //                 implies getPayloadMessages(sender, receiver).size() > 0
-    //         )
-    //     )
+    val pending_acks_imply_nonempty_payload =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver => getPayloadAcks(payloadState, sender, receiver).size() > 0
+                    implies getPayloadMessages(payloadState, sender, receiver).size() > 0
+            )
+        )
     
     /// Assert that a determined acknowledgement covers exactly the payload's messages.
     ///
     /// - @returns bool whether the proposition holds
-    // val determined_ack_covers_payload =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).ackDetermined
-    //                     implies
-    //                     getPayloadAcks(sender, receiver)
-    //                         == payloadMessageIds(sender, receiver)
-    //                 )
-    //         )
-    //     )
+    val determined_ack_covers_payload =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined
+                        implies
+                        getPayloadAcks(payloadState, sender, receiver)
+                            == payloadMessageIds(getPayload(payloadState, sender, receiver))
+                    )
+            )
+        )
 
     /// Assert that the idle phase has neither stored-message nor determined-ack flags set.
     ///
     /// - @returns bool whether the proposition holds
-    // val when_idle_not_messageStored_and_not_ackDetermined =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver => 
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).phase == Idle
-    //                     implies
-    //                     and {
-    //                         not(getPayloadExchangeState(sender, receiver).messagesStored),
-    //                         not(getPayloadExchangeState(sender, receiver).ackDetermined)
-    //                     }
-    //                 )
-    //         )
-    //     )
+    val when_idle_not_messageStored_and_not_ackDetermined =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver => 
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == Idle
+                        implies
+                        and {
+                            not(getPayloadExchangeState(payloadExchangeState, sender, receiver).messagesStored),
+                            not(getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined)
+                        }
+                    )
+            )
+        )
 
     /// Assert that the MessagesAdded phase always has a nonempty message payload.
     ///
     /// - @returns bool whether the proposition holds
-    // val when_MessagesAdded_payload_messages_non_empty =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).phase == MessagesAdded
-    //                     implies
-    //                     getPayloadMessages(sender, receiver).size() > 0
-    //                 )
-    //         )
-    //     )
+    val when_MessagesAdded_payload_messages_non_empty =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesAdded
+                        implies
+                        getPayloadMessages(payloadState, sender, receiver).size() > 0
+                    )
+            )
+        )
 
     /// Assert that the MessagesSent phase always has a nonempty message payload.
     ///
     /// - @returns bool whether the proposition holds
-    // val when_MessagesSent_payload_messages_non_empty =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).phase == MessagesSent
-    //                     implies
-    //                     getPayloadMessages(sender, receiver).size() > 0
-    //                 )
-    //         )
-    //     )
+    val when_MessagesSent_payload_messages_non_empty =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesSent
+                        implies
+                        getPayloadMessages(payloadState, sender, receiver).size() > 0
+                    )
+            )
+        )
 
     /// Assert that AckSent follows storage and acknowledgement determination with nonempty acknowledgements.
     ///
     /// - @returns bool whether the proposition holds
-    // val when_AckSent_messagesStored_ackDetermined_acks_non_empty =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).phase == AckSent
-    //                     implies
-    //                     and {
-    //                         getPayloadExchangeState(sender, receiver).messagesStored,
-    //                         getPayloadExchangeState(sender, receiver).ackDetermined,
-    //                         getPayloadAcks(sender, receiver).size() > 0
-    //                     }
-    //                 )
-    //         )
-    //     )
+    val when_AckSent_messagesStored_ackDetermined_acks_non_empty =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == AckSent
+                        implies
+                        and {
+                            getPayloadExchangeState(payloadExchangeState, sender, receiver).messagesStored,
+                            getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined,
+                            getPayloadAcks(payloadState, sender, receiver).size() > 0
+                        }
+                    )
+            )
+        )
 
     /// Assert that acknowledgement receipt leaves the acknowledgement set empty.
     ///
     /// - @returns bool whether the proposition holds
-    // val when_AckReceived_acks_empty = 
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).phase == AckReceived
-    //                     implies
-    //                     getPayloadAcks(sender, receiver).size() == 0
-    //                 )
-    //         )
-    //     )
+    val when_AckReceived_acks_empty = 
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == AckReceived
+                        implies
+                        getPayloadAcks(payloadState, sender, receiver).size() == 0
+                    )
+            )
+        )
 
     /// Assert that acknowledgement determination occurs only in compatible exchange phases.
     ///
     /// - @returns bool whether the proposition holds
-    // val when_ackDetermined = 
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).ackDetermined
-    //                     implies
-    //                     getPayloadExchangeState(sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
-    //                 )
-    //         )
-    //     )
+    val when_ackDetermined = 
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined
+                        implies
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
+                    )
+            )
+        )
 
     /// Assert that received-message storage occurs only in compatible exchange phases.
     ///
     /// - @returns bool whether the proposition holds
-    // val when_messagesStored = 
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     getPayloadExchangeState(sender, receiver).messagesStored
-    //                     implies
-    //                     getPayloadExchangeState(sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
-    //                 )
-    //         )
-    //     )
+    val when_messagesStored = 
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).messagesStored
+                        implies
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
+                    )
+            )
+        )
 
     // -------------------------------------------------------------------------------------
     // LIVENESS PROPOSITIONS
@@ -1223,65 +882,65 @@ module interactive {
     /// Require weak fairness for receiving some sent message payload.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal fair_receive_messages_payload =
-    //     someReceiveMessagesPayload.weakFair(Set(payloadExchangeState))
+    temporal fair_receive_messages_payload =
+        someReceiveMessagesPayload.weakFair(Set(payloadExchangeState))
 
     /// Require weak fairness for determining some payload acknowledgement.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal fair_determine_ack =
-    //     someDetermineAck.weakFair(Set(payloadState))
+    temporal fair_determine_ack =
+        someDetermineAck.weakFair(Set(payloadState))
 
     /// Require weak fairness for receiving some acknowledgement payload.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal fair_receive_ack_payload =
-    //     someReceiveAckPayload.weakFair(Set(nodeState))
+    temporal fair_receive_ack_payload =
+        someReceiveAckPayload.weakFair(Set(nodeState))
 
     /// Assert that every in-flight payload is eventually received under receive fairness.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal in_flight_payload_is_eventually_received =
-    //     fair_receive_messages_payload implies (
-    //         NODES.forall(
-    //             sender => NODES.forall(
-    //                 receiver => isPeerPair(sender, receiver) implies
-    //                     hasInFlightPayload(sender, receiver)
-    //                     leadsTo getPayloadExchangeState(sender, receiver).phase == MessagesReceived
-    //             )
-    //         )
-    //     )
+    temporal in_flight_payload_is_eventually_received =
+        fair_receive_messages_payload implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver => isPeerPair(sender, receiver) implies
+                        hasInFlightPayload(getPayloadExchangeState(payloadExchangeState, sender, receiver))
+                        leadsTo getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesReceived
+                )
+            )
+        )
 
     /// Assert that every sent payload is eventually acknowledged under delivery fairness.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal pending_payload_is_eventually_acknowledged =
-    //     (fair_receive_messages_payload and fair_determine_ack) implies (
-    //         NODES.forall(
-    //             sender => NODES.forall(
-    //                 receiver => isPeerPair(sender, receiver) implies
-    //                     and {
-    //                         getPayloadMessages(sender, receiver).size() > 0,
-    //                         getPayloadExchangeState(sender,receiver).phase == MessagesSent,
-    //                     }
-    //                     leadsTo getPayloadAcks(sender, receiver).size() > 0
-    //             )
-    //         )
-    //     )
+    temporal pending_payload_is_eventually_acknowledged =
+        (fair_receive_messages_payload and fair_determine_ack) implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver => isPeerPair(sender, receiver) implies
+                        and {
+                            getPayloadMessages(payloadState, sender, receiver).size() > 0,
+                            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == MessagesSent,
+                        }
+                        leadsTo getPayloadAcks(payloadState, sender, receiver).size() > 0
+                )
+            )
+        )
 
     /// Assert that every pending acknowledgement is eventually cleared under receive fairness.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal pending_ack_is_eventually_cleared =
-    //     fair_receive_ack_payload implies (
-    //         NODES.forall(
-    //             sender => NODES.forall(
-    //                 receiver => isPeerPair(sender, receiver) implies
-    //                     getPayloadAcks(sender, receiver).size() > 0
-    //                     leadsTo getPayloadAcks(sender, receiver).size() == 0
-    //             )
-    //         )
-    //     )
+    temporal pending_ack_is_eventually_cleared =
+        fair_receive_ack_payload implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver => isPeerPair(sender, receiver) implies
+                        getPayloadAcks(payloadState, sender, receiver).size() > 0
+                        leadsTo getPayloadAcks(payloadState, sender, receiver).size() == 0
+                )
+            )
+        )
 
     /// Ensure a pending message ID is removed only after the receiver stores the message.
     ///
@@ -1303,14 +962,14 @@ module interactive {
     //                             (
     //                                 id.in(
     //                                     getSetMessageIds(
-    //                                         getNodeState(sender, receiver).messages
+    //                                         getNodeState(nodeState, sender, receiver).messages
     //                                     )
     //                                 )
     //                                 and next(
     //                                     not(
     //                                         id.in(
     //                                             getSetMessageIds(
-    //                                                 getNodeState(sender, receiver).messages
+    //                                                 getNodeState(nodeState, sender, receiver).messages
     //                                             )
     //                                         )
     //                                     )
@@ -1319,7 +978,7 @@ module interactive {
     //                             implies next(
     //                                 id.in(
     //                                     getSetMessageIds(
-    //                                         getMessagesMessageStore(receiver)
+    //                                         getMessagesMessageStore(messageStore, receiver)
     //                                     )
     //                                 )
     //                             )
@@ -1331,137 +990,137 @@ module interactive {
     /// Assert that acknowledged messages are eventually removed from pending and payload state.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal acknowledged_messages_are_eventually_removed =
-    //     fair_receive_ack_payload implies (
-    //         NODES.forall(
-    //             sender => NODES.forall(
-    //                 receiver =>
-    //                     isPeerPair(sender, receiver) implies
-    //                     MESSAGES.keys().forall(
-    //                         id =>
-    //                             id.in(getPayloadAcks(sender, receiver))
-    //                             leadsTo (
-    //                                 not(
-    //                                     id.in(
-    //                                         getSetMessageIds(
-    //                                             getNodeState(sender, receiver).messages
-    //                                         )
-    //                                     )
-    //                                 )
-    //                                 and not(
-    //                                     id.in(
-    //                                         payloadMessageIds(sender, receiver)
-    //                                     )
-    //                                 )
-    //                             )
-    //                     )
-    //             )
-    //         )
-    //     )
+    temporal acknowledged_messages_are_eventually_removed =
+        fair_receive_ack_payload implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver =>
+                        isPeerPair(sender, receiver) implies
+                        MESSAGES.keys().forall(
+                            id =>
+                                id.in(getPayloadAcks(payloadState, sender, receiver))
+                                leadsTo (
+                                    not(
+                                        id.in(
+                                            getSetMessageIds(
+                                                getNodeState(nodeState, sender, receiver).messages
+                                            )
+                                        )
+                                    )
+                                    and not(
+                                        id.in(
+                                            payloadMessageIds(getPayload(payloadState, sender, receiver))
+                                        )
+                                    )
+                                )
+                        )
+                )
+            )
+        )
 
     /// Assert that pending messages eventually reach the receiver under delivery fairness.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal pending_messages_are_eventually_delivered =
-    //     delivery_fairness implies (
-    //         NODES.forall(
-    //             sender => NODES.forall(
-    //                 receiver =>
-    //                     isPeerPair(sender, receiver) implies
-    //                     MESSAGES.keys().forall(
-    //                         id =>
-    //                             id.in(
-    //                                 getSetMessageIds(
-    //                                     getNodeState(sender, receiver).messages
-    //                                 )
-    //                             )
-    //                             leadsTo id.in(
-    //                                 getSetMessageIds(
-    //                                     getMessagesMessageStore(receiver)
-    //                                 )
-    //                             )
-    //                     )
-    //             )
-    //         )
-    //     )
+    temporal pending_messages_are_eventually_delivered =
+        delivery_fairness implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver =>
+                        isPeerPair(sender, receiver) implies
+                        MESSAGES.keys().forall(
+                            id =>
+                                id.in(
+                                    getSetMessageIds(
+                                        getNodeState(nodeState, sender, receiver).messages
+                                    )
+                                )
+                                leadsTo id.in(
+                                    getSetMessageIds(
+                                        getMessagesMessageStore(messageStore, receiver)
+                                    )
+                                )
+                        )
+                )
+            )
+        )
 
     /// Assert that pending messages eventually leave sender state under protocol fairness.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal pending_messages_are_eventually_cleared =
-    //     protocol_fairness implies (
-    //         NODES.forall(
-    //             sender => NODES.forall(
-    //                 receiver =>
-    //                     isPeerPair(sender, receiver) implies
-    //                     MESSAGES.keys().forall(
-    //                         id =>
-    //                             id.in(
-    //                                 getSetMessageIds(
-    //                                     getNodeState(sender, receiver).messages
-    //                                 )
-    //                             )
-    //                             leadsTo not(
-    //                                 id.in(
-    //                                     getSetMessageIds(
-    //                                         getNodeState(sender, receiver).messages
-    //                                     )
-    //                                 )
-    //                             )
-    //                     )
-    //             )
-    //         )
-    //     )
+    temporal pending_messages_are_eventually_cleared =
+        protocol_fairness implies (
+            NODES.forall(
+                sender => NODES.forall(
+                    receiver =>
+                        isPeerPair(sender, receiver) implies
+                        MESSAGES.keys().forall(
+                            id =>
+                                id.in(
+                                    getSetMessageIds(
+                                        getNodeState(nodeState, sender, receiver).messages
+                                    )
+                                )
+                                leadsTo not(
+                                    id.in(
+                                        getSetMessageIds(
+                                            getNodeState(nodeState, sender, receiver).messages
+                                        )
+                                    )
+                                )
+                        )
+                )
+            )
+        )
 
     /// Define fairness for the complete delivery, acknowledgement, and idle protocol cycle.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal protocol_fairness =
-    //     delivery_fairness
-    //     and acknowledgement_fairness
-    //     and NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies
-    //                     idle(sender, receiver)
-    //                         .weakFair(Set(payloadExchangeState))
-    //         )
-    //     )
+    temporal protocol_fairness =
+        delivery_fairness
+        and acknowledgement_fairness
+        and NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies
+                        idle(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+            )
+        )
 
     /// Define weak fairness for every message-delivery action and peer pair.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal delivery_fairness =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     and {
-    //                         addMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
-    //                         sendMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-    //                         receiveMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-    //                         storeReceivedMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
-    //                     }
-    //                 )
-    //         )
-    //     )
+    temporal delivery_fairness =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        and {
+                            addMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            sendMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            receiveMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            storeReceivedMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
+                        }
+                    )
+            )
+        )
 
     /// Define weak fairness for every acknowledgement action and peer pair.
     ///
     /// - @returns bool whether the proposition holds
-    // temporal acknowledgement_fairness =
-    //     NODES.forall(
-    //         sender => NODES.forall(
-    //             receiver =>
-    //                 isPeerPair(sender, receiver) implies (
-    //                     and {
-    //                         determineAck(sender, receiver).weakFair(Set(payloadExchangeState)),
-    //                         sendAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-    //                         receiveAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-    //                     }
-    //                 )
-    //         )
-    //     )
+    temporal acknowledgement_fairness =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        and {
+                            determineAck(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            sendAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            receiveAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                        }
+                    )
+            )
+        )
 
     /// Ensure changes to one exchange direction leave the reverse payload unchanged.
     ///
@@ -1478,20 +1137,20 @@ module interactive {
     //                     isPeerPair(sender, receiver) implies (
     //                         (
     //                             next(
-    //                                 getPayloadExchangeState(sender, receiver)
+    //                                 getPayloadExchangeState(payloadExchangeState, sender, receiver)
     //                             )
-    //                             != getPayloadExchangeState(sender, receiver)
+    //                             != getPayloadExchangeState(payloadExchangeState, sender, receiver)
     //                             or
     //                             next(
-    //                                 getPayload(sender, receiver)
+    //                                 getPayload(payloadState, sender, receiver)
     //                             )
-    //                             != getPayload(sender, receiver)
+    //                             != getPayload(payloadState, sender, receiver)
     //                         )
     //                         implies
     //                         next(
-    //                             getPayload(receiver, sender)
+    //                             getPayload(payloadState, receiver, sender)
     //                         )
-    //                         == getPayload(receiver, sender)
+    //                         == getPayload(payloadState, receiver, sender)
     //                     )
     //             )
     //         )
@@ -1505,167 +1164,70 @@ module interactive {
     /// Witness that a reachable state may contain messages pending for a peer.
     ///
     /// - @returns bool whether the proposition holds
-    // val can_have_pending_messages =
-    //     NODES.exists(
-    //         sender => NODES.exists(
-    //             receiver => 
-    //                 and {
-    //                     isPeerPair(sender, receiver),
-    //                     getNodeState(sender,receiver).messages.size() > 0,
-    //                 }
-    //         )
-    //     )
+    val can_have_pending_messages =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => 
+                    and {
+                        isPeerPair(sender, receiver),
+                        getNodeState(nodeState, sender,receiver).messages.size() > 0,
+                    }
+            )
+        )
 
     /// Witness that a reachable state may contain messages in a payload.
     ///
     /// - @returns bool whether the proposition holds
-    // val can_have_payload_messages =
-    //     NODES.exists(
-    //         sender => NODES.exists(
-    //             receiver => 
-    //                 and {
-    //                     isPeerPair(sender, receiver),
-    //                     getPayloadMessages(sender, receiver).size() > 0,
-    //                 }
-    //         )
-    //     )
+    val can_have_payload_messages =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => 
+                    and {
+                        isPeerPair(sender, receiver),
+                        getPayloadMessages(payloadState, sender, receiver).size() > 0,
+                    }
+            )
+        )
 
     /// Witness that a reachable state may contain an in-flight payload.
     ///
     /// - @returns bool whether the proposition holds
-    // val can_have_in_flight_payload =
-    //     NODES.exists(
-    //         sender => NODES.exists(
-    //             receiver => 
-    //                 and {
-    //                     isPeerPair(sender, receiver),
-    //                     hasInFlightPayload(sender, receiver),
-    //                 }
-    //         )
-    //     )
+    val can_have_in_flight_payload =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => 
+                    and {
+                        isPeerPair(sender, receiver),
+                        hasInFlightPayload(getPayloadExchangeState(payloadExchangeState, sender, receiver)),
+                    }
+            )
+        )
 
     /// Witness that a reachable state may contain pending acknowledgements.
     ///
     /// - @returns bool whether the proposition holds
-    // val can_have_pending_acks =
-    //     NODES.exists(
-    //         sender => NODES.exists(
-    //             receiver => 
-    //                 and {
-    //                     isPeerPair(sender, receiver),
-    //                     getPayloadAcks(sender, receiver).size() > 0,
-    //                 }
-    //         )
-    //     )
+    val can_have_pending_acks =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => 
+                    and {
+                        isPeerPair(sender, receiver),
+                        getPayloadAcks(payloadState, sender, receiver).size() > 0,
+                    }
+            )
+        )
 
     /// Witness that a reachable state may contain a delivered payload.
     ///
     /// - @returns bool whether the proposition holds
-    // val can_have_delivered_payload =
-    //     NODES.exists(
-    //         sender => NODES.exists(
-    //             receiver => 
-    //                 and {
-    //                     isPeerPair(sender, receiver),
-    //                     getPayloadExchangeState(sender, receiver).phase == MessagesReceived,
-    //                 }
-    //         )
-    //     )
-
-
-    // ------------------------------------------------------------------------------------
-    // TESTS
-    // ------------------------------------------------------------------------------------
-
-    /// Test that a complete exchange synchronises Alice's messages to Bob.
-    ///
-    /// - @returns bool whether the test passes
-    // run messageStoreSyncTest =
-    //     initWithMessagesToSyncTwoNodes
-    //         .then(addMessages(ALICE, BOB))
-    //         .then(sendMessagesPayload(ALICE, BOB))
-    //         .then(receiveMessagesPayload(ALICE, BOB))
-    //         .then(storeReceivedMessages(ALICE, BOB))
-    //         .then(determineAck(ALICE, BOB))
-    //         .then(sendAckPayload(ALICE, BOB))
-    //         .then(receiveAckPayload(ALICE, BOB))
-    //         .expect(
-    //             // After complete bidirectional message exchange, both nodes should have messages
-    //             // This verifies that the protocol correctly syncs messages when nodes start with different sets
-    //             and {
-    //                 messageStore.get(ALICE).size() > 0,
-    //                 messageStore.get(BOB).size() > 0,
-    //                 messageStore.get(ALICE).forall(m => m.in(messageStore.get(BOB))),
-    //             }
-    //         )
-
-    /// Test that adding messages remains enabled when no synchronisation delta exists.
-    ///
-    /// Unknown receiver knowledge permits redundant transmission, so Alice can still send
-    /// messages to Bob when Bob already has all of them.
-    ///
-    /// - @returns bool whether the test passes
-    // run addMessagesDoesNotFailWhenNoSyncDeltaTest =
-    //     initWithoutMessagesToSyncTwoNodes
-    //         .then(addMessages(ALICE, BOB))
-
-    /// Test that adding messages produces pending messages and a nonempty payload.
-    ///
-    /// - @returns bool whether the test passes
-    // run payloadMessagesWitnessTest =
-    //     initWithMessagesToSyncTwoNodes
-    //         .then(addMessages(ALICE, BOB))
-    //         .expect(
-    //             and {
-    //                 can_have_pending_messages,
-    //                 can_have_payload_messages,
-    //             }
-    //         )
-
-    /// Test that sending a message payload produces an in-flight payload.
-    ///
-    /// - @returns bool whether the test passes
-    // run inFlightPayloadWitnessTest =
-    //     initWithMessagesToSyncTwoNodes
-    //         .then(addMessages(ALICE, BOB))
-    //         .then(sendMessagesPayload(ALICE, BOB))
-    //         .expect(can_have_in_flight_payload)
-
-    /// Test that acknowledgement determination produces pending acknowledgements.
-    ///
-    /// - @returns bool whether the test passes
-    // run pendingAckWitnessTest =
-    //     initWithMessagesToSyncTwoNodes
-    //         .then(addMessages(ALICE, BOB))
-    //         .then(sendMessagesPayload(ALICE, BOB))
-    //         .then(receiveMessagesPayload(ALICE, BOB))
-    //         .then(determineAck(ALICE, BOB))
-    //         .expect(
-    //             and {
-    //                 can_have_pending_acks,
-    //                 can_have_delivered_payload,
-    //             }
-    //         )
-
-    /// Test that storing received messages preserves every message already stored.
-    ///
-    /// - @returns bool whether the test passes
-    // run storeReceivedMessagesPreservesExistingMessagesTest =
-    //     initWithMessagesToSyncTwoNodes
-    //         .then(addMessages(ALICE, BOB))
-    //         .then(sendMessagesPayload(ALICE, BOB))
-    //         .then(receiveMessagesPayload(ALICE, BOB))
-    //         .then(
-    //             {
-    //                 val oldBobStore = messageStore.get(BOB)
-    //                 storeReceivedMessages(ALICE, BOB)
-    //                     .expect(
-    //                         oldBobStore.forall(
-    //                             m => m.in(messageStore.get(BOB))
-    //                         )
-    //                     )
-    //             }
-    //         )
-
-    run tempTest = initWithMessagesToSyncTwoNodes
+    val can_have_delivered_payload =
+        NODES.exists(
+            sender => NODES.exists(
+                receiver => 
+                    and {
+                        isPeerPair(sender, receiver),
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesReceived,
+                    }
+            )
+        )
 }

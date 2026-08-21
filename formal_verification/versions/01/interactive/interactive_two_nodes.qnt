@@ -1,7 +1,7 @@
-/// Configure the batch protocol with two nodes and deterministic initial messages.
+/// Configure the interactive protocol with two nodes and deterministic initial messages.
 ///
-/// - @returns batch_two_nodes the deterministic two-node batch protocol module
-module batch_two_nodes {
+/// - @returns interactive_two_nodes the deterministic two-node batch protocol module
+module interactive_two_nodes {
     // > General
     import basicSpells.* from "./../../../spells/basicSpells"
     // > Types
@@ -16,12 +16,16 @@ module batch_two_nodes {
     import record_state.* from "./../#global/types/record_state"
     // > Messages
     import messages.* from "./../#global/messages/messages"
-    // > Helper functions
-    import getter_helpers.* from "./../#global/helper-functions/getters"
     // > Constant values
     import empty_node_state.* from "./../#global/constant-values/empty_node_state"
     import empty_payload_exchange_state.* from "./../#global/constant-values/empty_payload_exchange_state"
     import two_nodes.* from "./../#global/constant-values/two_nodes"
+    // > State variables
+    import message_store.* from "./../#global/state-variables/message_store"
+    import node_state_variable.* from "./../#global/state-variables/node_state"
+    import payload_state.* from "./../#global/state-variables/payload_state"
+    import payload_exchange_state_variable.* from "./../#global/state-variables/payload_exchange_state"
+    // import next_payload_id.* from "./../#global/state-variables/next_payload_id" // only for retransmission
 
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES
@@ -69,10 +73,10 @@ module batch_two_nodes {
     // PROTOCOL INSTANCE
     // ------------------------------------------------------------------------------------
 
-    import batch(
+    import interactive(
         NODES = TWO_NODES,
         RANDOM_MESSAGE_IDS = TWO_NODE_MESSAGE_IDS
-    ).* from "batch"
+    ).* from "interactive"
 
     // ------------------------------------------------------------------------------------
     // INIT AND STEP ACTIONS
@@ -95,7 +99,7 @@ module batch_two_nodes {
     /// Initialise two nodes with distinct nonempty message sets that require synchronisation.
     ///
     /// - @returns bool whether the action is enabled and its transition constraints hold
-    action initWithMessagesToSyncTwoNodes() =
+    action initWithMessagesToSyncTwoNodes() = 
         initWithMessageIds(MESSAGES_TO_SYNC_IDS)
 
     /// Initialise two nodes such that Bob already contains Alice's selected messages.
@@ -136,9 +140,9 @@ module batch_two_nodes {
                 // After complete bidirectional message exchange, both nodes should have messages
                 // This verifies that the protocol correctly syncs messages when nodes start with different sets
                 and {
-                    getMessagesMessageStore(messageStore, ALICE).size() > 0,
-                    getMessagesMessageStore(messageStore, BOB).size() > 0,
-                    getMessagesMessageStore(messageStore, ALICE).forall(m => m.in(getMessagesMessageStore(messageStore, BOB))),
+                    messageStore.get(ALICE).size() > 0,
+                    messageStore.get(BOB).size() > 0,
+                    messageStore.get(ALICE).forall(m => m.in(messageStore.get(BOB))),
                 }
             )
 
@@ -200,11 +204,11 @@ module batch_two_nodes {
             .then(receiveMessagesPayload(ALICE, BOB))
             .then(
                 {
-                    val oldBobStore = getMessagesMessageStore(messageStore, BOB)
+                    val oldBobStore = messageStore.get(BOB)
                     storeReceivedMessages(ALICE, BOB)
                         .expect(
                             oldBobStore.forall(
-                                m => m.in(getMessagesMessageStore(messageStore, BOB))
+                                m => m.in(messageStore.get(BOB))
                             )
                         )
                 }

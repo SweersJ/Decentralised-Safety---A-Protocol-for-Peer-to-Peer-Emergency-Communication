@@ -4,17 +4,40 @@
 /// - @param Node -> Set[MessageId] RANDOM_MESSAGE_IDS the initial message identifiers assigned to each node
 /// - @returns batch the protocol module
 module batch {
-import message_id.* from "./../types/message_id"
-    import message.* from "./../types/message"
-    import payload_id.* from "./../types/payload_id"
-    import payload.* from "./../types/payload"
-    import node_state.* from "./../types/node_state"
-    import node.* from "./../types/node"
-    import payload_exchange_phase.* from "./../types/payload_exchange_phase"
-    import payload_exchange_state.* from "./../types/payload_exchange_state"
-    import record_state.* from "./../types/record_state"
-    import messages.* from "./../messages/messages"
+    // > General
     import basicSpells.* from "./../../../spells/basicSpells"
+    // > Types
+    import message_id.* from "./../#global/types/message_id"
+    import message.* from "./../#global/types/message"
+    import payload_id.* from "./../#global/types/payload_id"
+    import payload.* from "./../#global/types/payload"
+    import node_state.* from "./../#global/types/node_state"
+    import node.* from "./../#global/types/node"
+    import payload_exchange_phase.* from "./../#global/types/payload_exchange_phase"
+    import payload_exchange_state.* from "./../#global/types/payload_exchange_state"
+    import record_state.* from "./../#global/types/record_state"
+    // > Messages
+    import messages.* from "./../#global/messages/messages"
+    // > Helper functions
+    import init_helpers(INIT_NODES = NODES).* from "./../#global/helper-functions/init"
+    import guard_helpers.* from "./../#global/helper-functions/guards"
+    import getter_helpers.* from "./../#global/helper-functions/getters"
+    import state_query_helpers.* from "./../#global/helper-functions/state_queries"
+    // > Safety propositions
+    import self_nodeState_is_always_empty_safety.* from "./../#global/safety/self_nodeState_is_always_empty"
+    import self_payloadState_is_always_empty_safety.* from "./../#global/safety/self_payloadState_is_always_empty"
+    import reverse_payloadState_is_always_empty_safety.* from "./../#global/safety/reverse_payloadState_is_always_empty"
+    import self_payloadExchangeState_is_always_empty_safety.* from "./../#global/safety/self_payloadExchangeState_is_always_empty"
+    // > State variables
+    import message_store.* from "./../#global/state-variables/message_store"
+    import node_state_variable.* from "./../#global/state-variables/node_state"
+    import payload_state.* from "./../#global/state-variables/payload_state"
+    import payload_exchange_state_variable.* from "./../#global/state-variables/payload_exchange_state"
+    export message_store.*
+    export node_state_variable.*
+    export payload_state.*
+    export payload_exchange_state_variable.*
+    // import next_payload_id.* from "./../#global/state-variables/next_payload_id" // only for retransmission
 
     // ------------------------------------------------------------------------------------
     // CONSTANT VARIABLES
@@ -31,122 +54,10 @@ import message_id.* from "./../types/message_id"
     const RANDOM_MESSAGE_IDS: Node -> Set[MessageId]
 
     // ------------------------------------------------------------------------------------
-    // CONSTANT VALUES
-    // ------------------------------------------------------------------------------------
-
-    /// Provide the default per-peer node state containing no synchronisation data.
-    ///
-    /// - @returns NodeState the empty node-state value
-    pure val EMPTY_NODE_STATE: NodeState = {
-        offers: Set(), //only for interactive
-        requests: Set(), //only for interactive
-        messages: Set()
-    }
-
-    /// Provide the default idle and unprocessed payload exchange state.
-    ///
-    /// - @returns PayloadExchangeState the empty exchange-state value
-    pure val EMPTY_PAYLOAD_EXCHANGE_STATE: PayloadExchangeState = {
-        phase: Idle,
-        messagesStored: false,
-        ackDetermined: false
-    }
-
-    // ------------------------------------------------------------------------------------
-    // STATE VARIABLES
-    // ------------------------------------------------------------------------------------
-
-    /// Store the messages persisted by each node.
-    ///
-    /// - @returns Node -> Set[Message] the messages indexed by their storing node
-    var messageStore: Node -> Set[Message] //TODO: add a map of messageId to message to be able to retrieve the message by its ID.
-
-    /// Track each sender's synchronisation knowledge for every receiver.
-    /// (simulation of storing at node side what transport is expected for each node at the node side)
-    ///
-    /// - @returns Node -> (Node -> NodeState) the per-sender and per-receiver node states
-    var nodeState: Node -> (Node -> NodeState)
-
-    /// Store the current payload for every sender-receiver pair.
-    ///
-    /// - @returns Node -> (Node -> Option[Payload]) the payloads indexed by sender and receiver
-    var payloadState: Node -> (Node -> Option[Payload])
-
-    /// Track the payload exchange lifecycle for every sender-receiver pair.
-    ///
-    /// - @returns Node -> (Node -> PayloadExchangeState) the exchange states indexed by sender and receiver
-    var payloadExchangeState: Node -> (Node -> PayloadExchangeState)
-
-    /// Payload-id generator for future send actions.
-    ///
-    /// TODO: add the payload generator
-    ///
-    /// - @returns int the next payload id for the next payload to be sent
-    // var nextPayloadId: int
-
-    // ------------------------------------------------------------------------------------
     // HELPER FUNCTIONS
     // ------------------------------------------------------------------------------------
 
-    // > INIT FUNCTIONS
-
-    /// Build the initial per-peer node state from the messages assigned to each node.
-    ///
-    /// - @param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
-    /// - @returns Node -> (Node -> NodeState) the computed result
-    pure def initNodeState(randomMessageIds: Node -> Set[MessageId]): Node -> (Node -> NodeState) = {
-        NODES.mapBy(
-            sender => NODES.mapBy(
-                receiver => {
-                    ...EMPTY_NODE_STATE,
-                    messages: if (sender != receiver) getMessages(randomMessageIds.get(sender)) else EMPTY_NODE_STATE.messages
-                }
-            )
-        )
-    }
-
-    /// Build an empty payload for every sender-receiver pair.
-    ///
-    /// - @returns Node -> (Node -> Option[Payload]) the computed result
-    pure def initPayloadState(): Node -> (Node -> Option[Payload]) = {
-        NODES.mapBy(
-            _ => NODES.mapBy(
-                _ => None
-            )
-        )
-    }
-
-    /// Populate each node's message store from its assigned message identifiers.
-    ///
-    /// - @param Node -> Set[MessageId] randomMessageIds the message identifiers assigned to each node
-    /// - @returns Node -> Set[Message] the computed result
-    pure def initMessageStore(randomMessageIds: Node -> Set[MessageId]): Node -> Set[Message] = {
-        NODES.mapBy(
-            node => getMessages(randomMessageIds.get(node))
-        )
-    }
-
-    /// Initialise every sender-receiver exchange to the empty idle state.
-    ///
-    /// - @returns Node -> (Node -> PayloadExchangeState) the computed result
-    pure def initPayloadExchangeState(): Node -> (Node -> PayloadExchangeState) = {
-        NODES.mapBy(
-            sender => NODES.mapBy(
-                receiver => EMPTY_PAYLOAD_EXCHANGE_STATE
-            )
-        )
-    }
-
     // > GUARD FUNCTIONS
-
-    /// Check whether the sender and receiver are distinct peers, otherwise it doesn't make sense to send a payload.
-    ///
-    /// - @param Node sender the node sending the payload
-    /// - @param Node receiver the node receiving the payload
-    /// - @returns bool the computed result
-    pure def isPeerPair(sender: Node, receiver: Node): bool = {
-        sender != receiver
-    }
 
     /// Check whether a sender-receiver pair has messages available for synchronisation.
     ///
@@ -155,8 +66,8 @@ import message_id.* from "./../types/message_id"
     /// - @returns bool the computed result
     def hasSyncDelta(sender: Node, receiver: Node): bool = {
         and {
-            getMessagesMessageStore(sender).size() > 0,
-            getNodeState(sender,receiver).messages.size() > 0,
+            getMessagesMessageStore(messageStore, sender).size() > 0,
+            getNodeState(nodeState, sender,receiver).messages.size() > 0,
         }
     }
 
@@ -169,7 +80,7 @@ import message_id.* from "./../types/message_id"
         and {
             isPeerPair(sender, receiver),
             hasSyncDelta(sender, receiver),
-            getPayloadExchangeState(sender,receiver).phase == Idle,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == Idle,
         }
     }
 
@@ -182,9 +93,9 @@ import message_id.* from "./../types/message_id"
         and {
             isPeerPair(sender, receiver),
             hasSyncDelta(sender, receiver),
-            getPayloadMessages(sender, receiver).size() != 0,
-            getNodeState(sender,receiver).messages.size() != 0,
-            getPayloadExchangeState(sender,receiver).phase == MessagesAdded,
+            getPayloadMessages(payloadState, sender, receiver).size() != 0,
+            getNodeState(nodeState, sender,receiver).messages.size() != 0,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == MessagesAdded,
         }
     }
 
@@ -196,7 +107,7 @@ import message_id.* from "./../types/message_id"
     def canReceiveMessagesPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
-            getPayloadExchangeState(sender,receiver).phase == MessagesSent,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == MessagesSent,
         }
     }
 
@@ -206,7 +117,7 @@ import message_id.* from "./../types/message_id"
     /// - @param Node receiver the node storing the messages
     /// - @returns bool the computed result
     def canStoreReceivedMessages(sender: Node, receiver: Node): bool = {
-        val state = getPayloadExchangeState(sender,receiver)
+        val state = getPayloadExchangeState(payloadExchangeState, sender,receiver)
 
         and {
             isPeerPair(sender, receiver),
@@ -221,7 +132,7 @@ import message_id.* from "./../types/message_id"
     /// - @param Node receiver the node determining acknowledgements
     /// - @returns bool the computed result
     def canDetermineAck(sender: Node, receiver: Node): bool = {
-        val state = getPayloadExchangeState(sender,receiver)
+        val state = getPayloadExchangeState(payloadExchangeState, sender,receiver)
 
         and {
             isPeerPair(sender, receiver),
@@ -236,7 +147,7 @@ import message_id.* from "./../types/message_id"
     /// - @param Node receiver the node sending the acknowledgement
     /// - @returns bool the computed result
     def canAckPayload(sender: Node, receiver: Node): bool = {
-        val state = getPayloadExchangeState(sender,receiver)
+        val state = getPayloadExchangeState(payloadExchangeState, sender,receiver)
 
         and {
             isPeerPair(sender, receiver),
@@ -254,8 +165,8 @@ import message_id.* from "./../types/message_id"
     def canReceiveAckPayload(sender: Node, receiver: Node): bool = {
         and {
             isPeerPair(sender, receiver),
-            getPayloadAcks(sender, receiver).size() != 0,
-            getPayloadExchangeState(sender,receiver).phase == AckSent,
+            getPayloadAcks(payloadState, sender, receiver).size() != 0,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == AckSent,
         }
     }
 
@@ -265,7 +176,7 @@ import message_id.* from "./../types/message_id"
     /// - @param Node receiver the receiving node
     /// - @returns bool the computed result
     def canIdle(sender: Node, receiver: Node): bool = {
-        val phase = getPayloadExchangeState(sender,receiver).phase
+        val phase = getPayloadExchangeState(payloadExchangeState, sender,receiver).phase
 
         and {
             isPeerPair(sender, receiver),
@@ -273,78 +184,6 @@ import message_id.* from "./../types/message_id"
         }
 
     }
-
-    // > GETTER FUNCTIONS
-
-    /// Return the messages currently stored by a node.
-    ///
-    /// - @param Node sender the node whose message store is returned
-    /// - @returns Set[Message] the computed result
-    def getMessagesMessageStore(sender: Node): Set[Message] = {
-        messageStore.get(sender)
-    }
-
-    /// Return the sender's synchronisation state for a receiver.
-    ///
-    /// - @param Node sender the node maintaining the synchronisation state
-    /// - @param Node receiver the peer represented by that state
-    /// - @returns NodeState the computed result
-    def getNodeState(sender: Node, receiver: Node): NodeState = {
-        nodeState.get(sender).get(receiver)
-    }
-
-    /// Return the optional payload associated with a sender-receiver pair.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Option[Payload] the payload when one exists, otherwise None
-    def getPayload(sender: Node, receiver: Node): Option[Payload] = {
-        payloadState.get(sender).get(receiver)
-    }
-
-    /// Return the messages in a pair's payload, or an empty set when no payload exists.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Set[Message] the payload messages or an empty set
-    def getPayloadMessages(sender: Node, receiver: Node): Set[Message] = {
-        match getPayload(sender, receiver) {
-            | Some(payload) => payload.messages
-            | None => Set()
-        }
-    }
-
-    /// Return the acknowledgements in a pair's payload, or an empty set when no payload exists.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Set[MessageId] the acknowledgement identifiers or an empty set
-    def getPayloadAcks(sender: Node, receiver: Node): Set[MessageId] = {
-        match getPayload(sender, receiver) {
-            | Some(payload) => payload.acks
-            | None => Set()
-        }
-    }
-
-    /// Return the exchange lifecycle state associated with a sender-receiver pair.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns PayloadExchangeState the computed result
-    def getPayloadExchangeState(sender: Node, receiver: Node): PayloadExchangeState = {
-        payloadExchangeState.get(sender).get(receiver)
-    }
-
-    /// Return the record state messages ids from the set of RecordStates
-    ///
-    /// TODO: activate when in interactive mode
-    ///
-    /// - @param Set[RecordState] recordStates the record states to analyse and extract message ids from
-    /// - @returns Set[MessageId] the computed set of message ids
-    // pure def getRecordStateMessageIds(recordStates: Set[RecordState]): Set[MessageId] = {
-    //     recordStates.map(recordState => recordState.messageId)
-    // }
-
 
     // > SETTER FUNCTIONS
 
@@ -389,6 +228,17 @@ import message_id.* from "./../types/message_id"
         nodeState' = initNodeState(RANDOM_MESSAGE_IDS),
         payloadState' = initPayloadState,
         messageStore' = initMessageStore(RANDOM_MESSAGE_IDS),
+        payloadExchangeState' = initPayloadExchangeState
+    }
+
+    /// Initialise all protocol state with the supplied node messages.
+    ///
+    /// - @param Node -> Set[MessageId] messageIds the initial message identifiers indexed by node
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action initWithMessageIds(messageIds) = all {
+        nodeState' = initNodeState(messageIds),
+        payloadState' = initPayloadState,
+        messageStore' = initMessageStore(messageIds),
         payloadExchangeState' = initPayloadExchangeState
     }
 
@@ -466,20 +316,20 @@ import message_id.* from "./../types/message_id"
                             offers: Set(),
                             requests: Set(),
                             acks: Set(),
-                            messages: getNodeState(sender, receiver).messages
+                            messages: getNodeState(nodeState, sender, receiver).messages
                         })
                         | Some(payload) => Some({
                             ...payload,
                             // Keep any messages already present when extending an existing payload.
                             messages: payload.messages.union(
-                                getNodeState(sender, receiver).messages
+                                getNodeState(nodeState, sender, receiver).messages
                             )
                         })
                     }
             )
         ),
         payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(sender, receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender, receiver)
             setPayloadExchangeState(
                 sender,
                 receiver,
@@ -503,7 +353,7 @@ import message_id.* from "./../types/message_id"
         nodeState' = nodeState,
         payloadState' = payloadState,
         payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender,
                 receiver,
@@ -527,7 +377,7 @@ import message_id.* from "./../types/message_id"
         nodeState' = nodeState,
         payloadState' = payloadState,
         payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender,
                 receiver,
@@ -551,7 +401,7 @@ import message_id.* from "./../types/message_id"
             receiver,
             // With the use of union no previous messages can be removed, thus proving monotonicity.
             receiverStore => receiverStore.union(
-                getPayloadMessages(sender, receiver)
+                getPayloadMessages(payloadState, sender, receiver)
             )
         ),
         nodeState' = nodeState.setBy(
@@ -562,14 +412,14 @@ import message_id.* from "./../types/message_id"
                     ...senderState,
                     messages: excludeMessagesById(
                         senderState.messages,
-                        getSetMessageIds(getPayloadMessages(sender, receiver))
+                        getSetMessageIds(getPayloadMessages(payloadState, sender, receiver))
                     )
                 }
             )
         ),
         payloadState' = payloadState,
         payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender,
                 receiver,
@@ -608,7 +458,7 @@ import message_id.* from "./../types/message_id"
             )
         ),
         payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
 
             setPayloadExchangeState(
                 sender,
@@ -633,7 +483,7 @@ import message_id.* from "./../types/message_id"
         nodeState' = nodeState,
         payloadState' = payloadState,
         payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender,
                 receiver,
@@ -658,7 +508,7 @@ import message_id.* from "./../types/message_id"
         // Next state updates
         messageStore' = messageStore,
         nodeState' =
-            val ackIds = getPayloadAcks(sender, receiver)
+            val ackIds = getPayloadAcks(payloadState, sender, receiver)
 
             nodeState.setBy(
                 sender,
@@ -672,7 +522,7 @@ import message_id.* from "./../types/message_id"
                 )
             ),
         payloadState' =
-            val ackIds = getPayloadAcks(sender, receiver)
+            val ackIds = getPayloadAcks(payloadState, sender, receiver)
 
             payloadState.setBy(
                 sender,
@@ -697,7 +547,7 @@ import message_id.* from "./../types/message_id"
                 )
             ),
         payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(sender,receiver)
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
             setPayloadExchangeState(
                 sender,
                 receiver,
@@ -739,67 +589,6 @@ import message_id.* from "./../types/message_id"
     }
 
     // -------------------------------------------------------------------------------------
-    // HELPER VERIFICATION FUNCTIONS
-    // -------------------------------------------------------------------------------------
-
-    /// Check whether a pair's node state equals the empty default state.
-    ///
-    /// - @param Node sender the node maintaining the state
-    /// - @param Node receiver the peer represented by the state
-    /// - @returns bool the computed result
-    def isDefaultNodeState(sender: Node, receiver: Node): bool = {
-        val nodeState = getNodeState(sender, receiver)
-        and {
-            nodeState.messages.size() == 0,
-            nodeState.offers.size() == 0,  //only for interactive
-            nodeState.requests.size() == 0, //only for interactive
-        }
-    }
-
-    /// Check whether a sender-receiver pair has no payload.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool whether the payload is absent
-    def isDefaultPayloadState(sender: Node, receiver: Node): bool = {
-        getPayload(sender, receiver) == None
-    }
-
-    /// Check whether a pair's exchange state equals the empty default exchange state.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool the computed result
-    def isDefaultPayloadExchangeState(sender: Node, receiver: Node): bool = {
-        val payloadExchangeState = getPayloadExchangeState(sender, receiver)
-
-        and {
-            payloadExchangeState.phase == Idle,
-            not(payloadExchangeState.messagesStored),
-            not(payloadExchangeState.ackDetermined),
-        }
-
-    }
-
-    /// Return the identifiers of all messages in a pair's payload.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns Set[MessageId] the computed result
-    def payloadMessageIds(sender: Node, receiver: Node): Set[MessageId] = {
-        getSetMessageIds(getPayloadMessages(sender, receiver))
-    }
-
-    /// Check whether a pair currently has a sent message payload awaiting receipt.
-    ///
-    /// - @param Node sender the payload sender
-    /// - @param Node receiver the payload receiver
-    /// - @returns bool the computed result
-    def hasInFlightPayload(sender: Node, receiver: Node): bool = {
-        getPayloadExchangeState(sender, receiver).phase == MessagesSent
-    }
-
-    // -------------------------------------------------------------------------------------
 
     // SAFETY PROPOSITIONS
     // -------------------------------------------------------------------------------------
@@ -808,55 +597,31 @@ import message_id.* from "./../types/message_id"
     ///
     /// - @returns bool whether the proposition holds
     val self_nodeState_is_always_empty =
-        NODES.forall(
-            n => isDefaultNodeState(n, n)
-        )
+        self_nodeState_is_always_empty_predicate(NODES, nodeState)
 
     /// Assert that every node's payload addressed to itself remains empty.
     ///
     /// - @returns bool whether the proposition holds
     val self_payloadState_is_always_empty =
-        NODES.forall(
-            n => isDefaultPayloadState(n, n)
-        )
+        self_payloadState_is_always_empty_predicate(NODES, payloadState)
 
     /// Assert that the unused reverse-direction payload remains empty during an exchange.
     ///
     /// - @returns bool whether the proposition holds
     val reverse_payloadState_is_always_empty =
-        NODES.forall(
-            sender => NODES.forall(
-                receiver =>
-                    isPeerPair(sender, receiver) implies
-                    (
-                        // Allow both directions to be empty only when both directions are idle.
-                        (
-                            (
-                                getPayloadExchangeState(sender, receiver).phase == Idle or
-                                getPayloadExchangeState(sender, receiver).phase == AckReceived
-                            )
-                            and
-                            (
-                                getPayloadExchangeState(receiver, sender).phase == Idle or
-                                getPayloadExchangeState(receiver, sender).phase == AckReceived
-                            )
-                        )
-                        or
-                        // During sync activity, at least one direction must contain a payload.
-                        (
-                            not(isDefaultPayloadState(sender, receiver)) or
-                            not(isDefaultPayloadState(receiver, sender))
-                        )
-                    )
-            )
+        reverse_payloadState_is_always_empty_predicate(
+            NODES,
+            payloadState,
+            payloadExchangeState
         )
 
     /// Assert that every node's exchange state with itself remains at its default.
     ///
     /// - @returns bool whether the proposition holds
     val self_payloadExchangeState_is_always_empty =
-        NODES.forall(
-            n => isDefaultPayloadExchangeState(n, n)
+        self_payloadExchangeState_is_always_empty_predicate(
+            NODES,
+            payloadExchangeState
         )
 
     /// Assert that every payload message is pending or already known by the receiver.
@@ -867,13 +632,13 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies
-                    getPayloadMessages(sender, receiver).forall(
+                    getPayloadMessages(payloadState, sender, receiver).forall(
                         m =>
                             // Still scheduled for this receiver
-                            m.in(getNodeState(sender, receiver).messages)
+                            m.in(getNodeState(nodeState, sender, receiver).messages)
                             or
                             // No longer scheduled because the receiver already has it
-                            m.in(getMessagesMessageStore(receiver))
+                            m.in(getMessagesMessageStore(messageStore, receiver))
                     )
             )
         )
@@ -886,8 +651,8 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies
-                    getPayloadMessages(sender, receiver).forall(
-                        m => m.in(getMessagesMessageStore(sender))
+                    getPayloadMessages(payloadState, sender, receiver).forall(
+                        m => m.in(getMessagesMessageStore(messageStore, sender))
                     )
             )
         )
@@ -910,8 +675,8 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies
-                    getNodeState(sender, receiver).messages.forall(
-                        m => m.in(getMessagesMessageStore(sender))
+                    getNodeState(nodeState, sender, receiver).messages.forall(
+                        m => m.in(getMessagesMessageStore(messageStore, sender))
                     )
             )
         )
@@ -922,8 +687,8 @@ import message_id.* from "./../types/message_id"
     val ack_ids_match_payload_messages =
         NODES.forall(
             sender => NODES.forall(
-                receiver => getPayloadAcks(sender, receiver).forall(
-                    id => id.in(payloadMessageIds(sender, receiver))
+                receiver => getPayloadAcks(payloadState, sender, receiver).forall(
+                    id => id.in(payloadMessageIds(getPayload(payloadState, sender, receiver)))
                 )
             )
         )
@@ -936,9 +701,9 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).phase == AckSent
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == AckSent
                         implies
-                        getPayloadAcks(sender, receiver).forall(
+                        getPayloadAcks(payloadState, sender, receiver).forall(
                             id => id.in(
                                 getSetMessageIds(messageStore.get(receiver))
                             )
@@ -963,8 +728,8 @@ import message_id.* from "./../types/message_id"
     val pending_acks_imply_nonempty_payload =
         NODES.forall(
             sender => NODES.forall(
-                receiver => getPayloadAcks(sender, receiver).size() > 0
-                    implies getPayloadMessages(sender, receiver).size() > 0
+                receiver => getPayloadAcks(payloadState, sender, receiver).size() > 0
+                    implies getPayloadMessages(payloadState, sender, receiver).size() > 0
             )
         )
 
@@ -976,10 +741,10 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).ackDetermined
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined
                         implies
-                        getPayloadAcks(sender, receiver)
-                            == payloadMessageIds(sender, receiver)
+                        getPayloadAcks(payloadState, sender, receiver)
+                            == payloadMessageIds(getPayload(payloadState, sender, receiver))
                     )
             )
         )
@@ -992,11 +757,11 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).phase == Idle
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == Idle
                         implies
                         and {
-                            not(getPayloadExchangeState(sender, receiver).messagesStored),
-                            not(getPayloadExchangeState(sender, receiver).ackDetermined)
+                            not(getPayloadExchangeState(payloadExchangeState, sender, receiver).messagesStored),
+                            not(getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined)
                         }
                     )
             )
@@ -1010,9 +775,9 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).phase == MessagesAdded
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesAdded
                         implies
-                        getPayloadMessages(sender, receiver).size() > 0
+                        getPayloadMessages(payloadState, sender, receiver).size() > 0
                     )
             )
         )
@@ -1025,9 +790,9 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).phase == MessagesSent
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesSent
                         implies
-                        getPayloadMessages(sender, receiver).size() > 0
+                        getPayloadMessages(payloadState, sender, receiver).size() > 0
                     )
             )
         )
@@ -1040,12 +805,12 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).phase == AckSent
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == AckSent
                         implies
                         and {
-                            getPayloadExchangeState(sender, receiver).messagesStored,
-                            getPayloadExchangeState(sender, receiver).ackDetermined,
-                            getPayloadAcks(sender, receiver).size() > 0
+                            getPayloadExchangeState(payloadExchangeState, sender, receiver).messagesStored,
+                            getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined,
+                            getPayloadAcks(payloadState, sender, receiver).size() > 0
                         }
                     )
             )
@@ -1059,9 +824,9 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).phase == AckReceived
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == AckReceived
                         implies
-                        getPayloadAcks(sender, receiver).size() == 0
+                        getPayloadAcks(payloadState, sender, receiver).size() == 0
                     )
             )
         )
@@ -1074,9 +839,9 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).ackDetermined
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).ackDetermined
                         implies
-                        getPayloadExchangeState(sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
                     )
             )
         )
@@ -1089,9 +854,9 @@ import message_id.* from "./../types/message_id"
             sender => NODES.forall(
                 receiver =>
                     isPeerPair(sender, receiver) implies (
-                        getPayloadExchangeState(sender, receiver).messagesStored
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).messagesStored
                         implies
-                        getPayloadExchangeState(sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase.in(Set(MessagesReceived, AckSent, AckReceived))
                     )
             )
         )
@@ -1144,8 +909,8 @@ import message_id.* from "./../types/message_id"
             NODES.forall(
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
-                        hasInFlightPayload(sender, receiver)
-                        leadsTo getPayloadExchangeState(sender, receiver).phase == MessagesReceived
+                        hasInFlightMessagesPayload(getPayloadExchangeState(payloadExchangeState, sender, receiver))
+                        leadsTo getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesReceived
                 )
             )
         )
@@ -1159,10 +924,10 @@ import message_id.* from "./../types/message_id"
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
                         and {
-                            getPayloadMessages(sender, receiver).size() > 0,
-                            getPayloadExchangeState(sender,receiver).phase == MessagesSent,
+                            getPayloadMessages(payloadState, sender, receiver).size() > 0,
+                            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == MessagesSent,
                         }
-                        leadsTo getPayloadAcks(sender, receiver).size() > 0
+                        leadsTo getPayloadAcks(payloadState, sender, receiver).size() > 0
                 )
             )
         )
@@ -1175,8 +940,8 @@ import message_id.* from "./../types/message_id"
             NODES.forall(
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
-                        getPayloadAcks(sender, receiver).size() > 0
-                        leadsTo getPayloadAcks(sender, receiver).size() == 0
+                        getPayloadAcks(payloadState, sender, receiver).size() > 0
+                        leadsTo getPayloadAcks(payloadState, sender, receiver).size() == 0
                 )
             )
         )
@@ -1201,14 +966,14 @@ import message_id.* from "./../types/message_id"
     //                             (
     //                                 id.in(
     //                                     getSetMessageIds(
-    //                                         getNodeState(sender, receiver).messages
+    //                                         getNodeState(nodeState, sender, receiver).messages
     //                                     )
     //                                 )
     //                                 and next(
     //                                     not(
     //                                         id.in(
     //                                             getSetMessageIds(
-    //                                                 getNodeState(sender, receiver).messages
+    //                                                 getNodeState(nodeState, sender, receiver).messages
     //                                             )
     //                                         )
     //                                     )
@@ -1217,7 +982,7 @@ import message_id.* from "./../types/message_id"
     //                             implies next(
     //                                 id.in(
     //                                     getSetMessageIds(
-    //                                         getMessagesMessageStore(receiver)
+    //                                         getMessagesMessageStore(messageStore, receiver)
     //                                     )
     //                                 )
     //                             )
@@ -1237,18 +1002,18 @@ import message_id.* from "./../types/message_id"
                         isPeerPair(sender, receiver) implies
                         MESSAGES.keys().forall(
                             id =>
-                                id.in(getPayloadAcks(sender, receiver))
+                                id.in(getPayloadAcks(payloadState, sender, receiver))
                                 leadsTo (
                                     not(
                                         id.in(
                                             getSetMessageIds(
-                                                getNodeState(sender, receiver).messages
+                                                getNodeState(nodeState, sender, receiver).messages
                                             )
                                         )
                                     )
                                     and not(
                                         id.in(
-                                            payloadMessageIds(sender, receiver)
+                                            payloadMessageIds(getPayload(payloadState, sender, receiver))
                                         )
                                     )
                                 )
@@ -1270,12 +1035,12 @@ import message_id.* from "./../types/message_id"
                             id =>
                                 id.in(
                                     getSetMessageIds(
-                                        getNodeState(sender, receiver).messages
+                                        getNodeState(nodeState, sender, receiver).messages
                                     )
                                 )
                                 leadsTo id.in(
                                     getSetMessageIds(
-                                        getMessagesMessageStore(receiver)
+                                        getMessagesMessageStore(messageStore, receiver)
                                     )
                                 )
                         )
@@ -1296,13 +1061,13 @@ import message_id.* from "./../types/message_id"
                             id =>
                                 id.in(
                                     getSetMessageIds(
-                                        getNodeState(sender, receiver).messages
+                                        getNodeState(nodeState, sender, receiver).messages
                                     )
                                 )
                                 leadsTo not(
                                     id.in(
                                         getSetMessageIds(
-                                            getNodeState(sender, receiver).messages
+                                            getNodeState(nodeState, sender, receiver).messages
                                         )
                                     )
                                 )
@@ -1376,20 +1141,20 @@ import message_id.* from "./../types/message_id"
     //                     isPeerPair(sender, receiver) implies (
     //                         (
     //                             next(
-    //                                 getPayloadExchangeState(sender, receiver)
+    //                                 getPayloadExchangeState(payloadExchangeState, sender, receiver)
     //                             )
-    //                             != getPayloadExchangeState(sender, receiver)
+    //                             != getPayloadExchangeState(payloadExchangeState, sender, receiver)
     //                             or
     //                             next(
-    //                                 getPayload(sender, receiver)
+    //                                 getPayload(payloadState, sender, receiver)
     //                             )
-    //                             != getPayload(sender, receiver)
+    //                             != getPayload(payloadState, sender, receiver)
     //                         )
     //                         implies
     //                         next(
-    //                             getPayload(receiver, sender)
+    //                             getPayload(payloadState, receiver, sender)
     //                         )
-    //                         == getPayload(receiver, sender)
+    //                         == getPayload(payloadState, receiver, sender)
     //                     )
     //             )
     //         )
@@ -1409,7 +1174,7 @@ import message_id.* from "./../types/message_id"
                 receiver =>
                     and {
                         isPeerPair(sender, receiver),
-                        getNodeState(sender,receiver).messages.size() > 0,
+                        getNodeState(nodeState, sender,receiver).messages.size() > 0,
                     }
             )
         )
@@ -1423,7 +1188,7 @@ import message_id.* from "./../types/message_id"
                 receiver =>
                     and {
                         isPeerPair(sender, receiver),
-                        getPayloadMessages(sender, receiver).size() > 0,
+                        getPayloadMessages(payloadState, sender, receiver).size() > 0,
                     }
             )
         )
@@ -1437,7 +1202,7 @@ import message_id.* from "./../types/message_id"
                 receiver =>
                     and {
                         isPeerPair(sender, receiver),
-                        hasInFlightPayload(sender, receiver),
+                        hasInFlightMessagesPayload(getPayloadExchangeState(payloadExchangeState, sender, receiver)),
                     }
             )
         )
@@ -1451,7 +1216,7 @@ import message_id.* from "./../types/message_id"
                 receiver =>
                     and {
                         isPeerPair(sender, receiver),
-                        getPayloadAcks(sender, receiver).size() > 0,
+                        getPayloadAcks(payloadState, sender, receiver).size() > 0,
                     }
             )
         )
@@ -1465,9 +1230,8 @@ import message_id.* from "./../types/message_id"
                 receiver =>
                     and {
                         isPeerPair(sender, receiver),
-                        getPayloadExchangeState(sender, receiver).phase == MessagesReceived,
+                        getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == MessagesReceived,
                     }
             )
         )
-
 }

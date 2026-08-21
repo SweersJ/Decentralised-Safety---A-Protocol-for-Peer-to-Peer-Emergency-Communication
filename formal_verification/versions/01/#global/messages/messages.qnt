@@ -2,9 +2,9 @@
 ///
 /// - @returns messages the shared message module
 module messages {
-import message_id.* from "./../types/message_id"
+    import message_id.* from "./../types/message_id"
     import message.* from "./../types/message"
-    import basicSpells.* from "./../../../spells/basicSpells"
+    import basicSpells.* from "./../../../../spells/basicSpells"
     // ------------------------------------------------------------------------------------
     // CONSTANT VALUES
     // ------------------------------------------------------------------------------------

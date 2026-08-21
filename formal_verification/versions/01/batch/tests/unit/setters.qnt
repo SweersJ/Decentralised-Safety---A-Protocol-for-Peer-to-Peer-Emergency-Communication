@@ -68,6 +68,8 @@ module setters_tests {
         initWithTestMessages
             .expect(
                 val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, ALICE, BOB)
+                val currentPayloadExchangeStateReverse = getPayloadExchangeState(payloadExchangeState, BOB, ALICE)
+                
                 val newPayloadExchangeState = setPayloadExchangeState(
                     ALICE,
                     BOB,
@@ -77,6 +79,8 @@ module setters_tests {
                 )
 
                 and {
+                    not(currentPayloadExchangeState.ackDetermined),
+                    not(currentPayloadExchangeStateReverse.ackDetermined),
                     newPayloadExchangeState.get(ALICE).get(BOB).ackDetermined,
                     not(newPayloadExchangeState.get(BOB).get(ALICE).ackDetermined),
                 }

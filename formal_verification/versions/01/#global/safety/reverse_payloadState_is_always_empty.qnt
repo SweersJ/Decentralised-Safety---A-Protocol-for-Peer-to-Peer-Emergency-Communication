@@ -3,6 +3,7 @@
 /// - @returns reverse_payloadState_is_always_empty_safety the shared safety-predicate module
 module reverse_payloadState_is_always_empty_safety {
     import basicSpells.* from "./../../../../spells/basicSpells"
+    import getter_helpers.* from "./../helper-functions/getters"
     import node.* from "./../types/node"
     import payload.* from "./../types/payload"
     import payload_exchange_phase.* from "./../types/payload_exchange_phase"
@@ -23,26 +24,29 @@ module reverse_payloadState_is_always_empty_safety {
             sender => nodes.forall(
                 receiver =>
                     sender != receiver implies
-                    (
-                        // Allow both directions to be empty only when both directions are idle.
-                        (
-                            (
-                                currentPayloadExchangeState.get(sender).get(receiver).phase == Idle or
-                                currentPayloadExchangeState.get(sender).get(receiver).phase == AckReceived
-                            )
-                            and
-                            (
-                                currentPayloadExchangeState.get(receiver).get(sender).phase == Idle or
-                                currentPayloadExchangeState.get(receiver).get(sender).phase == AckReceived
-                            )
-                        )
-                        or
-                        // During sync activity, at least one direction must contain a payload.
-                        (
-                            currentPayloadState.get(sender).get(receiver) != None or
-                            currentPayloadState.get(receiver).get(sender) != None
-                        )
-                    )
+                    {
+                        val forwardPhase =
+                            getPayloadExchangeState(currentPayloadExchangeState, sender, receiver).phase
+                        val reversePhase =
+                            getPayloadExchangeState(currentPayloadExchangeState, receiver, sender).phase
+                        val forwardPayload = getPayload(currentPayloadState, sender, receiver)
+                        val reversePayload = getPayload(currentPayloadState, receiver, sender)
+                        val forwardInactive = forwardPhase == Idle or forwardPhase == AckReceived
+                        val reverseInactive = reversePhase == Idle or reversePhase == AckReceived
+
+                        or {
+                            // Both payloads may be empty when neither direction is active.
+                            forwardInactive and reverseInactive,
+                            // A single active direction owns the only in-flight payload.
+                            not(forwardInactive) and reverseInactive
+                                and forwardPayload != None and reversePayload == None,
+                            forwardInactive and not(reverseInactive)
+                                and forwardPayload == None and reversePayload != None,
+                            // Concurrent synchronization permits one payload in each direction.
+                            not(forwardInactive) and not(reverseInactive)
+                                and forwardPayload != None and reversePayload != None,
+                        }
+                    }
             )
         )
 }

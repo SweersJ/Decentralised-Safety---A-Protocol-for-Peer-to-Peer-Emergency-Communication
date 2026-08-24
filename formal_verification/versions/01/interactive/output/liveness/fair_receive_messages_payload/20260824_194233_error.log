@@ -1,0 +1,19 @@
+Starting Apalache server on port 8822...
+# Usage statistics is OFF. We care about your privacy.
+# If you want to help our project, consider enabling statistics with config --enable-stats=true.
+
+Output directory: ...\DecSaf\formal_verification\versions\01\interactive\_apalache-out\server\2026-08-24T19-42-35_12578837201987491584
+# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@19:42:35.590
+Starting checker server on port 8822...                           I@19:42:35.600
+The Apalache server is running on port 8822. Press Ctrl-C to stop.
+Running verification for "interactive_two_nodes.qnt" with arguments " --temporal fair_receive_messages_payload --out-itf output\liveness\fair_receive_messages_payload\20260824_194233.itf.json --backend tlc"...
+
+ Error [QNT409]: Action interactive_two_nodes::interactive::init is used both for init and for step, and therefore can't be converted into TLA+. You can duplicate this with a different name to use on init. Sorry Quint can't do it for you yet.
+
+  at ...\DecSaf\formal_verification\versions\01\interactive\interactive_two_nodes.qnt:85:29
+  85:     action initTwoNodes() = init
+                                  ^^^^
+
+error: Failed to convert init to predicate
+Auto-closing Apalache server on port 8822...
+[FAIL]  exit 1

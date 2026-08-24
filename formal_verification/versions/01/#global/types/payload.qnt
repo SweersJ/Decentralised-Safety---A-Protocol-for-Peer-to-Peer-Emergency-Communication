@@ -6,6 +6,9 @@ module payload {
     import message.* from "./message"
     import payload_id.* from "./payload_id"
     import record_state.* from "./record_state"
+    export message_id.*
+    export message.*
+    export payload_id.*
 
     /// Represent the acknowledgements, records, and messages exchanged between peers.
     ///

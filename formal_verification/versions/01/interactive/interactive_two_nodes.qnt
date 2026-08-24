@@ -16,15 +16,12 @@ module interactive_two_nodes {
     import record_state.* from "./../#global/types/record_state"
     // > Messages
     import messages.* from "./../#global/messages/messages"
+    // > Helper functions
+    import getter_helpers.* from "./../#global/helper-functions/getters"
     // > Constant values
     import empty_node_state.* from "./../#global/constant-values/empty_node_state"
     import empty_payload_exchange_state.* from "./../#global/constant-values/empty_payload_exchange_state"
     import two_nodes.* from "./../#global/constant-values/two_nodes"
-    // > State variables
-    import message_store.* from "./../#global/state-variables/message_store"
-    import node_state_variable.* from "./../#global/state-variables/node_state"
-    import payload_state.* from "./../#global/state-variables/payload_state"
-    import payload_exchange_state_variable.* from "./../#global/state-variables/payload_exchange_state"
     // import next_payload_id.* from "./../#global/state-variables/next_payload_id" // only for retransmission
 
     // ------------------------------------------------------------------------------------
@@ -129,6 +126,12 @@ module interactive_two_nodes {
     /// - @returns bool whether the test passes
     run messageStoreSyncTest =
         initWithMessagesToSyncTwoNodes
+            .then(addOffers(ALICE, BOB))
+            .then(sendOffersPayload(ALICE, BOB))
+            .then(receiveOffersPayload(ALICE, BOB))
+            .then(determineRequests(ALICE, BOB))
+            .then(sendRequestsPayload(ALICE, BOB))
+            .then(receiveRequestsPayload(ALICE, BOB))
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .then(receiveMessagesPayload(ALICE, BOB))
@@ -140,27 +143,36 @@ module interactive_two_nodes {
                 // After complete bidirectional message exchange, both nodes should have messages
                 // This verifies that the protocol correctly syncs messages when nodes start with different sets
                 and {
-                    messageStore.get(ALICE).size() > 0,
-                    messageStore.get(BOB).size() > 0,
-                    messageStore.get(ALICE).forall(m => m.in(messageStore.get(BOB))),
+                    getMessagesMessageStore(messageStore, ALICE).size() > 0,
+                    getMessagesMessageStore(messageStore, BOB).size() > 0,
+                    getMessagesMessageStore(messageStore, ALICE).forall(m => m.in(getMessagesMessageStore(messageStore, BOB))),
                 }
             )
 
-    /// Test that adding messages remains enabled when no synchronisation delta exists.
-    ///
-    /// Unknown receiver knowledge permits redundant transmission, so Alice can still send
-    /// messages to Bob when Bob already has all of them.
+    /// Test that an already-synchronised receiver requests no offered messages.
     ///
     /// - @returns bool whether the test passes
     run addMessagesDoesNotFailWhenNoSyncDeltaTest =
         initWithoutMessagesToSyncTwoNodes
-            .then(addMessages(ALICE, BOB))
+            .then(addOffers(ALICE, BOB))
+            .then(sendOffersPayload(ALICE, BOB))
+            .then(receiveOffersPayload(ALICE, BOB))
+            .then(determineRequests(ALICE, BOB))
+            .then(sendRequestsPayload(ALICE, BOB))
+            .then(receiveRequestsPayload(ALICE, BOB))
+            .expect(getPayloadRequests(payloadState, ALICE, BOB).size() == 0)
 
     /// Test that adding messages produces pending messages and a nonempty payload.
     ///
     /// - @returns bool whether the test passes
     run payloadMessagesWitnessTest =
         initWithMessagesToSyncTwoNodes
+            .then(addOffers(ALICE, BOB))
+            .then(sendOffersPayload(ALICE, BOB))
+            .then(receiveOffersPayload(ALICE, BOB))
+            .then(determineRequests(ALICE, BOB))
+            .then(sendRequestsPayload(ALICE, BOB))
+            .then(receiveRequestsPayload(ALICE, BOB))
             .then(addMessages(ALICE, BOB))
             .expect(
                 and {
@@ -174,6 +186,12 @@ module interactive_two_nodes {
     /// - @returns bool whether the test passes
     run inFlightPayloadWitnessTest =
         initWithMessagesToSyncTwoNodes
+            .then(addOffers(ALICE, BOB))
+            .then(sendOffersPayload(ALICE, BOB))
+            .then(receiveOffersPayload(ALICE, BOB))
+            .then(determineRequests(ALICE, BOB))
+            .then(sendRequestsPayload(ALICE, BOB))
+            .then(receiveRequestsPayload(ALICE, BOB))
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .expect(can_have_in_flight_payload)
@@ -183,6 +201,12 @@ module interactive_two_nodes {
     /// - @returns bool whether the test passes
     run pendingAckWitnessTest =
         initWithMessagesToSyncTwoNodes
+            .then(addOffers(ALICE, BOB))
+            .then(sendOffersPayload(ALICE, BOB))
+            .then(receiveOffersPayload(ALICE, BOB))
+            .then(determineRequests(ALICE, BOB))
+            .then(sendRequestsPayload(ALICE, BOB))
+            .then(receiveRequestsPayload(ALICE, BOB))
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .then(receiveMessagesPayload(ALICE, BOB))
@@ -199,16 +223,22 @@ module interactive_two_nodes {
     /// - @returns bool whether the test passes
     run storeReceivedMessagesPreservesExistingMessagesTest =
         initWithMessagesToSyncTwoNodes
+            .then(addOffers(ALICE, BOB))
+            .then(sendOffersPayload(ALICE, BOB))
+            .then(receiveOffersPayload(ALICE, BOB))
+            .then(determineRequests(ALICE, BOB))
+            .then(sendRequestsPayload(ALICE, BOB))
+            .then(receiveRequestsPayload(ALICE, BOB))
             .then(addMessages(ALICE, BOB))
             .then(sendMessagesPayload(ALICE, BOB))
             .then(receiveMessagesPayload(ALICE, BOB))
             .then(
                 {
-                    val oldBobStore = messageStore.get(BOB)
+                    val oldBobStore = getMessagesMessageStore(messageStore, BOB)
                     storeReceivedMessages(ALICE, BOB)
                         .expect(
                             oldBobStore.forall(
-                                m => m.in(messageStore.get(BOB))
+                                m => m.in(getMessagesMessageStore(messageStore, BOB))
                             )
                         )
                 }

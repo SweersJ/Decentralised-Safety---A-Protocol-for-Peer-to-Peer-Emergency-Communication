@@ -1,0 +1,2289 @@
+{
+  "#meta": {
+    "format": "ITF",
+    "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+    "source": "interactive_two_nodes.qnt",
+    "status": "ok",
+    "command": "quint test interactive_two_nodes.qnt --match payloadMessagesWitnessTest --out-itf output\\tests\\payloadMessagesWitnessTest\\20260824_174657.itf.json",
+    "seed": "1004033613804830720",
+    "description": "Created by Quint on Mon Aug 24 2026 17:47:00 GMT+0200 (Midden-Europese zomertijd)",
+    "timestamp": 1787586420009
+  },
+  "vars": [
+    "interactive_two_nodes::interactive::messageStore",
+    "interactive_two_nodes::interactive::nodeState",
+    "interactive_two_nodes::interactive::payloadExchangeState",
+    "interactive_two_nodes::interactive::payloadState"
+  ],
+  "states": [
+    {
+      "#meta": {
+        "index": 0
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 1
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "OffersAdded",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "Some",
+                    "value": {
+                      "acks": {
+                        "#set": []
+                      },
+                      "messages": {
+                        "#set": []
+                      },
+                      "offers": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      },
+                      "payloadId": {
+                        "#bigint": "0"
+                      },
+                      "requests": {
+                        "#set": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 2
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "OfferRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "OffersSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "Some",
+                    "value": {
+                      "acks": {
+                        "#set": []
+                      },
+                      "messages": {
+                        "#set": []
+                      },
+                      "offers": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      },
+                      "payloadId": {
+                        "#bigint": "0"
+                      },
+                      "requests": {
+                        "#set": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 3
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "OfferRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "OffersReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "Some",
+                    "value": {
+                      "acks": {
+                        "#set": []
+                      },
+                      "messages": {
+                        "#set": []
+                      },
+                      "offers": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      },
+                      "payloadId": {
+                        "#bigint": "0"
+                      },
+                      "requests": {
+                        "#set": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 4
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "OfferRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "RequestRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "RequestAdded",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "Some",
+                    "value": {
+                      "acks": {
+                        "#set": []
+                      },
+                      "messages": {
+                        "#set": []
+                      },
+                      "offers": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      },
+                      "payloadId": {
+                        "#bigint": "0"
+                      },
+                      "requests": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 5
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "OfferRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "RequestRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "RequestSent",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "Some",
+                    "value": {
+                      "acks": {
+                        "#set": []
+                      },
+                      "messages": {
+                        "#set": []
+                      },
+                      "offers": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      },
+                      "payloadId": {
+                        "#bigint": "0"
+                      },
+                      "requests": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 6
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "OfferRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "RequestRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "RequestReceived",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "Some",
+                    "value": {
+                      "acks": {
+                        "#set": []
+                      },
+                      "messages": {
+                        "#set": []
+                      },
+                      "offers": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      },
+                      "payloadId": {
+                        "#bigint": "0"
+                      },
+                      "requests": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "#meta": {
+        "index": 7
+      },
+      "interactive_two_nodes::interactive::messageStore": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#set": [
+                {
+                  "body": "Need insulin at shelter A",
+                  "groupId": "group-alpha",
+                  "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#set": [
+                {
+                  "body": "Offer: 2L water near station",
+                  "groupId": "group-alpha",
+                  "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                  "timestamp": {
+                    "#bigint": "1751966400"
+                  }
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::nodeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Need insulin at shelter A",
+                          "groupId": "group-alpha",
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "OfferRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "messages": {
+                      "#set": [
+                        {
+                          "body": "Offer: 2L water near station",
+                          "groupId": "group-alpha",
+                          "messageId": "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                          "timestamp": {
+                            "#bigint": "1751966400"
+                          }
+                        }
+                      ]
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": [
+                        {
+                          "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "recordType": {
+                            "tag": "RequestRecord",
+                            "value": {
+                              "#tup": []
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "messages": {
+                      "#set": []
+                    },
+                    "offers": {
+                      "#set": []
+                    },
+                    "requests": {
+                      "#set": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadExchangeState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "MessagesAdded",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "ackDetermined": false,
+                    "messagesStored": false,
+                    "phase": {
+                      "tag": "Idle",
+                      "value": {
+                        "#tup": []
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      "interactive_two_nodes::interactive::payloadState": {
+        "#map": [
+          [
+            "Alice",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "Some",
+                    "value": {
+                      "acks": {
+                        "#set": []
+                      },
+                      "messages": {
+                        "#set": [
+                          {
+                            "body": "Need insulin at shelter A",
+                            "groupId": "group-alpha",
+                            "messageId": "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                            "timestamp": {
+                              "#bigint": "1751966400"
+                            }
+                          }
+                        ]
+                      },
+                      "offers": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      },
+                      "payloadId": {
+                        "#bigint": "0"
+                      },
+                      "requests": {
+                        "#set": [
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "Bob",
+            {
+              "#map": [
+                [
+                  "Alice",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ],
+                [
+                  "Bob",
+                  {
+                    "tag": "None",
+                    "value": {
+                      "#tup": []
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}

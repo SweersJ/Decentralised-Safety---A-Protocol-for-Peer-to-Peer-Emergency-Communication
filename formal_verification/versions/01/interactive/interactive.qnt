@@ -15,6 +15,7 @@ module interactive {
     import node.* from "./../#global/types/node"
     import payload_exchange_phase.* from "./../#global/types/payload_exchange_phase"
     import payload_exchange_state.* from "./../#global/types/payload_exchange_state"
+    import record_type.* from "./../#global/types/record_type"
     import record_state.* from "./../#global/types/record_state"
     // > Messages
     import messages.* from "./../#global/messages/messages"
@@ -33,8 +34,13 @@ module interactive {
     import node_state_variable.* from "./../#global/state-variables/node_state"
     import payload_state.* from "./../#global/state-variables/payload_state"
     import payload_exchange_state_variable.* from "./../#global/state-variables/payload_exchange_state"
+    // > Exports
+    export message_store.*
+    export node_state_variable.*
+    export payload_state.*
+    export payload_exchange_state_variable.*
     // import next_payload_id.* from "./../#global/state-variables/next_payload_id" // only for retransmission
-    
+
     // ------------------------------------------------------------------------------------
     // CONSTANT VARIABLES
     // ------------------------------------------------------------------------------------
@@ -54,6 +60,68 @@ module interactive {
     // ------------------------------------------------------------------------------------
 
     // > GUARD FUNCTIONS
+
+    /// Check whether a sender may advertise its pending messages to a peer.
+    ///
+    /// - @param Node sender the node creating offers
+    /// - @param Node receiver the destination peer
+    /// - @returns bool whether offers can be added
+    def canAddOffers(sender: Node, receiver: Node): bool = {
+        and {
+            isPeerPair(sender, receiver),
+            getNodeState(nodeState, sender, receiver).messages.size() > 0,
+            getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == Idle,
+        }
+    }
+
+    /// Check whether an offer payload may advance to the receiver.
+    ///
+    /// - @param Node sender the node advertising messages
+    /// - @param Node receiver the destination peer
+    /// - @returns bool whether the offers can be sent
+    def canSendOffersPayload(sender: Node, receiver: Node): bool = {
+        and {
+            isPeerPair(sender, receiver),
+            getPayloadOffers(payloadState, sender, receiver).size() > 0,
+            getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == OffersAdded,
+        }
+    }
+
+    /// Check whether an in-flight offer payload may be received.
+    ///
+    /// - @param Node sender the node advertising messages
+    /// - @param Node receiver the node receiving the offers
+    /// - @returns bool whether the offers can be received
+    def canReceiveOffersPayload(sender: Node, receiver: Node): bool =
+        isPeerPair(sender, receiver)
+        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == OffersSent
+
+    /// Check whether the receiver may request offered messages it does not store.
+    ///
+    /// - @param Node sender the node that supplied the offers
+    /// - @param Node receiver the node selecting requests
+    /// - @returns bool whether requests can be determined
+    def canDetermineRequests(sender: Node, receiver: Node): bool =
+        isPeerPair(sender, receiver)
+        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == OffersReceived
+
+    /// Check whether a request payload may advance to the sender.
+    ///
+    /// - @param Node sender the node that supplied the offers
+    /// - @param Node receiver the node returning requests
+    /// - @returns bool whether the requests can be sent
+    def canSendRequestsPayload(sender: Node, receiver: Node): bool =
+        isPeerPair(sender, receiver)
+        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == RequestAdded
+
+    /// Check whether an in-flight request payload may be received.
+    ///
+    /// - @param Node sender the node receiving the requests
+    /// - @param Node receiver the node that selected them
+    /// - @returns bool whether the requests can be received
+    def canReceiveRequestsPayload(sender: Node, receiver: Node): bool =
+        isPeerPair(sender, receiver)
+        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == RequestSent
 
     /// Check whether a sender-receiver pair has messages available for synchronisation.
     ///
@@ -76,7 +144,8 @@ module interactive {
         and {
             isPeerPair(sender, receiver),
             hasSyncDelta(sender, receiver),
-            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == Idle,
+            getPayloadRequests(payloadState, sender, receiver).size() > 0,
+            getPayloadExchangeState(payloadExchangeState, sender,receiver).phase == RequestReceived,
         }
     }
 
@@ -212,8 +281,6 @@ module interactive {
             )
         )
     }
-
-    // > GENERAL FUNCTIONS
     
     // ------------------------------------------------------------------------------------
     // INIT ACTIONS
@@ -255,6 +322,12 @@ module interactive {
         any {
             //TODO: add generate messages as step
             idle(sender, receiver),
+            addOffers(sender, receiver),
+            sendOffersPayload(sender, receiver),
+            receiveOffersPayload(sender, receiver),
+            determineRequests(sender, receiver),
+            sendRequestsPayload(sender, receiver),
+            receiveRequestsPayload(sender, receiver),
             addMessages(sender, receiver),
             sendMessagesPayload(sender, receiver),
             receiveMessagesPayload(sender, receiver),
@@ -291,6 +364,156 @@ module interactive {
         ),
     }
 
+    /// Add the sender's pending offers to its payload for the receiver.
+    ///
+    /// - @param Node sender the node adding pending offers
+    /// - @param Node receiver the destination peer
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action addOffers(sender, receiver) = all {
+        // Guards
+        canAddOffers(sender, receiver),
+
+        // Next state updates
+        messageStore' = messageStore,
+        nodeState' = nodeState,
+        payloadState' = payloadState.setBy(
+            sender,
+            senderPayload => senderPayload.setBy(
+                receiver,
+                receiverPayload =>
+                    match receiverPayload {
+                        | None => Some({
+                            payloadId: 0,
+                            acks: Set(),
+                            offers: getSetMessageIds(getNodeState(nodeState, sender, receiver).messages),
+                            requests: Set(),
+                            messages: Set()
+                        })
+                        | Some(payload) => Some({
+                            ...payload,
+                            offers: payload.offers.union(
+                                getSetMessageIds(getNodeState(nodeState, sender, receiver).messages)
+                            )
+                        })
+                    }
+            )
+        ),
+        payloadExchangeState' =
+            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender, receiver)
+            setPayloadExchangeState(
+                sender,
+                receiver,
+                OffersAdded,
+                currentPayloadExchangeState.messagesStored,
+                currentPayloadExchangeState.ackDetermined
+            ),
+    }
+
+    /// Mark the populated offer payload as sent to the receiver.
+    ///
+    /// - @param Node sender the node advertising messages
+    /// - @param Node receiver the destination peer
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action sendOffersPayload(sender, receiver) = all {
+        canSendOffersPayload(sender, receiver),
+        messageStore' = messageStore,
+        nodeState' = nodeState.setBy(
+            sender,
+            senderState => senderState.setBy(
+                receiver,
+                receiverState => {
+                    ...receiverState,
+                    offers: receiverState.offers.union(
+                        getSetMessageIds(receiverState.messages).map(
+                            id => { messageId: id, recordType: OfferRecord }
+                        )
+                    )
+                }
+            )
+        ),
+        payloadState' = payloadState,
+        payloadExchangeState' = setPayloadExchangeState(sender, receiver, OffersSent, false, false),
+    }
+
+    /// Mark the in-flight offer payload as received by the peer.
+    ///
+    /// - @param Node sender the node advertising messages
+    /// - @param Node receiver the node receiving the offers
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action receiveOffersPayload(sender, receiver) = all {
+        canReceiveOffersPayload(sender, receiver),
+        messageStore' = messageStore,
+        nodeState' = nodeState,
+        payloadState' = payloadState,
+        payloadExchangeState' = setPayloadExchangeState(sender, receiver, OffersReceived, false, false),
+    }
+
+    /// Add requests for offered messages absent from the receiver's message store.
+    ///
+    /// - @param Node sender the node that supplied the offers
+    /// - @param Node receiver the node selecting requests
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action determineRequests(sender, receiver) = all {
+        canDetermineRequests(sender, receiver),
+        messageStore' = messageStore,
+        nodeState' =
+            val requestIds = getPayloadOffers(payloadState, sender, receiver)
+                .exclude(getSetMessageIds(getMessagesMessageStore(messageStore, receiver)))
+            nodeState.setBy(
+                receiver,
+                receiverState => receiverState.setBy(
+                    sender,
+                    senderState => {
+                        ...senderState,
+                        requests: senderState.requests.union(
+                            requestIds.map(id => { messageId: id, recordType: RequestRecord })
+                        )
+                    }
+                )
+            ),
+        payloadState' =
+            val requestIds = getPayloadOffers(payloadState, sender, receiver)
+                .exclude(getSetMessageIds(getMessagesMessageStore(messageStore, receiver)))
+            payloadState.setBy(
+                sender,
+                senderPayload => senderPayload.setBy(
+                    receiver,
+                    receiverPayload =>
+                        match receiverPayload {
+                            | Some(payload) => Some({ ...payload, requests: requestIds })
+                            | None => None
+                        }
+                )
+            ),
+        payloadExchangeState' = setPayloadExchangeState(sender, receiver, RequestAdded, false, false),
+    }
+
+    /// Mark the request payload as sent back to the offering node.
+    ///
+    /// - @param Node sender the node that supplied the offers
+    /// - @param Node receiver the node returning requests
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action sendRequestsPayload(sender, receiver) = all {
+        canSendRequestsPayload(sender, receiver),
+        messageStore' = messageStore,
+        nodeState' = nodeState,
+        payloadState' = payloadState,
+        payloadExchangeState' = setPayloadExchangeState(sender, receiver, RequestSent, false, false),
+    }
+
+    /// Mark the in-flight request payload as received by the offering node.
+    ///
+    /// - @param Node sender the node receiving the requests
+    /// - @param Node receiver the node that selected them
+    /// - @returns bool whether the action is enabled and its transition constraints hold
+    action receiveRequestsPayload(sender, receiver) = all {
+        canReceiveRequestsPayload(sender, receiver),
+        messageStore' = messageStore,
+        nodeState' = nodeState,
+        payloadState' = payloadState,
+        payloadExchangeState' = setPayloadExchangeState(sender, receiver, RequestReceived, false, false),
+    }
+
     /// Add the sender's pending messages to its payload for the receiver.
     ///
     /// - @param Node sender the node adding pending messages
@@ -314,13 +537,16 @@ module interactive {
                             acks: Set(),
                             offers: Set(),
                             requests: Set(),
-                            messages: getNodeState(nodeState, sender, receiver).messages
+                            messages: getNodeState(nodeState, sender, receiver).messages.filter(
+                                message => message.messageId.in(getPayloadRequests(payloadState, sender, receiver))
+                            )
                         })
                         | Some(payload) => Some({
                             ...payload,
-                            // Keep any messages already present when extending an existing payload.
                             messages: payload.messages.union(
-                                getNodeState(nodeState, sender, receiver).messages
+                                getNodeState(nodeState, sender, receiver).messages.filter(
+                                    message => message.messageId.in(payload.requests)
+                                )
                             )
                         })
                     }
@@ -372,7 +598,22 @@ module interactive {
         
         // Next state updates
         messageStore' = messageStore,
-        nodeState' = nodeState,
+        nodeState' = nodeState.setBy(
+            receiver,
+            receiverState => receiverState.setBy(
+                sender,
+                senderState => {
+                    ...senderState,
+                    requests: senderState.requests.filter(
+                        request => not(
+                            request.messageId.in(
+                                getSetMessageIds(getPayloadMessages(payloadState, sender, receiver))
+                            )
+                        )
+                    )
+                }
+            )
+        ),
         payloadState' = payloadState,
         payloadExchangeState' = 
             val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)

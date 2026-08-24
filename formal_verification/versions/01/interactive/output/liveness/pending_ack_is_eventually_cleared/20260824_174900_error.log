@@ -1,0 +1,37 @@
+Starting Apalache server on port 8822...
+# Usage statistics is OFF. We care about your privacy.
+# If you want to help our project, consider enabling statistics with config --enable-stats=true.
+
+Output directory: ...\DecSaf\formal_verification\versions\01\interactive\_apalache-out\server\2026-08-24T17-49-01_11716648706543807969
+# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@17:49:01.983
+Starting checker server on port 8822...                           I@17:49:01.989
+The Apalache server is running on port 8822. Press Ctrl-C to stop.
+Running verification for "interactive_two_nodes.qnt" with arguments " --temporal pending_ack_is_eventually_cleared --out-itf output\liveness\pending_ack_is_eventually_cleared\20260824_174900.itf.json"...
+
+ Error [QNT404]: Type alias 'PayloadId' not found
+
+  at .../OneDrive - Info Support B.V/Documents/Master Thesis (obsidian)/thesis_repo/DecSaf/formal_verification/versions/01/#global/types/payload.qnt:16:20
+
+
+ Error [QNT404]: Type alias 'Message' not found
+
+  at .../OneDrive - Info Support B.V/Documents/Master Thesis (obsidian)/thesis_repo/DecSaf/formal_verification/versions/01/#global/types/payload.qnt:28:23
+
+
+ Error [QNT404]: Type alias 'MessageId' not found
+
+  at .../OneDrive - Info Support B.V/Documents/Master Thesis (obsidian)/thesis_repo/DecSaf/formal_verification/versions/01/#global/types/payload.qnt:19:19
+
+
+ Error [QNT404]: Type alias 'MessageId' not found
+
+  at .../OneDrive - Info Support B.V/Documents/Master Thesis (obsidian)/thesis_repo/DecSaf/formal_verification/versions/01/#global/types/payload.qnt:22:21
+
+
+ Error [QNT404]: Type alias 'MessageId' not found
+
+  at .../OneDrive - Info Support B.V/Documents/Master Thesis (obsidian)/thesis_repo/DecSaf/formal_verification/versions/01/#global/types/payload.qnt:25:23
+
+error: name resolution failed
+Auto-closing Apalache server on port 8822...
+[FAIL]  exit 1

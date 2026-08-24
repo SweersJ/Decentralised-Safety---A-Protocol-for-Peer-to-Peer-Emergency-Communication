@@ -33,6 +33,7 @@ module batch {
     import node_state_variable.* from "./../#global/state-variables/node_state"
     import payload_state.* from "./../#global/state-variables/payload_state"
     import payload_exchange_state_variable.* from "./../#global/state-variables/payload_exchange_state"
+    // > Exports
     export message_store.*
     export node_state_variable.*
     export payload_state.*

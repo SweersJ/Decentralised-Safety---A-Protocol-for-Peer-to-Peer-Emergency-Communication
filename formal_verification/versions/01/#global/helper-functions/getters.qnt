@@ -85,6 +85,36 @@ module getter_helpers {
         }
     }
 
+    /// Return the offers from an optional payload in a payload-state value.
+    ///
+    /// - @param Node -> (Node -> Option[Payload]) currentPayloadState the per-peer payload state to query
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns Set[MessageId] the offered message identifiers or an empty set
+    pure def getPayloadOffers(
+        currentPayloadState: Node -> (Node -> Option[Payload]), sender: Node, receiver: Node
+    ): Set[MessageId] = {
+        match getPayload(currentPayloadState, sender, receiver) {
+            | Some(payload) => payload.offers
+            | None => Set()
+        }
+    }
+
+    /// Return the requests from an optional payload in a payload-state value.
+    ///
+    /// - @param Node -> (Node -> Option[Payload]) currentPayloadState the per-peer payload state to query
+    /// - @param Node sender the payload sender
+    /// - @param Node receiver the payload receiver
+    /// - @returns Set[MessageId] the requested message identifiers or an empty set
+    pure def getPayloadRequests(
+        currentPayloadState: Node -> (Node -> Option[Payload]), sender: Node, receiver: Node
+    ): Set[MessageId] = {
+        match getPayload(currentPayloadState, sender, receiver) {
+            | Some(payload) => payload.requests
+            | None => Set()
+        }
+    }
+
     /// Return an exchange state from a payload-exchange-state value.
     ///
     /// - @param Node -> (Node -> PayloadExchangeState) currentPayloadExchangeState the per-peer exchange state to query

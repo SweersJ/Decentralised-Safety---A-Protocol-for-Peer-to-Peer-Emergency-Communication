@@ -75,20 +75,6 @@ module batch_two_nodes {
     ).* from "batch"
 
     // ------------------------------------------------------------------------------------
-    // INIT AND STEP ACTIONS
-    // ------------------------------------------------------------------------------------
-
-    /// Initialise the configured batch protocol instance.
-    ///
-    /// - @returns bool whether the action is enabled and its transition constraints hold
-    action initTwoNodes() = init
-
-    /// Advance the configured batch protocol instance by one transition.
-    ///
-    /// - @returns bool whether an enabled protocol transition is performed
-    action stepTwoNodes() = step
-
-    // ------------------------------------------------------------------------------------
     // HELPER VERIFICATION ACTIONS
     // ------------------------------------------------------------------------------------
 

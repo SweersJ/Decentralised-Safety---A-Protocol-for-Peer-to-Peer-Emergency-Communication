@@ -1,0 +1,13 @@
+Starting Apalache server on port 8822...
+# Usage statistics is OFF. We care about your privacy.
+# If you want to help our project, consider enabling statistics with config --enable-stats=true.
+
+Output directory: ...\DecSaf\formal_verification\versions\01\batch\_apalache-out\server\2026-08-24T20-37-15_6533954390944587689
+# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@20:37:15.932
+Starting checker server on port 8822...                           I@20:37:15.937
+The Apalache server is running on port 8822. Press Ctrl-C to stop.
+Running verification for "batch_two_nodes.qnt" with arguments " --temporal pending_ack_is_eventually_cleared --out-itf output\liveness\pending_ack_is_eventually_cleared\20260824_203713.itf.json --backend tlc"...
+error: [QNT404] Name 'pending_ack_is_eventually_cleared' not found
+error: name resolution failed
+Auto-closing Apalache server on port 8822...
+[FAIL]  exit 1

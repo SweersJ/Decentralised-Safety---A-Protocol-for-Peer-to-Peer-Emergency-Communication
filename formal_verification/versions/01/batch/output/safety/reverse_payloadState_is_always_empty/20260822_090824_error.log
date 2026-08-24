@@ -1,0 +1,392 @@
+An example execution:
+
+[State 0]
+{
+  batch_two_nodes::batch::messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Need insulin at shelter A",
+            groupId: "group-alpha",
+            messageId:
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+            timestamp: 1751966400
+          },
+          {
+            body: "Offer: 2L water near station",
+            groupId: "group-alpha",
+            messageId:
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  batch_two_nodes::batch::nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Need insulin at shelter A",
+                    groupId: "group-alpha",
+                    messageId:
+                      "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Offer: 2L water near station",
+                    groupId: "group-alpha",
+                    messageId:
+                      "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  batch_two_nodes::batch::payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  batch_two_nodes::batch::payloadState:
+    Map(
+      "Alice" -> Map("Alice" -> None, "Bob" -> None),
+      "Bob" -> Map("Alice" -> None, "Bob" -> None)
+    )
+}
+
+[State 1]
+{
+  batch_two_nodes::batch::messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Need insulin at shelter A",
+            groupId: "group-alpha",
+            messageId:
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+            timestamp: 1751966400
+          },
+          {
+            body: "Offer: 2L water near station",
+            groupId: "group-alpha",
+            messageId:
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  batch_two_nodes::batch::nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Need insulin at shelter A",
+                    groupId: "group-alpha",
+                    messageId:
+                      "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Offer: 2L water near station",
+                    groupId: "group-alpha",
+                    messageId:
+                      "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  batch_two_nodes::batch::payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  batch_two_nodes::batch::payloadState:
+    Map(
+      "Alice" -> Map("Alice" -> None, "Bob" -> None),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            Some({
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }),
+          "Bob" -> None
+        )
+    )
+}
+
+[State 2]
+{
+  batch_two_nodes::batch::messageStore:
+    Map(
+      "Alice" ->
+        Set(
+          {
+            body: "Need insulin at shelter A",
+            groupId: "group-alpha",
+            messageId:
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+            timestamp: 1751966400
+          },
+          {
+            body: "Offer: 2L water near station",
+            groupId: "group-alpha",
+            messageId:
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+            timestamp: 1751966400
+          }
+        ),
+      "Bob" ->
+        Set(
+          {
+            body: "Request: flashlight batteries",
+            groupId: "group-bravo",
+            messageId:
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+            timestamp: 1751966400
+          }
+        )
+    ),
+  batch_two_nodes::batch::nodeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> { messages: Set(), offers: Set(), requests: Set() },
+          "Bob" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Need insulin at shelter A",
+                    groupId: "group-alpha",
+                    messageId:
+                      "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Offer: 2L water near station",
+                    groupId: "group-alpha",
+                    messageId:
+                      "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              requests: Set()
+            },
+          "Bob" -> { messages: Set(), offers: Set(), requests: Set() }
+        )
+    ),
+  batch_two_nodes::batch::payloadExchangeState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" ->
+            { ackDetermined: false, messagesStored: false, phase: Idle },
+          "Bob" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            }
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            {
+              ackDetermined: false,
+              messagesStored: false,
+              phase: MessagesAdded
+            },
+          "Bob" -> { ackDetermined: false, messagesStored: false, phase: Idle }
+        )
+    ),
+  batch_two_nodes::batch::payloadState:
+    Map(
+      "Alice" ->
+        Map(
+          "Alice" -> None,
+          "Bob" ->
+            Some({
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Need insulin at shelter A",
+                    groupId: "group-alpha",
+                    messageId:
+                      "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                    timestamp: 1751966400
+                  },
+                  {
+                    body: "Offer: 2L water near station",
+                    groupId: "group-alpha",
+                    messageId:
+                      "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            })
+        ),
+      "Bob" ->
+        Map(
+          "Alice" ->
+            Some({
+              acks: Set(),
+              messages:
+                Set(
+                  {
+                    body: "Request: flashlight batteries",
+                    groupId: "group-bravo",
+                    messageId:
+                      "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                    timestamp: 1751966400
+                  }
+                ),
+              offers: Set(),
+              payloadId: 0,
+              requests: Set()
+            }),
+          "Bob" -> None
+        )
+    )
+}
+
+[violation] Found an issue (1072ms at 19 traces/second).
+Use --verbosity=3 to show executions.
+error: Invariant violated
+[FAIL]  exit 1

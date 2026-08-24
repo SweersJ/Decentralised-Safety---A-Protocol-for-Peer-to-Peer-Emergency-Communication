@@ -1,0 +1,20 @@
+{
+  "#meta": {
+    "format": "ITF",
+    "format-description": "https://apalache-mc.org/docs/adr/015adr-trace.html",
+    "source": "predicates.qnt",
+    "status": "ok",
+    "command": "quint test predicates.qnt --match selfPayloadExchangeStateIsAlwaysEmptyPredicateTest --out-itf output\\tests\\selfPayloadExchangeStateIsAlwaysEmptyPredicateTest\\20260821_151405.itf.json",
+    "seed": "16036593875552665385",
+    "description": "Created by Quint on Fri Aug 21 2026 15:14:06 GMT+0200 (Midden-Europese zomertijd)",
+    "timestamp": 1787318046604
+  },
+  "vars": [],
+  "states": [
+    {
+      "#meta": {
+        "index": 0
+      }
+    }
+  ]
+}

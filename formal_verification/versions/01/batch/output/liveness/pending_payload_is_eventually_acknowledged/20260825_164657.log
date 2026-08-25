@@ -1,0 +1,63 @@
+Starting Apalache server on port 8822...
+# Usage statistics is OFF. We care about your privacy.
+# If you want to help our project, consider enabling statistics with config --enable-stats=true.
+
+Output directory: ...\DecSaf\formal_verification\versions\01\batch\_apalache-out\server\2026-08-25T16-46-58_12857722061382523685
+# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@16:46:58.485
+Starting checker server on port 8822...                           I@16:46:58.485
+The Apalache server is running on port 8822. Press Ctrl-C to stop.
+Running verification for "batch_two_nodes.qnt" with arguments " --temporal pending_payload_is_eventually_acknowledged --out-itf output\liveness\pending_payload_is_eventually_acknowledged\20260825_164657.itf.json --backend tlc"...
+[TLC] Compiling to TLA+ (via Apalache)...
+aug 25, 2026 4:47:03 P.M. com.google.protobuf.GeneratedMessage warnPre22Gencode
+WARNING: Vulnerable protobuf generated type in use: io.grpc.reflection.v1alpha.ServerReflectionRequest
+As of 2022/09/29 (release 21.7) makeExtensionsImmutable should not be called from protobuf gencode. If you are seeing this message, your gencode is vulnerable to a denial of service attack. You should regenerate your code using protobuf 25.6 or later. Use the latest version that meets your needs. However, if you understand the risks and wish to continue with vulnerable gencode, you can set the system property `-Dcom.google.protobuf.use_unsafe_pre22_gencode` on the command line to silence this warning. You also can set `-Dcom.google.protobuf.error_on_unsafe_pre22_gencode` to throw an error instead. See security vulnerability: https://github.com/protocolbuffers/protobuf/security/advisories/GHSA-h4h5-3hr4-j3g2
+PASS #0: SanyParser                                               I@16:47:03.870
+[TLC] Running TLC model checker...
+
+TLC2 Version 2026.08.25.144705
+Warning: Please run the Java VM, which executes TLC with a throughput optimized garbage collector, by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 109 and seed -3918722052211305560 with 20 workers on 20 cores with 8192MB heap and 64MB offheap memory [pid: 4284] (Windows 11 10.0 amd64, Microsoft 21.0.11 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file <tmp>\quint-tlc-zBrqZB\batch_two_nodes.tla
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\Integers.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\Sequences.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\FiniteSets.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\TLC.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\Apalache.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Apalache.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\Variants.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Variants.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\_TLCTrace.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\Naturals.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file <tmp>\quint-tlc-zBrqZB\tlc-14887505414543171778\TLCExt.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/TLCExt.tla)
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Apalache
+Semantic processing of module Variants
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module batch_two_nodes
+Linting of module Apalache
+Linting of module Variants
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module batch_two_nodes
+Starting... (2026-08-25 16:47:05)
+Implied-temporal checking--satisfiability problem has 2 branches.
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-08-25 16:47:06.
+Progress(17) at 2026-08-25 16:47:06: 241 states generated, 100 distinct states found, 0 states left on queue.
+Checking 2 branches of temporal properties for the complete state space with 200 total distinct states at (2026-08-25 16:47:06)
+Finished checking temporal properties in 00s at 2026-08-25 16:47:06
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 7.6E-16
+241 states generated, 100 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 17.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 3 and the 95th percentile is 2).
+Finished in 01s at (2026-08-25 16:47:06)
+
+[ok] No violation found (1470ms).
+Auto-closing Apalache server on port 8822...

@@ -933,11 +933,11 @@ module batch {
             )
         )
 
-    /// Assert that every pending acknowledgement is eventually cleared under receive fairness.
+    /// Assert that every pending acknowledgement is eventually cleared under delivery and acknowledgement fairness.
     ///
     /// - @returns bool whether the proposition holds
     temporal pending_ack_is_eventually_cleared =
-        fair_receive_ack_payload implies (
+        (delivery_fairness and acknowledgement_fairness) implies (
             NODES.forall(
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
@@ -992,11 +992,11 @@ module batch {
     //         )
     //     )
 
-    /// Assert that acknowledged messages are eventually removed from pending and payload state.
+    /// Assert that acknowledged messages are eventually removed under delivery and acknowledgement fairness.
     ///
     /// - @returns bool whether the proposition holds
     temporal acknowledged_messages_are_eventually_removed =
-        fair_receive_ack_payload implies (
+        (delivery_fairness and acknowledgement_fairness) implies (
             NODES.forall(
                 sender => NODES.forall(
                     receiver =>

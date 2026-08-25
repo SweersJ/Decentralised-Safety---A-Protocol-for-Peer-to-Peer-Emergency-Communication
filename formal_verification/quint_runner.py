@@ -395,9 +395,13 @@ def build_command(
 
 def _determine_status(returncode: int, output: str) -> str:
     """Classify a run result as 'ok', 'violation', or 'error'."""
+    lower = output.lower()
+    # Temporal verification can emit its successful result while a wrapper exits
+    # non-zero. Prefer Quint's explicit verdict over that wrapper exit code.
+    if re.search(r"\[ok\]\s+no violation found\b", lower):
+        return "ok"
     if returncode == 0:
         return "ok"
-    lower = output.lower()
     if (any(kw in lower for kw in ("violated", "counterexample",
                                     "invariant not", "failed", "assertion"))
             or ("violation" in lower and "no violation" not in lower)):

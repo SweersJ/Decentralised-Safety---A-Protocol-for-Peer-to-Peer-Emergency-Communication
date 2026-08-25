@@ -863,7 +863,78 @@ module batch {
         )
 
     // -------------------------------------------------------------------------------------
+    // FAIRNESS PROPOSITIONS
+    // -------------------------------------------------------------------------------------
 
+    /// Require weak fairness for receiving some sent message payload.
+    ///
+    /// - @returns bool whether the proposition holds
+    temporal receive_messages_payload_fairness =
+        someReceiveMessagesPayload.weakFair(Set(payloadExchangeState))
+
+    /// Require weak fairness for determining some payload acknowledgement.
+    ///
+    /// - @returns bool whether the proposition holds
+    temporal determine_ack_fairness =
+        someDetermineAck.weakFair(Set(payloadState))
+
+    /// Require weak fairness for receiving some acknowledgement payload.
+    ///
+    /// - @returns bool whether the proposition holds
+    temporal receive_ack_payload_fairness =
+        someReceiveAckPayload.weakFair(Set(nodeState))
+
+    /// Define fairness for the complete delivery, acknowledgement, and idle protocol cycle.
+    ///
+    /// - @returns bool whether the proposition holds
+    temporal protocol_fairness =
+        delivery_fairness
+        and acknowledgement_fairness
+        and NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies
+                        idle(sender, receiver)
+                            .weakFair(Set(payloadExchangeState))
+            )
+        )
+
+    /// Define weak fairness for every message-delivery action and peer pair.
+    ///
+    /// - @returns bool whether the proposition holds
+    temporal delivery_fairness =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        and {
+                            addMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            sendMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            receiveMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            storeReceivedMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
+                        }
+                    )
+            )
+        )
+
+    /// Define weak fairness for every acknowledgement action and peer pair.
+    ///
+    /// - @returns bool whether the proposition holds
+    temporal acknowledgement_fairness =
+        NODES.forall(
+            sender => NODES.forall(
+                receiver =>
+                    isPeerPair(sender, receiver) implies (
+                        and {
+                            determineAck(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            sendAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                            receiveAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
+                        }
+                    )
+            )
+        )
+
+    // -------------------------------------------------------------------------------------
     // LIVENESS PROPOSITIONS
     // -------------------------------------------------------------------------------------
 
@@ -884,29 +955,11 @@ module batch {
     //         )
     //     )
 
-    /// Require weak fairness for receiving some sent message payload.
-    ///
-    /// - @returns bool whether the proposition holds
-    temporal fair_receive_messages_payload =
-        someReceiveMessagesPayload.weakFair(Set(payloadExchangeState))
-
-    /// Require weak fairness for determining some payload acknowledgement.
-    ///
-    /// - @returns bool whether the proposition holds
-    temporal fair_determine_ack =
-        someDetermineAck.weakFair(Set(payloadState))
-
-    /// Require weak fairness for receiving some acknowledgement payload.
-    ///
-    /// - @returns bool whether the proposition holds
-    temporal fair_receive_ack_payload =
-        someReceiveAckPayload.weakFair(Set(nodeState))
-
     /// Assert that every in-flight payload is eventually received under receive fairness.
     ///
     /// - @returns bool whether the proposition holds
     temporal in_flight_payload_is_eventually_received =
-        fair_receive_messages_payload implies (
+        receive_messages_payload_fairness implies (
             NODES.forall(
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
@@ -920,7 +973,7 @@ module batch {
     ///
     /// - @returns bool whether the proposition holds
     temporal pending_payload_is_eventually_acknowledged =
-        (fair_receive_messages_payload and fair_determine_ack) implies (
+        (receive_messages_payload_fairness and determine_ack_fairness) implies (
             NODES.forall(
                 sender => NODES.forall(
                     receiver => isPeerPair(sender, receiver) implies
@@ -1074,56 +1127,6 @@ module batch {
                                 )
                         )
                 )
-            )
-        )
-
-    /// Define fairness for the complete delivery, acknowledgement, and idle protocol cycle.
-    ///
-    /// - @returns bool whether the proposition holds
-    temporal protocol_fairness =
-        delivery_fairness
-        and acknowledgement_fairness
-        and NODES.forall(
-            sender => NODES.forall(
-                receiver =>
-                    isPeerPair(sender, receiver) implies
-                        idle(sender, receiver)
-                            .weakFair(Set(payloadExchangeState))
-            )
-        )
-
-    /// Define weak fairness for every message-delivery action and peer pair.
-    ///
-    /// - @returns bool whether the proposition holds
-    temporal delivery_fairness =
-        NODES.forall(
-            sender => NODES.forall(
-                receiver =>
-                    isPeerPair(sender, receiver) implies (
-                        and {
-                            addMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
-                            sendMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-                            receiveMessagesPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-                            storeReceivedMessages(sender, receiver).weakFair(Set(payloadExchangeState)),
-                        }
-                    )
-            )
-        )
-
-    /// Define weak fairness for every acknowledgement action and peer pair.
-    ///
-    /// - @returns bool whether the proposition holds
-    temporal acknowledgement_fairness =
-        NODES.forall(
-            sender => NODES.forall(
-                receiver =>
-                    isPeerPair(sender, receiver) implies (
-                        and {
-                            determineAck(sender, receiver).weakFair(Set(payloadExchangeState)),
-                            sendAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-                            receiveAckPayload(sender, receiver).weakFair(Set(payloadExchangeState)),
-                        }
-                    )
             )
         )
 

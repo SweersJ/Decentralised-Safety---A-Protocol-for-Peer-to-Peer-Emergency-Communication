@@ -93,36 +93,48 @@ module interactive {
     /// - @param Node sender the node advertising messages
     /// - @param Node receiver the node receiving the offers
     /// - @returns bool whether the offers can be received
-    def canReceiveOffersPayload(sender: Node, receiver: Node): bool =
-        isPeerPair(sender, receiver)
-        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == OffersSent
+    def canReceiveOffersPayload(sender: Node, receiver: Node): bool = {
+        and {
+            isPeerPair(sender, receiver),
+            getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == OffersSent
+        }
+    }
 
     /// Check whether the receiver may request offered messages it does not store.
     ///
     /// - @param Node sender the node that supplied the offers
     /// - @param Node receiver the node selecting requests
     /// - @returns bool whether requests can be determined
-    def canDetermineRequests(sender: Node, receiver: Node): bool =
-        isPeerPair(sender, receiver)
-        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == OffersReceived
+    def canDetermineRequests(sender: Node, receiver: Node): bool = {
+        and {
+            isPeerPair(sender, receiver),
+            getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == OffersReceived
+        }
+    }
 
     /// Check whether a request payload may advance to the sender.
     ///
     /// - @param Node sender the node that supplied the offers
     /// - @param Node receiver the node returning requests
     /// - @returns bool whether the requests can be sent
-    def canSendRequestsPayload(sender: Node, receiver: Node): bool =
-        isPeerPair(sender, receiver)
-        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == RequestAdded
+    def canSendRequestsPayload(sender: Node, receiver: Node): bool = {
+        and {
+            isPeerPair(sender, receiver),
+            getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == RequestAdded
+        }
+    }
 
     /// Check whether an in-flight request payload may be received.
     ///
     /// - @param Node sender the node receiving the requests
     /// - @param Node receiver the node that selected them
     /// - @returns bool whether the requests can be received
-    def canReceiveRequestsPayload(sender: Node, receiver: Node): bool =
-        isPeerPair(sender, receiver)
-        and getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == RequestSent
+    def canReceiveRequestsPayload(sender: Node, receiver: Node): bool = {
+        and {
+            isPeerPair(sender, receiver),
+            getPayloadExchangeState(payloadExchangeState, sender, receiver).phase == RequestSent
+        }
+    }
 
     /// Check whether a sender-receiver pair has messages available for synchronisation.
     ///

@@ -1,0 +1,2148 @@
+Starting Apalache server on port 8822...
+# Usage statistics is OFF. We care about your privacy.
+# If you want to help our project, consider enabling statistics with config --enable-stats=true.
+
+Output directory: ...\DecSaf\formal_verification\versions\01\interactive\_apalache-out\server\2026-08-25T18-27-15_11400846989676631467
+# APALACHE version: v0.59.0-2-gfe7c1642a | build: v0.59.0-2-gfe7c1642a I@18:27:15.775
+Starting checker server on port 8822...                           I@18:27:15.775
+The Apalache server is running on port 8822. Press Ctrl-C to stop.
+Running verification for "interactive_two_nodes.qnt" with arguments " --temporal delivery_fairness --out-itf output\fairness\delivery_fairness\20260825_182713.itf.json --backend tlc"...
+[TLC] Compiling to TLA+ (via Apalache)...
+aug 25, 2026 6:27:24 P.M. com.google.protobuf.GeneratedMessage warnPre22Gencode
+WARNING: Vulnerable protobuf generated type in use: io.grpc.reflection.v1alpha.ServerReflectionRequest
+As of 2022/09/29 (release 21.7) makeExtensionsImmutable should not be called from protobuf gencode. If you are seeing this message, your gencode is vulnerable to a denial of service attack. You should regenerate your code using protobuf 25.6 or later. Use the latest version that meets your needs. However, if you understand the risks and wish to continue with vulnerable gencode, you can set the system property `-Dcom.google.protobuf.use_unsafe_pre22_gencode` on the command line to silence this warning. You also can set `-Dcom.google.protobuf.error_on_unsafe_pre22_gencode` to throw an error instead. See security vulnerability: https://github.com/protocolbuffers/protobuf/security/advisories/GHSA-h4h5-3hr4-j3g2
+PASS #0: SanyParser                                               I@18:27:25.456
+[TLC] Running TLC model checker...
+
+TLC2 Version 2026.08.25.162728
+Warning: Please run the Java VM, which executes TLC with a throughput optimized garbage collector, by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 39 and seed 1785735921661283716 with 20 workers on 20 cores with 8192MB heap and 64MB offheap memory [pid: 40784] (Windows 11 10.0 amd64, Microsoft 21.0.11 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file <tmp>\quint-tlc-OEuwIH\interactive_two_nodes.tla
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\Integers.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\Sequences.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\FiniteSets.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\TLC.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\Apalache.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Apalache.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\Variants.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Variants.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\_TLCTrace.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\Naturals.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file <tmp>\quint-tlc-OEuwIH\tlc-6291871941449437533\TLCExt.tla (jar:file:/.../.quint/apalache-dist-powsetfilter/apalache/lib/apalache.jar!/tla2sany/StandardModules/TLCExt.tla)
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Apalache
+Semantic processing of module Variants
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module interactive_two_nodes
+Linting of module Apalache
+Linting of module Variants
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module interactive_two_nodes
+Starting... (2026-08-25 18:27:28)
+Implied-temporal checking--satisfiability problem has 1 branches.
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-08-25 18:27:29.
+Progress(29) at 2026-08-25 18:27:29: 577 states generated, 256 distinct states found, 0 states left on queue.
+Checking temporal properties for the complete state space with 256 total distinct states at (2026-08-25 18:27:29)
+Error: Temporal property q_temporalProps was violated.
+
+Error: The following behavior constitutes a counter-example:
+
+State 1: <Initial predicate>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ],
+  Bob |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 2: <interactive_two_nodes_interactive_addOffers("Alice","Bob") line 791, col 3 to line 885, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersAdded |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 3: <interactive_two_nodes_interactive_addOffers("Bob","Alice") line 791, col 3 to line 885, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersAdded |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [OffersAdded |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 4: <interactive_two_nodes_interactive_sendOffersPayload("Bob","Alice") line 1482, col 3 to line 1543, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersAdded |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [OffersSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |-> {},
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 5: <interactive_two_nodes_interactive_sendOffersPayload("Alice","Bob") line 1482, col 3 to line 1543, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [OffersSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 6: <interactive_two_nodes_interactive_receiveOffersPayload("Bob","Alice") line 908, col 3 to line 919, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [OffersReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 7: <interactive_two_nodes_interactive_determineRequests("Bob","Alice") line 926, col 3 to line 1060, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [RequestAdded |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 8: <interactive_two_nodes_interactive_sendRequestsPayload("Bob","Alice") line 1067, col 3 to line 1078, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [RequestSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 9: <interactive_two_nodes_interactive_receiveOffersPayload("Alice","Bob") line 908, col 3 to line 919, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [RequestSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 10: <interactive_two_nodes_interactive_receiveRequestsPayload("Bob","Alice") line 1085, col 3 to line 1096, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [RequestReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 11: <interactive_two_nodes_interactive_addMessages("Bob","Alice") line 1550, col 3 to line 1665, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesAdded |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 12: <interactive_two_nodes_interactive_sendMessagesPayload("Bob","Alice") line 1672, col 3 to line 1694, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [OffersReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |-> {},
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 13: <interactive_two_nodes_interactive_determineRequests("Alice","Bob") line 926, col 3 to line 1060, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestAdded |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 14: <interactive_two_nodes_interactive_sendRequestsPayload("Alice","Bob") line 1067, col 3 to line 1078, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 15: <interactive_two_nodes_interactive_receiveMessagesPayload("Bob","Alice") line 1144, col 3 to line 1216, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 16: <interactive_two_nodes_interactive_storeReceivedMessages("Bob","Alice") line 1223, col 3 to line 1305, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ],
+        [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> TRUE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 17: <interactive_two_nodes_interactive_receiveRequestsPayload("Alice","Bob") line 1085, col 3 to line 1096, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ],
+        [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> TRUE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |-> {} ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 18: <interactive_two_nodes_interactive_determineAck("Bob","Alice") line 1312, col 3 to line 1391, col 15 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ],
+        [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [MessagesReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> TRUE,
+              ackDetermined |-> TRUE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" } ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 19: <interactive_two_nodes_interactive_sendAckPayload("Bob","Alice") line 1398, col 3 to line 1420, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ],
+        [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [AckSent |-> [tag |-> "UNIT"]],
+              messagesStored |-> TRUE,
+              ackDetermined |-> TRUE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      groupId |-> "group-bravo",
+                      timestamp |-> 1751966400,
+                      body |-> "Request: flashlight batteries" ] } ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |->
+            [ Some |->
+                  [ offers |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    requests |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" },
+                    messages |->
+                        { [ messageId |->
+                                "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                            groupId |-> "group-bravo",
+                            timestamp |-> 1751966400,
+                            body |-> "Request: flashlight batteries" ] },
+                    payloadId |-> 0,
+                    acks |->
+                        { "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1" } ] ],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 20: <interactive_two_nodes_interactive_receiveAckPayload("Bob","Alice") line 1701, col 3 to line 1848, col 9 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ],
+        [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [AckReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> TRUE,
+              ackDetermined |-> TRUE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |-> {} ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 21: <interactive_two_nodes_interactive_idle("Bob","Alice") line 1443, col 3 to line 1454, col 20 of module interactive_two_nodes>
+/\ interactive_two_nodes_interactive_messageStore = [ Alice |->
+      { [ messageId |->
+              "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Need insulin at shelter A" ],
+        [ messageId |->
+              "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+          groupId |-> "group-alpha",
+          timestamp |-> 1751966400,
+          body |-> "Offer: 2L water near station" ],
+        [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] },
+  Bob |->
+      { [ messageId |->
+              "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+          groupId |-> "group-bravo",
+          timestamp |-> 1751966400,
+          body |-> "Request: flashlight batteries" ] } ]
+/\ interactive_two_nodes_interactive_payloadExchangeState = [ Alice |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [RequestReceived |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ],
+  Bob |->
+      [ Alice |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ],
+        Bob |->
+            [ phase |-> [Idle |-> [tag |-> "UNIT"]],
+              messagesStored |-> FALSE,
+              ackDetermined |-> FALSE ] ] ]
+/\ interactive_two_nodes_interactive_nodeState = [ Alice |->
+      [ Alice |-> [offers |-> {}, requests |-> {}, messages |-> {}],
+        Bob |->
+            [ offers |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |-> {},
+              messages |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Need insulin at shelter A" ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      groupId |-> "group-alpha",
+                      timestamp |-> 1751966400,
+                      body |-> "Offer: 2L water near station" ] } ] ],
+  Bob |->
+      [ Alice |->
+            [ offers |->
+                  { [ messageId |->
+                          "4183701dda5d89fde3f72fea64dae70a78000b56e6f1c31c45cea54dd93208f1",
+                      recordType |-> [OfferRecord |-> [tag |-> "UNIT"]] ] },
+              requests |->
+                  { [ messageId |->
+                          "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ],
+                    [ messageId |->
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c",
+                      recordType |-> [RequestRecord |-> [tag |-> "UNIT"]] ] },
+              messages |-> {} ],
+        Bob |-> [offers |-> {}, requests |-> {}, messages |-> {}] ] ]
+/\ interactive_two_nodes_interactive_payloadState = [ Alice |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |->
+            [ Some |->
+                  [ offers |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    requests |->
+                        { "741a51061e3b8351670ec7af7b1040710cb8adb4e34ef9528c1bc1f311cc9f75",
+                          "12ab508965277ba7190d0833e0659ceae8a051cdedf21478cfa8eb785481e98c" },
+                    messages |-> {},
+                    payloadId |-> 0,
+                    acks |-> {} ] ] ],
+  Bob |->
+      [ Alice |-> [None |-> [tag |-> "UNIT"]],
+        Bob |-> [None |-> [tag |-> "UNIT"]] ] ]
+
+State 22: Stuttering
+Warning: The stuttering counterexample above may be caused by the absence of a behavior specification (SPECIFICATION). Only INIT and NEXT have been provided, so TLC permits infinite stuttering. To rule out such counterexamples, use SPECIFICATION Spec, with Spec asserting a suitable fairness constraint (compare Chapter 8, page 87ff of Specifying Systems at https://lamport.azurewebsites.net/tla/book.html).
+Finished checking temporal properties in 00s at 2026-08-25 18:27:29
+577 states generated, 256 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 29.
+Finished in 01s at (2026-08-25 18:27:29)
+Trace exploration spec path: <tmp>\quint-tlc-OEuwIH\interactive_two_nodes_TTrace_1787675248.tla
+
+[violation] Found an issue (1953ms).
+error: found a counterexample
+Auto-closing Apalache server on port 8822...
+[FAIL]  exit 1

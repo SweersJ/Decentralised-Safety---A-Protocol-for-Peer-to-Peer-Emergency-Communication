@@ -23,6 +23,7 @@ module interactive {
     import init_helpers(INIT_NODES = NODES).* from "./../#global/helper-functions/init"
     import guard_helpers.* from "./../#global/helper-functions/guards"
     import getter_helpers.* from "./../#global/helper-functions/getters"
+    import setter_helpers.* from "./../#global/helper-functions/setters"
     import state_query_helpers.* from "./../#global/helper-functions/state_queries"
     // > Safety propositions
     import self_nodeState_is_always_empty_safety.* from "./../#global/safety/self_nodeState_is_always_empty"
@@ -250,37 +251,6 @@ module interactive {
         }
         
     }
-
-
-    // > SETTER FUNCTIONS
-
-    /// Return the exchange-state map with one sender-receiver entry replaced.
-    ///
-    /// - @param Node sender the sender entry to update
-    /// - @param Node receiver the receiver entry to update
-    /// - @param PayloadExchangePhase newPayloadExchangePhase the replacement exchange phase
-    /// - @param bool newMessagesStored whether received messages have been stored
-    /// - @param bool newAckDetermined whether acknowledgements have been determined
-    /// - @returns Node -> (Node -> PayloadExchangeState) the computed result
-    def setPayloadExchangeState(
-        sender: Node, 
-        receiver: Node, 
-        newPayloadExchangePhase: PayloadExchangePhase, 
-        newMessagesStored: bool, 
-        newAckDetermined: bool
-    ): Node -> (Node -> PayloadExchangeState) = {
-        payloadExchangeState.setBy(
-            sender,
-            senderState => senderState.setBy(
-                receiver, 
-                receiverState => {
-                    phase: newPayloadExchangePhase,
-                    messagesStored: newMessagesStored,
-                    ackDetermined: newAckDetermined
-                }
-            )
-        )
-    }
     
     // ------------------------------------------------------------------------------------
     // INIT ACTIONS
@@ -355,13 +325,15 @@ module interactive {
         messageStore' = messageStore,
         nodeState' = nodeState,
         payloadState' = payloadState,
-        payloadExchangeState' = setPayloadExchangeState(
-            sender, 
-            receiver, 
-            Idle,
-            false,
-            false
-        ),
+        payloadExchangeState' = 
+            setPayloadExchangeState(
+                payloadExchangeState, 
+                sender, 
+                receiver, 
+                Idle,
+                false,
+                false,
+            ),
     }
 
     /// Add the sender's pending offers to its payload for the receiver.
@@ -398,14 +370,12 @@ module interactive {
                     }
             )
         ),
-        payloadExchangeState' =
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender, receiver)
-            setPayloadExchangeState(
+        payloadExchangeState' = 
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
                 sender,
                 receiver,
                 OffersAdded,
-                currentPayloadExchangeState.messagesStored,
-                currentPayloadExchangeState.ackDetermined
             ),
     }
 
@@ -432,7 +402,13 @@ module interactive {
             )
         ),
         payloadState' = payloadState,
-        payloadExchangeState' = setPayloadExchangeState(sender, receiver, OffersSent, false, false),
+        payloadExchangeState' = 
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
+                sender, 
+                receiver, 
+                OffersSent
+            ),
     }
 
     /// Mark the in-flight offer payload as received by the peer.
@@ -445,7 +421,13 @@ module interactive {
         messageStore' = messageStore,
         nodeState' = nodeState,
         payloadState' = payloadState,
-        payloadExchangeState' = setPayloadExchangeState(sender, receiver, OffersReceived, false, false),
+        payloadExchangeState' = 
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
+                sender, 
+                receiver, 
+                OffersReceived,
+            ),
     }
 
     /// Add requests for offered messages absent from the receiver's message store.
@@ -485,7 +467,13 @@ module interactive {
                         }
                 )
             ),
-        payloadExchangeState' = setPayloadExchangeState(sender, receiver, RequestAdded, false, false),
+        payloadExchangeState' = 
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
+                sender, 
+                receiver, 
+                RequestAdded,
+            ),
     }
 
     /// Mark the request payload as sent back to the offering node.
@@ -498,7 +486,13 @@ module interactive {
         messageStore' = messageStore,
         nodeState' = nodeState,
         payloadState' = payloadState,
-        payloadExchangeState' = setPayloadExchangeState(sender, receiver, RequestSent, false, false),
+        payloadExchangeState' =  
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
+                sender, 
+                receiver, 
+                RequestSent,
+            ),
     }
 
     /// Mark the in-flight request payload as received by the offering node.
@@ -511,7 +505,13 @@ module interactive {
         messageStore' = messageStore,
         nodeState' = nodeState,
         payloadState' = payloadState,
-        payloadExchangeState' = setPayloadExchangeState(sender, receiver, RequestReceived, false, false),
+        payloadExchangeState' = 
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
+                sender, 
+                receiver, 
+                RequestReceived,
+            ),
     }
 
     /// Add the sender's pending messages to its payload for the receiver.
@@ -552,14 +552,12 @@ module interactive {
                     }
             )
         ),
-        payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender, receiver)
-            setPayloadExchangeState(
+        payloadExchangeState' =  
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
                 sender, 
                 receiver, 
                 MessagesAdded,
-                currentPayloadExchangeState.messagesStored,
-                currentPayloadExchangeState.ackDetermined
             ),
     }
 
@@ -576,14 +574,12 @@ module interactive {
         messageStore' = messageStore,
         nodeState' = nodeState,
         payloadState' = payloadState,
-        payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
-            setPayloadExchangeState(
+        payloadExchangeState' =  
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
                 sender, 
                 receiver, 
                 MessagesSent,
-                currentPayloadExchangeState.messagesStored,
-                currentPayloadExchangeState.ackDetermined
             ),
     }
 
@@ -615,14 +611,12 @@ module interactive {
             )
         ),
         payloadState' = payloadState,
-        payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
-            setPayloadExchangeState(
+        payloadExchangeState' =  
+            setPayloadExchangeStatePhase(
+                payloadExchangeState, 
                 sender, 
                 receiver, 
                 MessagesReceived,
-                currentPayloadExchangeState.messagesStored,
-                currentPayloadExchangeState.ackDetermined
             ),
     }
 
@@ -658,13 +652,11 @@ module interactive {
         ),
         payloadState' = payloadState,
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
-            setPayloadExchangeState(
+            setPayloadExchangeStateMessagesStored(
+                payloadExchangeState,
                 sender,
                 receiver,
-                currentPayloadExchangeState.phase,
                 true,
-                currentPayloadExchangeState.ackDetermined
             ),
     }
 
@@ -697,14 +689,11 @@ module interactive {
             )
         ),
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
-        
-            setPayloadExchangeState(
-                sender, 
-                receiver, 
-                currentPayloadExchangeState.phase,
-                currentPayloadExchangeState.messagesStored,
-                true
+            setPayloadExchangeStateAckDetermined(
+                payloadExchangeState,
+                sender,
+                receiver,
+                true,
             ),
     }
 
@@ -722,13 +711,11 @@ module interactive {
         nodeState' = nodeState,
         payloadState' = payloadState,
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
-            setPayloadExchangeState(
+            setPayloadExchangeStatePhase(
+                payloadExchangeState,
                 sender, 
                 receiver, 
                 AckSent,
-                currentPayloadExchangeState.messagesStored,
-                currentPayloadExchangeState.ackDetermined
             ),
     }
 
@@ -786,13 +773,11 @@ module interactive {
                 )
             ),
         payloadExchangeState' = 
-            val currentPayloadExchangeState = getPayloadExchangeState(payloadExchangeState, sender,receiver)
-            setPayloadExchangeState(
+            setPayloadExchangeStatePhase(
+                payloadExchangeState,
                 sender, 
                 receiver, 
                 AckReceived,
-                currentPayloadExchangeState.messagesStored,
-                currentPayloadExchangeState.ackDetermined
             ),
     }
 

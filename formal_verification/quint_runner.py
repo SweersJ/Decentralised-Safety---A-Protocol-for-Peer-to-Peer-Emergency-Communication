@@ -98,6 +98,7 @@ _CATEGORIES: dict[str, dict] = {
     "safety":   {"label": "Safety (invariant)", "folder": "safety"},
     "witness":  {"label": "Witness",            "folder": "witness"},
     "liveness": {"label": "Liveness (temporal)", "folder": "liveness"},
+    "fairness": {"label": "Fairness diagnostic", "folder": "fairness"},
 }
 
 
@@ -137,7 +138,8 @@ def parse_qnt(path: Path) -> dict[str, list[str]]:
             if kind == "run":
                 groups["tests"].append(name)
             elif kind == "temporal":
-                groups["liveness"].append(name)
+                target = "fairness" if name.endswith("_fairness") else "liveness"
+                groups[target].append(name)
             else:  # val
                 target = "witness" if _WITNESS_RE.match(name) else "safety"
                 groups[target].append(name)
@@ -356,7 +358,7 @@ def build_command(
     opts: dict,
 ) -> list[str]:
     """
-    effective_cat: 'tests' | 'safety_run' | 'safety_verify' | 'witness' | 'liveness'
+    effective_cat: 'tests' | 'safety_run' | 'safety_verify' | 'witness' | 'liveness' | 'fairness'
     out_file: .itf.json for run/test commands, .log path for verify (captured separately).
     """
     run_flags: list[str] = []
@@ -380,7 +382,8 @@ def build_command(
                 "--out-itf", str(out_file)] + run_flags
 
     # verify-based categories; --out-itf saves the counterexample trace if supported
-    flag_map = {"safety_verify": "--invariant", "liveness": "--temporal"}
+    flag_map = {"safety_verify": "--invariant", "liveness": "--temporal",
+                "fairness": "--temporal"}
     cmd = _verify_base(qnt, opts) + [flag_map[effective_cat], name,
                                       "--out-itf", str(out_file)]
     if opts.get("backend") == "tlc":
@@ -407,6 +410,15 @@ def _determine_status(returncode: int, output: str) -> str:
             or ("violation" in lower and "no violation" not in lower)):
         return "violation"
     return "error"
+
+
+def _expected_status(category: str, status: str) -> str:
+    """Interpret a raw verifier result according to the category expectation."""
+    if category != "fairness" or status == "error":
+        return status
+    # A standalone fairness diagnostic succeeds when it exposes an unfair trace.
+    return "ok" if status == "violation" else "violation"
+
 
 # ─── GUI ─────────────────────────────────────────────────────────────────────
 
@@ -651,6 +663,7 @@ class QuintRunner(tk.Tk):
         "safety":   "Safety  →  quint run --invariant  /  quint verify --invariant",
         "witness":  "Witness  →  quint run --witnesses",
         "liveness": "Liveness  →  quint verify --temporal",
+        "fairness": "Fairness diagnostics (counterexample expected)  →  quint verify --temporal",
     }
 
     _STATUS_ICON:  dict[str, str]  = {"ok": "[ok]", "violation": "[!]", "error": "[x]", "unknown": "[?]"}
@@ -695,7 +708,7 @@ class QuintRunner(tk.Tk):
                     status = "error"
         except Exception:
             pass
-        return status, dt_str, last
+        return _expected_status(cat, status), dt_str, last
 
     def _populate_declarations(self) -> None:
         for w in self._inner.winfo_children():
@@ -854,7 +867,7 @@ class QuintRunner(tk.Tk):
 
     _FOLDER: dict[str, str] = {
         "tests": "tests", "safety_run": "safety", "safety_verify": "safety",
-        "witness": "witness", "liveness": "liveness",
+        "witness": "witness", "liveness": "liveness", "fairness": "fairness",
     }
 
     def _run_invariants_together(self, names: list[str], opts: dict) -> None:
@@ -912,7 +925,7 @@ class QuintRunner(tk.Tk):
                    else shlex.join(cmd))
         self._enqueue(f"\n>>  {display}\n", "cmd")
         # Verify categories always capture stdout; every category captures it on errors.
-        save_log = effective_cat in ("safety_verify", "liveness")
+        save_log = effective_cat in ("safety_verify", "liveness", "fairness")
         rc, output = self._exec(cmd, log_file=None)
         if not save_log and itf_file.exists():
             try:
@@ -922,8 +935,18 @@ class QuintRunner(tk.Tk):
                 )
             except Exception:
                 pass
-        status = _determine_status(rc, output)
-        if status != "ok":
+        raw_status = _determine_status(rc, output)
+        status = _expected_status(cat, raw_status)
+        if cat == "fairness" and raw_status == "violation" and itf_file.exists():
+            try:
+                itf_file.write_text(
+                    json.dumps(json.loads(itf_file.read_text(encoding="utf-8")), indent=2),
+                    encoding="utf-8",
+                )
+            except Exception:
+                pass
+            result_file = itf_file
+        elif status != "ok":
             log_file = out_dir / f"{timestamp}_error.log"
             log_file.write_text(output, encoding="utf-8")
             result_file = log_file

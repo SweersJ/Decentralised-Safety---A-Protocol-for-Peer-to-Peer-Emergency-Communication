@@ -501,14 +501,6 @@ class QuintRunner(tk.Tk):
         out_sb.configure(command=self.output_text.yview)
         self.output_text.pack(side="left", fill="both", expand=True)
 
-        # widget-level bindings return "break" so bind_all _route never double-scrolls
-        self.output_text.bind("<MouseWheel>",
-            lambda e: (self.output_text.yview_scroll(-1 * (e.delta // 120), "units"), "break")[-1])
-        self.output_text.bind("<Button-4>",
-            lambda e: (self.output_text.yview_scroll(-1, "units"), "break")[-1])
-        self.output_text.bind("<Button-5>",
-            lambda e: (self.output_text.yview_scroll( 1, "units"), "break")[-1])
-
         self.output_text.tag_configure("cmd",  foreground="#4ec9b0")  # command lines
         self.output_text.tag_configure("ok",   foreground="#4caf50")  # success
         self.output_text.tag_configure("err",  foreground="#f44336")  # error
@@ -520,6 +512,7 @@ class QuintRunner(tk.Tk):
         paned.add(left, weight=3)
 
         canvas = tk.Canvas(left, highlightthickness=0)
+        self._decl_canvas = canvas
         sb = ttk.Scrollbar(left, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=sb.set)
         sb.pack(side="right", fill="y")
@@ -609,24 +602,31 @@ class QuintRunner(tk.Tk):
         self.run_btn.pack(fill="x", padx=4, pady=10)
 
     def _setup_scroll_routing(self) -> None:
-        """Route mousewheel to the declarations canvas or let Text widgets self-scroll."""
-        # snapshot refs now; avoids AttributeError if _route fires before _build_ui finishes
-        decl_canvas = getattr(self, "_decl_canvas", None)
-        inner       = getattr(self, "_inner",       None)
+        """Scroll only the pane whose bounding box contains the mouse pointer."""
+        def _is_descendant(widget: tk.Misc | None, ancestor: tk.Misc) -> bool:
+            while widget is not None:
+                if widget is ancestor:
+                    return True
+                widget = getattr(widget, "master", None)
+            return False
 
-        def _route(e: tk.Event) -> None:
-            if decl_canvas is None:
-                return
-            delta = -1 * (e.delta // 120) if e.delta else (-1 if e.num == 4 else 1)
-            w = e.widget
-            while w:
-                if w is decl_canvas or w is inner:
-                    decl_canvas.yview_scroll(delta, "units")
-                    return
-                try:
-                    w = w.master
-                except AttributeError:
-                    break
+        def _route(e: tk.Event) -> str | None:
+            hovered = self.winfo_containing(e.x_root, e.y_root)
+            if hovered is None:
+                return None
+
+            if e.delta:
+                delta = -1 if e.delta > 0 else 1
+            else:
+                delta = -1 if e.num == 4 else 1
+
+            if _is_descendant(hovered, self._decl_canvas):
+                self._decl_canvas.yview_scroll(delta, "units")
+                return "break"
+            if _is_descendant(hovered, self.output_text):
+                self.output_text.yview_scroll(delta, "units")
+                return "break"
+            return None
 
         self.bind_all("<MouseWheel>", _route)
         self.bind_all("<Button-4>",   _route)

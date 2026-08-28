@@ -492,16 +492,20 @@ class QuintRunner(tk.Tk):
         self._instantiated_imports_frame = ttk.LabelFrame(
             top, text="Instantiated imports", padding=4)
 
-        # main split
-        paned = ttk.PanedWindow(self, orient="horizontal")
-        paned.pack(fill="both", expand=True, padx=8, pady=6)
+        # Vertically split the controls from output; the controls retain their
+        # own horizontal declaration/options split.
+        main_paned = ttk.PanedWindow(self, orient="vertical")
+        main_paned.pack(fill="both", expand=True, padx=8, pady=(6, 8))
+
+        paned = ttk.PanedWindow(main_paned, orient="horizontal")
+        main_paned.add(paned, weight=3)
 
         self._build_declarations_panel(paned)
         self._build_options_panel(paned)
 
         # output
-        out_frame = ttk.LabelFrame(self, text="Output", padding=4)
-        out_frame.pack(fill="both", expand=True, padx=8, pady=(0, 8))
+        out_frame = ttk.LabelFrame(main_paned, text="Output", padding=4)
+        main_paned.add(out_frame, weight=2)
         btn_row = ttk.Frame(out_frame)
         btn_row.pack(fill="x", pady=(0, 4))
         ttk.Button(btn_row, text="View file", command=self._open_file_viewer).pack(side="left", padx=2)

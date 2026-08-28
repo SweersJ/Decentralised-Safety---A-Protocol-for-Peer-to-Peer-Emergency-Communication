@@ -63,6 +63,10 @@ _IMPORT_SOURCE_RE = re.compile(
     re.MULTILINE | re.DOTALL,
 )
 # val names starting with `can_` are witnesses; all other vals are safety invariants.
+_INSTANTIATED_IMPORT_RE = re.compile(
+    r"^[ \t]*import\s+(\w+)\s*\(.*?\)\s*\.\*\s+from\s+['\"]([^'\"]+)['\"]",
+    re.MULTILINE | re.DOTALL,
+)
 _WITNESS_RE = re.compile(r"^can_")
 
 # Hide machine-specific WSL prefixes in command output.
@@ -149,6 +153,20 @@ def parse_qnt(path: Path) -> dict[str, list[str]]:
 
     visit(path)
     return groups
+
+
+def _instantiated_imports(path: Path) -> list[tuple[str, Path]]:
+    """Return direct parameterized imports as (instance name, source path)."""
+    imports: list[tuple[str, Path]] = []
+    for match in _INSTANTIATED_IMPORT_RE.finditer(path.read_text(encoding="utf-8")):
+        source = Path(match.group(2))
+        candidate = source if source.is_absolute() else path.parent / source
+        if candidate.suffix == "":
+            candidate = candidate.with_suffix(".qnt")
+        candidate = candidate.resolve()
+        if candidate.is_file():
+            imports.append((match.group(1), candidate))
+    return imports
 
 
 # ─── syntax highlighting (from quint-vscode-highlighting grammar) ───────────────────
@@ -471,6 +489,8 @@ class QuintRunner(tk.Tk):
         cfg_frame.pack(fill="x", pady=(4, 0))
         ttk.Button(cfg_frame, text="Import config", command=self._import_config).pack(side="left", padx=2)
         ttk.Button(cfg_frame, text="Export config", command=self._export_config).pack(side="left", padx=2)
+        self._instantiated_imports_frame = ttk.LabelFrame(
+            top, text="Instantiated imports", padding=4)
 
         # main split
         paned = ttk.PanedWindow(self, orient="horizontal")
@@ -653,8 +673,28 @@ class QuintRunner(tk.Tk):
         self._qnt_path = p
         self._groups = parse_qnt(p)
         self._populate_declarations()
+        self._populate_instantiated_imports()
         total = sum(len(v) for v in self._groups.values())
         self._log(f"Scanned {p.name}: {total} declarations found.\n", "info")
+
+    def _populate_instantiated_imports(self) -> None:
+        for child in self._instantiated_imports_frame.winfo_children():
+            child.destroy()
+        self._instantiated_imports_frame.pack_forget()
+        imports = _instantiated_imports(self._qnt_path) if self._qnt_path else []
+        if not imports:
+            return
+        self._instantiated_imports_frame.pack(fill="x", pady=(4, 0))
+        for instance_name, source_path in imports:
+            row = ttk.Frame(self._instantiated_imports_frame)
+            row.pack(fill="x", pady=1)
+            ttk.Label(row, text=f"{instance_name} → {source_path.name}").pack(
+                side="left", fill="x", expand=True)
+            ttk.Button(
+                row, text="Compile",
+                command=lambda name=instance_name:
+                    self._open_compiled_file_viewer(name),
+            ).pack(side="right", padx=2)
 
     # ── declaration checkboxes ────────────────────────────────────────────────
 
@@ -1190,16 +1230,29 @@ class QuintRunner(tk.Tk):
             lambda w: setattr(self, "_file_viewer", w),
         )
 
-    def _open_compiled_file_viewer(self) -> None:
+    def _open_compiled_file_viewer(
+        self, instance_name: str | None = None,
+    ) -> None:
         if not self._qnt_path or not self._qnt_path.exists():
             messagebox.showwarning("No file", "Scan a .qnt file first.")
             return
-        if self._compiled_file_viewer and self._compiled_file_viewer.winfo_exists():
+        if (instance_name is None and self._compiled_file_viewer
+                and self._compiled_file_viewer.winfo_exists()):
             self._compiled_file_viewer.lift()
             return
 
-        tla_path = self._qnt_path.with_suffix(".tla")
-        self._log(f"Compiling {self._qnt_path.name} → TLA+…\n", "info")
+        suffix = f"_{instance_name}" if instance_name else ""
+        tla_path = self._qnt_path.with_name(f"{self._qnt_path.stem}{suffix}.tla")
+        main_args = ["--main", instance_name] if instance_name else []
+        if platform.system() == "Windows":
+            compile_cmd = ["cmd", "/d", "/c", "call", str(VERIFY_CMD),
+                           str(self._qnt_path), "--compile", *main_args]
+        else:
+            compile_cmd = ["quint", "compile", self._qnt_path.name,
+                           "--target", "tlaplus", *main_args]
+        display = (subprocess.list2cmdline(compile_cmd) if platform.system() == "Windows"
+                   else shlex.join(compile_cmd))
+        self._log(f"Compiling {self._qnt_path.name} → TLA+…\n>>  {display}\n", "info")
 
         def _compile() -> None:
             try:
@@ -1207,8 +1260,7 @@ class QuintRunner(tk.Tk):
                     # Compilation uses Apalache too. Route it through verify.cmd so
                     # Windows gets the same managed server lifecycle as verification.
                     result = subprocess.run(
-                        ["cmd", "/d", "/c", "call", str(VERIFY_CMD),
-                         str(self._qnt_path), "--compile"],
+                        compile_cmd,
                         capture_output=True,
                         text=True,
                         cwd=str(self._qnt_path.parent),
@@ -1216,7 +1268,7 @@ class QuintRunner(tk.Tk):
                     )
                 else:
                     result = subprocess.run(
-                        ["quint", "compile", self._qnt_path.name, "--target", "tlaplus"],
+                        compile_cmd,
                         capture_output=True,
                         text=True,
                         cwd=str(self._qnt_path.parent),
@@ -1250,7 +1302,8 @@ class QuintRunner(tk.Tk):
                 f"View compiled: {tla_path.name}",
                 _TLA_TAG_COLORS,
                 _highlight_tla,
-                lambda w: setattr(self, "_compiled_file_viewer", w),
+                (lambda w: setattr(self, "_compiled_file_viewer", w))
+                if instance_name is None else (lambda _w: None),
             ))
 
         threading.Thread(target=_compile, daemon=True).start()

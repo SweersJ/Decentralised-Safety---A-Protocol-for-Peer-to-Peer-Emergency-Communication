@@ -1,0 +1,141 @@
+classDiagram
+    direction LR
+
+    class Record {
+        -byte protocolVersion
+        -byte recordType
+        -byte[] payload
+        +int RECORD_HEADER_BYTES = 4
+        +int MAX_RECORD_PAYLOAD_BYTES = 49152
+        +Record(byte protocolVersion, byte recordType, byte[] payload)
+        +getProtocolVersion() byte
+        +getRecordType() byte
+        +getPayload() byte[]
+    }
+
+    class RecordTypes {
+        <<enumeration>>
+        ACK = 0
+        MESSAGE = 1
+        OFFER = 2
+        REQUEST = 3
+        VERSIONS = 4
+        PRIORITY = 5
+    }
+
+    class Message {
+        +int FORMAT_VERSION = 1
+        -MessageId id
+        -GroupId groupId
+        -long timestamp
+        -byte[] body
+        +Message(MessageId id, GroupId groupId, long timestamp, byte[] body)
+        +getId() MessageId
+        +getGroupId() GroupId
+        +getTimestamp() long
+        +getRawLength() int
+        +getBody() byte[]
+        +hashCode() int
+        +equals(Object o) boolean
+    }
+
+    class Offer {
+        -Collection~MessageId~ offered
+        +Offer(Collection~MessageId~ offered)
+        +getMessageIds() Collection~MessageId~
+    }
+
+    class Request {
+        -Collection~MessageId~ requested
+        +Request(Collection~MessageId~ requested)
+        +getMessageIds() Collection~MessageId~
+    }
+
+    class Ack {
+        -Collection~MessageId~ acked
+        +Ack(Collection~MessageId~ acked)
+        +getMessageIds() Collection~MessageId~
+    }
+    
+    class Versions {
+        -List~Byte~ supported
+        +Versions(List~Byte~ supported)
+        +getSupportedVersions() List~Byte~
+    }
+
+    class Priority {
+        -byte[] nonce
+        +Priority(byte[] nonce)
+        +getNonce() byte[]
+    }
+
+    class MessageId {
+        -byte[32] value
+        +MessageId(byte[] id)
+    }
+
+    class GroupId {
+        +byte[32] value
+    }
+
+    class MessageFactory {
+        <<interface>>
+        +createMessage(GroupId groupId, long timestamp, byte[] body) Message
+        +createMessage(byte[] raw) Message
+        +getRawMessage(Message message) byte[]
+    }
+
+    class SyncRecordWriter {
+        <<interface>>
+        +writeMessage(Message message)
+        +writeOffer(Offer offer)
+        +writeRequest(Request request)
+        +writeAck(Ack ack)
+        +writeVersions(Versions versions)
+        +writePriority(Priority priority)
+        +flush()
+    }
+
+    class SyncRecordReader {
+        <<interface>>
+        +hasMessage() boolean
+        +readMessage() Message
+        +hasOffer() boolean
+        +readOffer() Offer
+        +hasRequest() boolean
+        +readRequest() Request
+        +hasAck() boolean
+        +readAck() Ack
+        +hasVersions() boolean
+        +readVersions() Versions
+        +hasPriority() boolean
+        +readPriority() Priority
+    }
+
+    Record --> RecordTypes : type identified by
+
+    Message --> MessageId : identified by
+    Message --> GroupId : belongs to
+
+    Offer "1" o-- "1..*" MessageId : offers
+    Request "1" o-- "1..*" MessageId : requests
+    Ack "1" o-- "1..*" MessageId : ackes
+
+    MessageFactory ..> Message : creates and serializes
+    MessageFactory ..> MessageId : derives
+
+    SyncRecordWriter ..> Record : creates
+    SyncRecordWriter ..> Ack : serializes as type 0
+    SyncRecordWriter ..> Message : serializes as type 1
+    SyncRecordWriter ..> Offer : serializes as type 2
+    SyncRecordWriter ..> Request : serializes as type 3
+    SyncRecordWriter ..> Versions : serializes as type 4
+    SyncRecordWriter ..> Priority : serializes as type 5
+
+    SyncRecordReader ..> Record : parses
+    SyncRecordReader ..> Ack : reconstructs from type 0
+    SyncRecordReader ..> Message : reconstructs from type 1
+    SyncRecordReader ..> Offer : reconstructs from type 2
+    SyncRecordReader ..> Request : reconstructs from type 3
+    SyncRecordReader ..> Versions : reconstructs from type 4
+    SyncRecordReader ..> Priority : reconstructs from type 5

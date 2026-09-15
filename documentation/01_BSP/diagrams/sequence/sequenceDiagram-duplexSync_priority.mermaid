@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant A as Sender
+    participant B as Receiver
+    participant Registry as Receiver connection registry
+
+    A->>A: Generate random 16-byte nonce
+    A->>B: VERSIONS
+    A->>B: PRIORITY(nonce)
+    B->>Registry: Store priority for this connection
+    Registry->>Registry: Compare with existing connections
+
+    alt Existing connection is preferred
+        Registry->>A: Interrupt new outgoing session
+    else New connection is preferred
+        Registry->>Registry: Interrupt old outgoing session
+    else Neither connection strictly wins
+        Registry->>Registry: Retain current connection state
+    end

@@ -1,0 +1,58 @@
+classDiagram
+    direction LR
+
+    class Record {
+        +byte protocolVersion
+        +byte recordType
+        +uint16 payloadLength
+        +byte[] payload
+    }
+
+    class Ack {
+        +Collection~MessageId~ acked
+    }
+
+    class Message {
+        +MessageId id
+        +GroupId groupId
+        +uint64 timestamp
+        +byte[] body
+    }
+
+    class Offer {
+        +Collection~MessageId~ offered
+    }
+
+    class Request {
+        +Collection~MessageId~ requested
+    }
+    
+    class Versions {
+        +getSupportedVersions() List~Byte~
+    }
+
+    class Priority {
+        +getNonce() byte[]
+    }
+
+    class MessageId {
+        +byte[32] value
+    }
+
+    class GroupId {
+        +byte[32] value
+    }
+
+    Record ..> Ack : type 0 payload
+    Record ..> Message : type 1 payload
+    Record ..> Offer : type 2 payload
+    Record ..> Request : type 3 payload
+    Record ..> Versions : type 4 payload
+    Record ..> Priority : type 5 payload
+
+    Message --> MessageId : derived identifier
+    Message --> GroupId : group
+
+    Offer "1" o-- "1..1536" MessageId
+    Request "1" o-- "1..1536" MessageId
+    Ack "1" o-- "1..1536" MessageId

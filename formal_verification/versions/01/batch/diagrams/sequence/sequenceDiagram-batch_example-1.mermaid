@@ -11,7 +11,7 @@ sequenceDiagram
 
     Note over Alice, Bob: batch data sync
 
-    Note over Alice, Bob: wrap: Initial state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1]<br/>NodeState_A->B = <br/>{messages:[M1,M2,M3], offers:[],<br/> requests:[]}<br/>NodeState_B->A = <br/>{messages:[M1], offers:[], requests:[]}
+    Note over Alice, Bob: wrap: Initial state<br/>MessageStore(Alice) = [M1, M2, M3]<br/>MessageStore(Bob) = [M1]<br/>NodeState(A↦B) = <br/>{messages:[M1,M2,M3], offers:[],<br/> requests:[]}<br/>NodeState(B↦A) = <br/>{messages:[M1], offers:[], requests:[]}
 
     Alice->>PayloadState_Alice: create payload with messages {messages:[M1,M2,M3], acks:[]}
     activate PayloadState_Alice
@@ -26,7 +26,7 @@ sequenceDiagram
     activate PayloadState_Bob
     par message storing
         Bob->>MessageStore_Bob: store missing messages M2 and M3 from payload
-        Note right of Bob: Bob already has M1,<br/>so only new messages are added to <br/>MessageStore_Bob.
+        Note right of Bob: Bob already has M1,<br/>so only new messages are added to <br/>MessageStore(Bob).
         
         Bob->>NodeState_Bob: wrap: remove messages from Bob's NodeState to Alice that Alice already <br/>have send in their payload {messages:[], offers:[], requests:[]}
     and determination acknowledgements
@@ -38,5 +38,5 @@ sequenceDiagram
     deactivate PayloadState_Alice
 
     Alice->>NodeState_Alice: remove acknowledged messages from NodeState for Alice to Bob
-    Note left of Alice: ACKs for M1, M2, M3 received.<br/>NodeState_A->B becomes {messages:[], offers:[],<br/> requests:[]}.
-    Note over Alice, Bob: wrap: Final state<br/>MessageStore_Alice = [M1, M2, M3]<br/>MessageStore_Bob = [M1, M2, M3]<br/>NodeState_A->B =<br/> {messages:[], offers:[], requests:[]}<br/>NodeState_B->A =<br/> {messages:[], offers:[], requests:[]}
+    Note left of Alice: ACKs for M1, M2, M3 received.<br/>NodeState(A↦B) becomes {messages:[], offers:[],<br/> requests:[]}.
+    Note over Alice, Bob: wrap: Final state<br/>MessageStore(Alice) = [M1, M2, M3]<br/>MessageStore(Bob) = [M1, M2, M3]<br/>NodeState(A↦B) =<br/> {messages:[], offers:[], requests:[]}<br/>NodeState(B↦A) =<br/> {messages:[], offers:[], requests:[]}

@@ -7,7 +7,7 @@ config:
 stateDiagram-v2
     [*] --> Initial
     
-    Initial: MessageStore<sub>A</sub>: [M1, M2, M3]<br><br>MessageStore<sub>B</sub>: [M1]<br><br>NodeState<sub>A->B</sub>: {messages: [M1,M2,M3], offers: [], requests: []}<br><br>NodeState<sub>B->A</sub>: {messages: [M1], offers: [], requests: []}
+    Initial: MessageStore(A): [M1, M2, M3]<br><br>MessageStore(B): [M1]<br><br>NodeState(A↦B): {messages: [M1,M2,M3], offers: [], requests: []}<br><br>NodeState(B↦A): {messages: [M1], offers: [], requests: []}
     
     Initial --> Idle: Initialisation of the protocol is complete, both Alice and Bob are ready to send and receive messages.
 
@@ -21,11 +21,11 @@ stateDiagram-v2
 
     Idle --> Idle: No action is taken, Alice and Bob remain idle
     
-    AliceAddMessages: Payload<sub>A->B</sub>: {messages: [M1, M2, M3], acks: []}
+    AliceAddMessages: Payload(A↦B): {messages: [M1, M2, M3], acks: []}
 
     AliceAddMessages --> AliceSend: Alice sends payload
     
-    AliceSend: PayloadSent<sub>A->B</sub>: true<br><br>PayloadReceived<sub>B->A</sub>: false
+    AliceSend: PayloadSent(A↦B): true<br><br>PayloadReceived(B↦A): false
     
     AliceSend --> AliceSendPayloadInTransit: Sent payload from Alice to Bob is in transit
 
@@ -33,7 +33,7 @@ stateDiagram-v2
 
     AliceSendPayloadInTransit --> BobReceive: Bob receives payload
     
-    BobReceive: PayloadSent<sub>A->B</sub>: true<br><br>PayloadReceived<sub>B->A</sub>: true
+    BobReceive: PayloadSent(A↦B): true<br><br>PayloadReceived(B↦A): true
 
     BobReceive --> ReceiverProcessing
 
@@ -42,7 +42,7 @@ stateDiagram-v2
             Bob notices that Alice has sent M1 thus that doesn't need to be sent to Alice.
         end note
 
-        BobStoresMessages: MessageStore<sub>A</sub>: [M1, M2, M3]<br><br>MessageStore<sub>B</sub>: [M1, M2, M3]<br><br>NodeState<sub>A->B</sub>: {messages: [M1,M2,M3], offers: [], requests: []}<br><br>NodeState<sub>B->A</sub>: {messages: [], offers: [], requests: []}
+        BobStoresMessages: MessageStore(A): [M1, M2, M3]<br><br>MessageStore(B): [M1, M2, M3]<br><br>NodeState(A↦B): {messages: [M1,M2,M3], offers: [], requests: []}<br><br>NodeState(B↦A): {messages: [], offers: [], requests: []}
 
         [*] --> BobStoresMessages: Bob stores messages
         BobStoresMessages --> [*]
@@ -54,7 +54,7 @@ stateDiagram-v2
             received from Alice.
         end note
         
-        BobDetermineAck:  Payload<sub>A->B</sub>: {messages: [M1, M2, M3], acks: [M1, M2, M3]}
+        BobDetermineAck:  Payload(A↦B): {messages: [M1, M2, M3], acks: [M1, M2, M3]}
 
         [*] --> BobDetermineAck: Bob acknowledges messages received from Alice
         BobDetermineAck --> [*]
@@ -62,7 +62,7 @@ stateDiagram-v2
     
     ReceiverProcessing --> BobSend: Bob sends acks
     
-    BobSend: PayloadSent<sub>A->B</sub>: false<br><br>PayloadReceived<sub>B->A</sub>: false<br><br>PayloadSent<sub>B->A</sub>: true<br><br>PayloadReceived<sub>A->B</sub>: false
+    BobSend: PayloadSent(A↦B): false<br><br>PayloadReceived(B↦A): false<br><br>PayloadSent(B↦A): true<br><br>PayloadReceived(A↦B): false
     
     BobSend --> BobSendPayloadInTransit: Sent payload from Bob to Alice is in transit
 
@@ -74,6 +74,6 @@ stateDiagram-v2
         Alice notices that Bob has acknowledged M1, M2, and M3 thus that doesn't need to be sent to Bob. Therefore, Alice can remove it from the NodeState.
     end note
 
-    AliceReceiveAck: PayloadSent<sub>B->A</sub>: true<br><br>PayloadReceived<sub>A->B</sub>: true<br><br>NodeState<sub>A->B</sub>: {messages: [], offers: [], requests: []}<br><br>NodeState<sub>B->A</sub>: {messages: [], offers: [], requests: []}
+    AliceReceiveAck: PayloadSent(B↦A): true<br><br>PayloadReceived(A↦B): true<br><br>NodeState(A↦B): {messages: [], offers: [], requests: []}<br><br>NodeState(B↦A): {messages: [], offers: [], requests: []}
     
     AliceReceiveAck --> [*]

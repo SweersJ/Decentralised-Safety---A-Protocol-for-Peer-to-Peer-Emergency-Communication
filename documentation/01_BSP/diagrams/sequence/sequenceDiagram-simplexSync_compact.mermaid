@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+
+    participant A as Node A
+    participant B as Node B
+
+    Note over A,B: Simplex synchronisation A → B
+
+    A->>B: VERSIONS
+    A->>B: ACK*
+    A->>B: MESSAGE*
+    A->>B: End of stream
+
+    Note over A,B: Later simplex <br>synchronisation B → A
+
+    B->>A: VERSIONS
+    B->>A: ACK*
+    B->>A: MESSAGE*
+    B->>A: End of stream

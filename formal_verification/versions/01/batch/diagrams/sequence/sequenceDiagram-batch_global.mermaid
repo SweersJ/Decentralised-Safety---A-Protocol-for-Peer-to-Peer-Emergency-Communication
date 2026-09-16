@@ -3,8 +3,9 @@ sequenceDiagram
     participant MessageStore_Alice@{ "type" : "database" } as Message store (Alice)
     participant NodeState_Alice@{ "type" : "database" } as Node state (Alice)
     participant PayloadState_Alice@{ "type" : "database" } as Payload state (Alice)
-    actor Alice
-    actor Bob
+
+    participant Alice
+    participant Bob
     participant PayloadState_Bob@{ "type" : "database" } as Payload state (Bob)
     participant NodeState_Bob@{ "type" : "database" } as Node state (Bob)
     participant MessageStore_Bob@{ "type" : "database" } as Message store (Bob)

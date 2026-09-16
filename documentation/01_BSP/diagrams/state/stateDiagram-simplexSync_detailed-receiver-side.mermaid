@@ -1,0 +1,25 @@
+stateDiagram-v2
+    [*] --> Unknown
+
+    Unknown --> MessageReceived: MESSAGE received directly
+    MessageReceived --> MessageAccepted: structurally valid<br>and group visible
+    MessageReceived --> MessageIgnored: group not visible
+    MessageReceived --> SessionFailed: malformed record
+
+    MessageAccepted --> MessageStored: new message stored
+    MessageAccepted --> DuplicateKnown: message already present
+
+    MessageStored --> AckEligible: ACK flag set
+    DuplicateKnown --> AckEligible: seen and ACK flags set
+
+    AckEligible --> WaitingForReverseStream: incoming simplex stream<br>cannot carry the ACK
+
+    WaitingForReverseStream --> AckQueued: reverse-direction outgoing<br>session started, ACK selected
+    AckQueued --> Acknowledged: ACK written to<br>reverse-direction stream
+    AckQueued --> SessionFailed: write failed
+
+    WaitingForReverseStream --> MessageReceived: duplicate MESSAGE received<br>before ACK is sent
+
+    Acknowledged --> [*]
+    MessageIgnored --> [*]
+    SessionFailed --> [*]

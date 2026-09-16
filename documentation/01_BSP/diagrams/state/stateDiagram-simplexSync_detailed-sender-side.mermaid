@@ -1,0 +1,22 @@
+stateDiagram-v2
+    [*] --> LocallyAvailable
+
+    LocallyAvailable --> MessageEligible: shared, unseen,<br>and due for transmission
+
+    MessageEligible --> MessageQueued: selected by generateBatch()<br>expiry set, txCount++
+    MessageQueued --> MessageSent: MESSAGE written<br>to outgoing stream
+    MessageQueued --> SessionFailed: write failed
+
+    MessageSent --> WaitingForAcknowledgement: outgoing stream closed
+
+    WaitingForAcknowledgement --> Acknowledged: ACK received in a later<br>reverse-direction stream
+    WaitingForAcknowledgement --> MessageEligible: expiry reached and a new<br>outgoing stream is available
+    WaitingForAcknowledgement --> MessageEligible: lower-latency transport used
+
+    MessageEligible --> NotEligible: unshared, deleted,<br>or not visible
+    MessageQueued --> NotEligible: no longer shared<br>before transmission
+    WaitingForAcknowledgement --> NotEligible: unshared, deleted,<br>or not visible
+
+    Acknowledged --> [*]
+    NotEligible --> [*]
+    SessionFailed --> [*]

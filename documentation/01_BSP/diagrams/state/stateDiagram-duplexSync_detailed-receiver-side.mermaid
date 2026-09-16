@@ -1,0 +1,41 @@
+stateDiagram-v2
+    [*] --> Unknown
+
+    Unknown --> OfferReceived: OFFER received
+    OfferReceived --> AlreadyKnown: message is already<br>present and visible
+    OfferReceived --> OfferMessageStored: message is unknown<br>and offer capacity available
+    OfferReceived --> OfferIgnored: offer capacity reached
+
+    AlreadyKnown --> AckEligible: ACK flag set
+    OfferMessageStored --> RequestEligible: offered message MessageStored
+
+    RequestEligible --> RequestQueued: selected<br>offered entry removed
+    RequestQueued --> RequestSent: REQUEST written<br>to stream
+    RequestQueued --> SessionFailed: write failed
+
+    RequestSent --> WaitingForMessage
+
+    WaitingForMessage --> MessageReceived: MESSAGE received
+    WaitingForMessage --> OfferReceived: OFFER retransmitted
+
+    Unknown --> MessageReceived: MESSAGE received directly
+    AlreadyKnown --> MessageReceived: duplicate MESSAGE received
+
+    MessageReceived --> MessageAccepted: structurally valid<br>and group visible
+    MessageReceived --> MessageIgnored: group not visible
+    MessageReceived --> SessionFailed: malformed record
+
+    MessageAccepted --> MessageStored: new message MessageStored
+    MessageAccepted --> DuplicateKnown: message already present
+
+    MessageStored --> AckEligible: ACK flag set
+    DuplicateKnown --> AckEligible: seen and ACK flags set
+
+    AckEligible --> AckQueued: selected<br>ACK flag cleared
+    AckQueued --> Acknowledged: ACK written<br>to stream
+    AckQueued --> SessionFailed: write failed
+
+    Acknowledged --> [*]
+    OfferIgnored --> [*]
+    MessageIgnored --> [*]
+    SessionFailed --> [*]

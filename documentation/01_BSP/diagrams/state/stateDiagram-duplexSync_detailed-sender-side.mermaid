@@ -1,0 +1,31 @@
+stateDiagram-v2
+    [*] --> LocallyAvailable
+
+    LocallyAvailable --> OfferEligible: shared and unseen
+    OfferEligible --> OfferQueued: selected<br>expiry set, txCount++
+    OfferQueued --> OfferSent: OFFER written
+
+    OfferSent --> Requested: valid REQUEST received
+    OfferSent --> Acknowledged: Peer already has<br>message and sends ACK
+    OfferSent --> OfferEligible: expiry reached
+    OfferSent --> OfferEligible: lower-latency<br>transport used
+
+    Requested --> MessageEligible: expiry and txCount reset
+    MessageEligible --> MessageQueued: selected<br>expiry set, txCount++
+    MessageQueued --> MessageSent: MESSAGE written<br>to stream
+
+    MessageSent --> Acknowledged: ACK received
+    MessageSent --> OfferEligible: expiry reached
+    MessageSent --> OfferEligible: lower-latency transport used
+
+    OfferEligible --> NotEligible: unshared, deleted,<br>or not visible
+    OfferSent --> NotEligible: unshared, deleted,<br>or not visible
+    Requested --> NotEligible: unshared, deleted,<br>or not visible
+    MessageSent --> NotEligible: unshared, deleted,<br>or not visible
+
+    OfferQueued --> SessionFailed: write failed
+    MessageQueued --> SessionFailed: write failed
+
+    Acknowledged --> [*]
+    NotEligible --> [*]
+    SessionFailed --> [*]

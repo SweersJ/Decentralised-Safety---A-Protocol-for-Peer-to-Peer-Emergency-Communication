@@ -1,0 +1,40 @@
+sequenceDiagram
+    autonumber
+
+    participant SDB@{ "type" : "database" } as Sender DB
+    participant S as Sender
+    participant R as Receiver
+    participant RDB@{ "type" : "database" } as Receiver DB
+
+    Note over S,R: A new unidirectional synchronisation<br> stream is opened
+
+    S->>R: VERSIONS(supportedVersions)
+
+    loop While acknowledgements are queued
+        S->>SDB: generateAck(contactId, maxMessageIds)
+        SDB-->>S: ACK(messageIds)
+        S->>R: ACK(messageIds)
+        R->>RDB: Mark acknowledged messages as seen
+    end
+
+    loop While messages are eligible for transmission
+        S->>SDB: generateBatch(contactId, capacity, maxLatency)
+        SDB-->>S: Collection of messages
+
+        loop For every message in the batch
+            S->>R: MESSAGE(groupId, timestamp, body)
+            R->>R: Validate record and derive messageId
+            R->>RDB: Store message or update existing message
+            R->>RDB: Queue ACK for sender
+        end
+    end
+
+    S->>R: End of stream
+    Note over S,R: The simplex outgoing session closes when<br> no records remain
+
+    opt Later reverse-direction simplex session
+        R->>S: VERSIONS(supportedVersions)
+        R->>S: ACK(messageIds)
+        R->>S: End of stream
+        S->>SDB: Mark messages as seen by receiver
+    end

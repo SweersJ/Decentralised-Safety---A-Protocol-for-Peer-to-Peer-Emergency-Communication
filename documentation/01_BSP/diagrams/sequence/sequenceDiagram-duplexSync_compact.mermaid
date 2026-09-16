@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+
+    participant A as Node A
+    participant B as Node B
+
+    Note over A,B: Duplex synchronisation
+
+    A->>B: OFFER*
+
+    alt Message is already present and visible
+        B->>A: ACK*
+    else Message is unknown
+        B->>A: REQUEST*
+        A->>B: MESSAGE*
+        B->>A: ACK*
+    end
+
+    Note over A,B: The same exchange can run in<br> the reverse direction

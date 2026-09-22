@@ -5,6 +5,16 @@ sequenceDiagram
     participant R as Receiver
     participant RDB@{ "type" : "database" } as Receiver DB
 
+    par Senders outgoing direction
+        S->>R: VERSIONS(Sender supported versions)
+        opt Sender initiated the connection
+            S->>R: PRIORITY(nonce)
+            R->>RDB: Store and determine connection precedence
+        end
+    and Receivers outgoing direction
+        R->>S: VERSIONS(Receiver supported versions)
+    end
+
     S->>SDB: Find visible messages eligible for offering
     SDB-->>S: messageId list
     S->>R: OFFER(messageId₁ ... messageIdₙ)

@@ -6,6 +6,15 @@ sequenceDiagram
 
     Note over A,B: Duplex synchronisation A → B
 
+    par A's outgoing direction
+        A->>B: VERSIONS
+        opt A initiated the connection
+            A->>B: PRIORITY
+        end
+    and B's outgoing direction
+        B->>A: VERSIONS
+    end
+
     A->>B: OFFER*
 
     alt Message is already present and visible

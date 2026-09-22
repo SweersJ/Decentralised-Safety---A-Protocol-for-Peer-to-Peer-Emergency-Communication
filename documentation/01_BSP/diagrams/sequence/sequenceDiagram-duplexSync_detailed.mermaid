@@ -1,36 +1,36 @@
 sequenceDiagram
     autonumber
     participant SDB@{ "type" : "database" } as Sender DB
-    participant A as Sender
-    participant B as Receiver
+    participant S as Sender
+    participant R as Receiver
     participant RDB@{ "type" : "database" } as Receiver DB
 
-    A->>SDB: Find visible messages eligible for offering
-    SDB-->>A: messageId list
-    A->>B: OFFER(messageId₁ ... messageIdₙ)
+    S->>SDB: Find visible messages eligible for offering
+    SDB-->>S: messageId list
+    S->>R: OFFER(messageId₁ ... messageIdₙ)
 
-    B->>RDB: Check each offered ID
+    R->>RDB: Check each offered ID
 
     alt Message is already present and visible
-        RDB-->>B: Message already known
-        B->>B: Queue acknowledgement
-        B->>A: ACK(messageId)
-        A->>SDB: Mark message as seen by Reciver node
+        RDB-->>R: Message already known
+        R->>R: Queue acknowledgement
+        R->>S: ACK(messageId)
+        S->>SDB: Mark message as seen by Reciver node
     else Message is unknown
-        B->>RDB: Store message ID as offered
-        B->>RDB: Generate request and remove pending offer entry
-        B->>A: REQUEST(messageId)
+        R->>RDB: Store message ID as offered
+        R->>RDB: Generate request and remove pending offer entry
+        R->>S: REQUEST(messageId)
 
-        A->>SDB: Verify message is visible to Receiver node
-        A->>SDB: Mark message as requested
-        SDB-->>A: Requested message
-        A->>B: MESSAGE(groupId, timestamp, body)
+        S->>SDB: Verify message is visible to Receiver node
+        S->>SDB: Mark message as requested
+        SDB-->>S: Requested message
+        S->>R: MESSAGE(groupId, timestamp, body)
 
-        B->>B: Recompute messageId
-        B->>RDB: Check group visibility
-        B->>RDB: Store message or update existing entry
-        B->>B: Queue acknowledgement
-        B->>A: ACK(messageId)
+        R->>R: Recompute messageId
+        R->>RDB: Check group visibility
+        R->>RDB: Store message or update existing entry
+        R->>R: Queue acknowledgement
+        R->>S: ACK(messageId)
 
-        A->>SDB: Mark message as seen by Receiver node
+        S->>SDB: Mark message as seen by Receiver node
     end
